@@ -44,9 +44,6 @@ This document tracks what I learned while building SmartFolio from scratch.
 - `which python` - show path to active Python
 - `pip freeze > requirements.txt` - save dependencies to file
 
-### Questions I Had
-(Add any questions that came up and their answers)
-
 ### What's Next
 - Create first FastAPI endpoint
 - Run the development server
