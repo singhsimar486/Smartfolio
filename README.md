@@ -24,8 +24,9 @@ SmartFolio helps users track their investment portfolios with real-time market d
 - SQLAlchemy
 
 **Frontend:**
-- Next.js (coming soon)
-- Tailwind CSS
+- AngularJS
+- TypeScript
+- Angular Material
 
 **AI/ML:**
 - Sentiment analysis for news
@@ -36,7 +37,7 @@ SmartFolio helps users track their investment portfolios with real-time market d
 ### Prerequisites
 - Python 3.11+
 - PostgreSQL 15+
-- Node.js 18+ (for frontend, coming soon)
+- Node.js 18+
 
 ### Backend Setup
 
@@ -71,10 +72,14 @@ createdb smartfolio
 
 6. Run the server
 ```bash
-uvicorn main:app --reload
+uvicorn app.main:app --reload
 ```
 
 7. Visit `http://127.0.0.1:8000/docs` for API documentation
+
+### Frontend Setup
+
+Coming soon.
 
 ## Project Status
 
@@ -86,7 +91,7 @@ uvicorn main:app --reload
 - [ ] Market data integration
 - [ ] News sentiment analysis
 - [ ] AI insights
-- [ ] Frontend
+- [ ] Frontend (AngularJS)
 
 ## Author
 

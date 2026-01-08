@@ -105,3 +105,25 @@ This document tracks what I learned while building SmartFolio from scratch.
 - Create auth router (register/login endpoints)
 - Test authentication flow
 - Build holdings endpoints
+
+### Why AngularJS
+- Industry demand for AngularJS skills
+- Enterprise-grade frontend framework
+- Strong TypeScript integration
+- Component-based architecture similar to React
+
+### What We'll Learn
+- TypeScript fundamentals
+- Angular components and modules
+- Services and dependency injection
+- RxJS and Observables
+- Angular Material for UI components
+- Connecting Angular to our FastAPI backend
+
+### Updated Tech Stack
+| Layer | Technology |
+|-------|------------|
+| Backend | Python, FastAPI, SQLAlchemy |
+| Database | PostgreSQL |
+| Frontend | AngularJS, TypeScript, Angular Material |
+| AI/ML | FinBERT (sentiment), Claude API (insights) |
