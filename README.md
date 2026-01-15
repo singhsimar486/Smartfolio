@@ -6,14 +6,13 @@ An intelligent portfolio tracker with AI-powered insights.
 
 SmartFolio helps users track their investment portfolios with real-time market data, news sentiment analysis, and AI-generated insights.
 
-## Features (Planned)
+## Features
 
-- User authentication
-- Portfolio management (add/edit/delete holdings)
-- Real-time market data integration
-- Performance tracking and visualization
-- News feed with sentiment analysis
-- AI-powered portfolio insights
+- **User Authentication** — Secure registration and login with JWT tokens
+- **Portfolio Management** — Add, edit, and delete stock holdings
+- **Real-Time Market Data** — Live stock prices from Yahoo Finance
+- **Portfolio Analytics** — Track total value, profit/loss, and daily changes
+- **Allocation Breakdown** — Visualize portfolio distribution
 
 ## Tech Stack
 
@@ -22,22 +21,45 @@ SmartFolio helps users track their investment portfolios with real-time market d
 - FastAPI
 - PostgreSQL
 - SQLAlchemy
+- yfinance (market data)
 
 **Frontend:**
-- AngularJS
+- Angular (coming soon)
 - TypeScript
 - Angular Material
 
 **AI/ML:**
-- Sentiment analysis for news
-- LLM integration for insights
+- Sentiment analysis for news (coming soon)
+- LLM integration for insights (coming soon)
+
+## API Endpoints
+
+### Authentication
+- `POST /auth/register` — Create new account
+- `POST /auth/login` — Get JWT token
+- `GET /auth/me` — Get current user
+
+### Holdings
+- `POST /holdings/` — Add a holding
+- `GET /holdings/` — List all holdings
+- `GET /holdings/{id}` — Get single holding
+- `PUT /holdings/{id}` — Update holding
+- `DELETE /holdings/{id}` — Delete holding
+
+### Market Data
+- `GET /market/quote/{ticker}` — Get real-time stock quote
+- `GET /market/history/{ticker}` — Get historical prices
+
+### Portfolio
+- `GET /portfolio/summary` — Get portfolio with real-time values
+- `GET /portfolio/allocation` — Get allocation breakdown
 
 ## Setup
 
 ### Prerequisites
 - Python 3.11+
 - PostgreSQL 15+
-- Node.js 18+
+- Node.js 18+ (for frontend)
 
 ### Backend Setup
 
@@ -70,28 +92,31 @@ DEBUG=True
 createdb smartfolio
 ```
 
-6. Run the server
+6. Create tables
+```bash
+python -c "from app.database import engine, Base; from app.models import User, Holding, Transaction; Base.metadata.create_all(bind=engine)"
+```
+
+7. Run the server
 ```bash
 uvicorn app.main:app --reload
 ```
 
-7. Visit `http://127.0.0.1:8000/docs` for API documentation
-
-### Frontend Setup
-
-Coming soon.
+8. Visit `http://127.0.0.1:8000/docs` for API documentation
 
 ## Project Status
 
 - [x] Project setup
 - [x] Database models
 - [x] PostgreSQL integration
-- [ ] Authentication (in progress)
-- [ ] Holdings endpoints
-- [ ] Market data integration
+- [x] User authentication
+- [x] Holdings CRUD
+- [x] Real-time market data
+- [x] Portfolio summary
+- [x] Portfolio allocation
 - [ ] News sentiment analysis
 - [ ] AI insights
-- [ ] Frontend (AngularJS)
+- [ ] Frontend (Angular)
 
 ## Author
 
