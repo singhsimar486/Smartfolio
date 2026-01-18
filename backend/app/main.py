@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.routers import auth, holdings, market, portfolio
+from app.routers import auth, holdings, market, portfolio, news
 
 
 app = FastAPI(
@@ -13,6 +13,7 @@ app.include_router(auth.router)
 app.include_router(holdings.router)
 app.include_router(market.router)
 app.include_router(portfolio.router)
+app.include_router(news.router)
 
 
 @app.get("/")
