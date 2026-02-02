@@ -1,0 +1,363 @@
+<div class="min-h-screen bg-bg-primary">
+  <app-navbar></app-navbar>
+
+  <main class="max-w-7xl mx-auto px-6 py-8">
+    <!-- Page Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-3xl font-bold text-white mb-2">Price Alerts</h1>
+        <p class="text-text-secondary">Get notified when stocks hit your target prices</p>
+      </div>
+      <button
+        (click)="openAddModal()"
+        class="bg-accent hover:bg-accent/80 text-black font-semibold px-6 py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-accent/20 flex items-center gap-2"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        </svg>
+        Create Alert
+      </button>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex flex-col items-center justify-center py-20">
+      <div class="relative w-16 h-16 mb-4">
+        <div class="absolute inset-0 border-4 border-bg-card rounded-full"></div>
+        <div class="absolute inset-0 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
+      </div>
+      <p class="text-text-secondary">Loading alerts...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="errorMessage && !isLoading" class="bg-loss/10 border border-loss/50 text-loss px-6 py-4 rounded-xl mb-6 flex items-center gap-3">
+      <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      {{ errorMessage }}
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && alerts.length === 0 && !errorMessage" class="bg-bg-card rounded-2xl border border-gray-800 px-6 py-16 text-center animate-fadeIn">
+      <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-accent/20 to-accent/5 flex items-center justify-center">
+        <svg class="w-10 h-10 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+        </svg>
+      </div>
+      <h3 class="text-xl font-semibold text-white mb-2">No price alerts yet</h3>
+      <p class="text-text-secondary mb-6 max-w-sm mx-auto">Create alerts to get notified when stocks reach your target prices</p>
+      <button
+        (click)="openAddModal()"
+        class="bg-accent hover:bg-accent/80 text-black font-semibold px-8 py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-accent/20"
+      >
+        Create Your First Alert
+      </button>
+    </div>
+
+    <!-- Alerts List -->
+    <div *ngIf="!isLoading && alerts.length > 0" class="animate-fadeIn">
+      <!-- Summary Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        <div class="bg-bg-card rounded-xl p-5 border border-gray-800">
+          <p class="text-text-secondary text-sm mb-1">Total Alerts</p>
+          <p class="text-2xl font-bold text-white">{{ alerts.length }}</p>
+        </div>
+        <div class="bg-bg-card rounded-xl p-5 border border-gray-800">
+          <p class="text-text-secondary text-sm mb-1">Active</p>
+          <p class="text-2xl font-bold text-accent">{{ getActiveCount() }}</p>
+        </div>
+        <div class="bg-bg-card rounded-xl p-5 border border-gray-800">
+          <p class="text-text-secondary text-sm mb-1">Triggered</p>
+          <p class="text-2xl font-bold text-gain">{{ getTriggeredCount() }}</p>
+        </div>
+      </div>
+
+      <!-- Alerts Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div *ngFor="let alert of alerts"
+             [class]="alert.is_triggered ? 'border-gain/50 bg-gain/5' : (isNearTarget(alert) ? 'border-accent/50' : 'border-gray-800')"
+             class="bg-bg-card rounded-2xl border p-6 hover:border-gray-700 transition-all group">
+          <!-- Header -->
+          <div class="flex items-start justify-between mb-4">
+            <div class="flex items-center gap-3">
+              <div [class]="alert.is_triggered ? 'from-gain/20 to-gain/5 text-gain' : 'from-accent/20 to-accent/5 text-accent'"
+                   class="w-12 h-12 rounded-xl bg-gradient-to-br flex items-center justify-center font-bold text-lg">
+                {{ alert.ticker.charAt(0) }}
+              </div>
+              <div>
+                <h3 class="font-bold text-white text-lg">{{ alert.ticker }}</h3>
+                <p class="text-text-secondary text-sm truncate max-w-[150px]">{{ alert.stock_name || alert.ticker }}</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <!-- Toggle Switch -->
+              <button
+                *ngIf="!alert.is_triggered"
+                (click)="toggleAlert(alert)"
+                [class]="alert.is_active ? 'bg-accent' : 'bg-gray-700'"
+                class="relative w-11 h-6 rounded-full transition-colors"
+                [title]="alert.is_active ? 'Pause alert' : 'Activate alert'"
+              >
+                <span
+                  [class]="alert.is_active ? 'translate-x-5' : 'translate-x-1'"
+                  class="absolute top-1 left-0 w-4 h-4 bg-white rounded-full transition-transform"
+                ></span>
+              </button>
+              <!-- Delete button -->
+              <button
+                (click)="confirmDelete(alert)"
+                class="p-2 rounded-lg opacity-0 group-hover:opacity-100 bg-bg-secondary hover:bg-loss/20 text-text-secondary hover:text-loss transition-all"
+                title="Delete alert"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Status Badge -->
+          <div class="mb-4">
+            <span *ngIf="alert.is_triggered"
+                  class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-gain/20 text-gain">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              Triggered
+            </span>
+            <span *ngIf="!alert.is_triggered && alert.is_active && isNearTarget(alert)"
+                  class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-accent/20 text-accent">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              Near Target
+            </span>
+            <span *ngIf="!alert.is_triggered && alert.is_active && !isNearTarget(alert)"
+                  class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-accent/10 text-accent">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              Watching
+            </span>
+            <span *ngIf="!alert.is_triggered && !alert.is_active"
+                  class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-gray-700/50 text-text-secondary">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Paused
+            </span>
+          </div>
+
+          <!-- Alert Condition -->
+          <div class="flex items-center gap-2 mb-4 p-3 rounded-lg bg-bg-secondary">
+            <svg [class]="alert.condition === 'ABOVE' ? 'text-gain' : 'text-loss'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="getConditionIcon(alert.condition)" />
+            </svg>
+            <span class="text-text-secondary text-sm">Notify when price</span>
+            <span [class]="alert.condition === 'ABOVE' ? 'text-gain' : 'text-loss'" class="font-medium text-sm">
+              {{ getConditionText(alert.condition) }}
+            </span>
+            <span class="text-white font-bold">{{ formatCurrency(alert.target_price) }}</span>
+          </div>
+
+          <!-- Price Info -->
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-text-secondary text-sm">Current Price</span>
+              <span class="text-white font-semibold">{{ formatCurrency(alert.current_price) }}</span>
+            </div>
+            <div *ngIf="alert.is_triggered" class="flex items-center justify-between">
+              <span class="text-text-secondary text-sm">Triggered At</span>
+              <span class="text-gain font-medium">{{ formatCurrency(alert.triggered_price) }}</span>
+            </div>
+            <div *ngIf="alert.is_triggered" class="flex items-center justify-between">
+              <span class="text-text-secondary text-sm">Triggered On</span>
+              <span class="text-text-secondary text-sm">{{ formatDateTime(alert.triggered_at) }}</span>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="mt-4 pt-4 border-t border-gray-800/50 flex items-center justify-between">
+            <p class="text-text-secondary text-xs">Created {{ formatDate(alert.created_at) }}</p>
+            <button
+              *ngIf="alert.is_triggered"
+              (click)="resetAlert(alert)"
+              class="text-xs text-accent hover:text-accent/80 font-medium transition-colors"
+            >
+              Reset Alert
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Add Alert Modal -->
+  <div *ngIf="showAddModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 px-4 animate-fadeIn">
+    <div class="bg-bg-card rounded-2xl p-8 w-full max-w-md border border-gray-800 shadow-2xl">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-semibold text-white">Create Price Alert</h2>
+        <button (click)="closeAddModal()" class="text-text-secondary hover:text-white transition-colors">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Form Error -->
+      <div *ngIf="formError" class="bg-loss/10 border border-loss/50 text-loss px-4 py-3 rounded-xl mb-6 flex items-center gap-2">
+        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        {{ formError }}
+      </div>
+
+      <form (ngSubmit)="createAlert()">
+        <!-- Ticker -->
+        <div class="mb-6 relative">
+          <label class="block text-text-secondary text-sm mb-2">Stock Symbol</label>
+          <div class="relative">
+            <input
+              type="text"
+              [(ngModel)]="ticker"
+              name="ticker"
+              placeholder="e.g. AAPL, GOOGL, TSLA"
+              (input)="onTickerInput()"
+              (blur)="hideDropdown()"
+              (keydown.escape)="hideDropdown()"
+              autocomplete="off"
+              class="w-full bg-bg-secondary border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all uppercase"
+              autofocus
+            />
+            <!-- Loading spinner -->
+            <div *ngIf="isSearching" class="absolute right-3 top-1/2 -translate-y-1/2">
+              <svg class="w-5 h-5 animate-spin text-accent" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </div>
+          </div>
+          <!-- Search Dropdown -->
+          <div *ngIf="showDropdown && searchResults.length > 0"
+               class="absolute z-50 w-full mt-1 bg-bg-secondary border border-gray-700 rounded-xl shadow-xl overflow-hidden max-h-60 overflow-y-auto">
+            <button
+              *ngFor="let result of searchResults"
+              type="button"
+              (mousedown)="selectTicker(result)"
+              class="w-full px-4 py-3 text-left hover:bg-accent/10 transition-colors flex items-center justify-between group"
+            >
+              <div>
+                <span class="font-bold text-white">{{ result.symbol }}</span>
+                <span class="text-text-secondary ml-2 text-sm">{{ result.name }}</span>
+              </div>
+              <span class="text-xs text-text-secondary/60 group-hover:text-text-secondary">{{ result.exchange }}</span>
+            </button>
+          </div>
+          <p *ngIf="selectedStockName" class="text-accent text-xs mt-2">{{ selectedStockName }}</p>
+        </div>
+
+        <!-- Condition -->
+        <div class="mb-6">
+          <label class="block text-text-secondary text-sm mb-2">Alert Condition</label>
+          <div class="grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              (click)="condition = 'ABOVE'"
+              [class]="condition === 'ABOVE' ? 'border-gain bg-gain/10 text-gain' : 'border-gray-700 text-text-secondary hover:border-gray-600'"
+              class="p-4 rounded-xl border transition-all flex flex-col items-center gap-2"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+              </svg>
+              <span class="font-medium">Price Above</span>
+            </button>
+            <button
+              type="button"
+              (click)="condition = 'BELOW'"
+              [class]="condition === 'BELOW' ? 'border-loss bg-loss/10 text-loss' : 'border-gray-700 text-text-secondary hover:border-gray-600'"
+              class="p-4 rounded-xl border transition-all flex flex-col items-center gap-2"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+              </svg>
+              <span class="font-medium">Price Below</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Target Price -->
+        <div class="mb-8">
+          <label class="block text-text-secondary text-sm mb-2">Target Price</label>
+          <div class="relative">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary">$</span>
+            <input
+              type="number"
+              [(ngModel)]="targetPrice"
+              name="targetPrice"
+              placeholder="0.00"
+              step="0.01"
+              min="0.01"
+              class="w-full bg-bg-secondary border border-gray-700 rounded-xl pl-8 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all"
+            />
+          </div>
+          <p class="text-text-secondary text-xs mt-2">Enter the price at which you want to be notified</p>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex gap-4">
+          <button
+            type="button"
+            (click)="closeAddModal()"
+            class="flex-1 border border-gray-700 text-white py-3 rounded-xl hover:bg-bg-secondary transition-colors font-medium"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            [disabled]="isAdding"
+            class="flex-1 bg-accent hover:bg-accent/80 disabled:bg-accent/50 text-black font-semibold py-3 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"
+          >
+            <svg *ngIf="isAdding" class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            {{ isAdding ? 'Creating...' : 'Create Alert' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div *ngIf="showDeleteConfirm" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 px-4 animate-fadeIn">
+    <div class="bg-bg-card rounded-2xl p-8 w-full max-w-sm border border-gray-800 shadow-2xl text-center">
+      <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-loss/10 flex items-center justify-center">
+        <svg class="w-8 h-8 text-loss" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+      </div>
+      <h2 class="text-xl font-semibold text-white mb-2">Delete {{ deletingTicker }} Alert?</h2>
+      <p class="text-text-secondary mb-6">This action cannot be undone.</p>
+
+      <div class="flex gap-4">
+        <button
+          (click)="cancelDelete()"
+          class="flex-1 border border-gray-700 text-white py-3 rounded-xl hover:bg-bg-secondary transition-colors font-medium"
+        >
+          Cancel
+        </button>
+        <button
+          (click)="deleteAlert()"
+          [disabled]="isDeleting"
+          class="flex-1 bg-loss hover:bg-loss/80 disabled:bg-loss/50 text-white font-semibold py-3 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"
+        >
+          <svg *ngIf="isDeleting" class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          {{ isDeleting ? 'Deleting...' : 'Delete' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

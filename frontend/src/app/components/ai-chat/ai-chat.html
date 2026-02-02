@@ -1,0 +1,153 @@
+<!-- Chat Modal -->
+<div *ngIf="isOpen" class="fixed inset-0 z-[60] flex items-end justify-end p-4 sm:p-6 pointer-events-none">
+  <!-- Backdrop -->
+  <div
+    class="absolute inset-0 bg-black/50 backdrop-blur-sm pointer-events-auto"
+    (click)="close()"
+  ></div>
+
+  <!-- Chat Window -->
+  <div class="relative w-full max-w-md h-[600px] max-h-[80vh] bg-bg-card rounded-2xl border border-gray-800 shadow-2xl flex flex-col overflow-hidden pointer-events-auto animate-slideUp">
+    <!-- Header -->
+    <div class="p-4 border-b border-gray-800 bg-bg-secondary/50">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-purple-500 flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-semibold text-white">AI Advisor</h3>
+            <p class="text-text-secondary text-xs">Ask anything about your portfolio</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button
+            (click)="clearHistory()"
+            class="p-2 rounded-lg text-text-secondary hover:text-white hover:bg-white/5 transition-all"
+            title="Clear history"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+          </button>
+          <button
+            (click)="close()"
+            class="p-2 rounded-lg text-text-secondary hover:text-white hover:bg-white/5 transition-all"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div #messagesContainer class="flex-1 overflow-y-auto p-4 space-y-4">
+      <!-- Loading -->
+      <div *ngIf="isLoading" class="flex items-center justify-center py-8">
+        <div class="w-5 h-5 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="!isLoading && messages.length === 0" class="text-center py-8">
+        <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-accent/20 to-purple-500/20 flex items-center justify-center">
+          <svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+          </svg>
+        </div>
+        <h4 class="font-medium text-white mb-2">Ask me anything!</h4>
+        <p class="text-text-secondary text-sm mb-6">I can help analyze your portfolio and answer investment questions.</p>
+
+        <!-- Suggested Questions -->
+        <div class="space-y-2">
+          <p class="text-text-secondary text-xs uppercase tracking-wide mb-3">Try asking:</p>
+          <div class="flex flex-wrap gap-2 justify-center">
+            <button
+              *ngFor="let question of suggestedQuestions"
+              (click)="askSuggestion(question)"
+              class="px-3 py-1.5 rounded-full text-xs bg-white/5 text-text-secondary hover:bg-accent/10 hover:text-accent transition-all"
+            >
+              {{ question }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Messages List -->
+      <div *ngFor="let message of messages" [class]="message.role === 'user' ? 'flex justify-end' : 'flex justify-start'">
+        <div [class]="message.role === 'user'
+          ? 'max-w-[80%] bg-accent text-black rounded-2xl rounded-br-md px-4 py-3'
+          : 'max-w-[80%] bg-bg-secondary border border-gray-800 rounded-2xl rounded-bl-md px-4 py-3'">
+          <p class="text-sm whitespace-pre-wrap" [class]="message.role === 'user' ? 'text-black' : 'text-white'">{{ message.content }}</p>
+          <p class="text-xs mt-1 opacity-60">{{ formatTime(message.created_at) }}</p>
+        </div>
+      </div>
+
+      <!-- Typing Indicator -->
+      <div *ngIf="isSending" class="flex justify-start">
+        <div class="bg-bg-secondary border border-gray-800 rounded-2xl rounded-bl-md px-4 py-3">
+          <div class="flex items-center gap-1">
+            <div class="w-2 h-2 bg-text-secondary rounded-full animate-bounce" style="animation-delay: 0ms"></div>
+            <div class="w-2 h-2 bg-text-secondary rounded-full animate-bounce" style="animation-delay: 150ms"></div>
+            <div class="w-2 h-2 bg-text-secondary rounded-full animate-bounce" style="animation-delay: 300ms"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="errorMessage" class="text-center">
+        <p class="text-loss text-sm">{{ errorMessage }}</p>
+      </div>
+    </div>
+
+    <!-- Input Area -->
+    <div class="p-4 border-t border-gray-800 bg-bg-secondary/30">
+      <div class="flex items-end gap-3">
+        <div class="flex-1 relative">
+          <textarea
+            #messageInput
+            [(ngModel)]="newMessage"
+            (keydown)="onKeyDown($event)"
+            placeholder="Ask about your portfolio..."
+            rows="1"
+            class="w-full bg-bg-secondary border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all resize-none"
+            [disabled]="isSending"
+          ></textarea>
+        </div>
+        <button
+          (click)="sendMessage()"
+          [disabled]="!newMessage.trim() || isSending"
+          class="shrink-0 w-12 h-12 rounded-xl bg-accent hover:bg-accent/80 disabled:bg-accent/30 disabled:cursor-not-allowed text-black flex items-center justify-center transition-all"
+        >
+          <svg *ngIf="!isSending" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+          </svg>
+          <svg *ngIf="isSending" class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        </button>
+      </div>
+      <p class="text-text-secondary text-xs mt-2 text-center">
+        AI advice is for informational purposes only. Not financial advice.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Floating Chat Button (when closed) -->
+<button
+  *ngIf="!isOpen"
+  (click)="open()"
+  class="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-accent to-purple-500 text-white shadow-lg shadow-accent/30 hover:shadow-accent/50 hover:scale-105 transition-all flex items-center justify-center group"
+>
+  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+  </svg>
+  <span class="absolute -top-1 -right-1 w-4 h-4 bg-gain rounded-full flex items-center justify-center">
+    <span class="text-[10px] font-bold text-black">AI</span>
+  </span>
+</button>

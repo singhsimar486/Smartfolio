@@ -2,171 +2,274 @@
   <app-navbar></app-navbar>
 
   <main class="max-w-7xl mx-auto px-6 py-8">
-    <!-- Page Header -->
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold text-white mb-2">Dashboard</h1>
-      <p class="text-text-secondary">Your portfolio at a glance</p>
-    </div>
-
     <!-- Loading State -->
-    <div *ngIf="isLoading" class="flex flex-col items-center justify-center py-20">
-      <div class="relative w-16 h-16 mb-4">
-        <div class="absolute inset-0 border-4 border-bg-card rounded-full"></div>
-        <div class="absolute inset-0 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
+    <div *ngIf="isLoading" class="flex flex-col items-center justify-center py-32">
+      <div class="relative w-16 h-16 mb-6">
+        <div class="absolute inset-0 border-2 border-white/10 rounded-full"></div>
+        <div class="absolute inset-0 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>
+        <div class="absolute inset-2 border-2 border-accent/30 border-b-transparent rounded-full animate-spin" style="animation-direction: reverse; animation-duration: 1.5s;"></div>
       </div>
-      <p class="text-text-secondary">Loading portfolio...</p>
+      <p class="text-text-secondary text-lg">Loading your portfolio...</p>
     </div>
 
     <!-- Error State -->
-    <div *ngIf="errorMessage && !isLoading" class="bg-loss/10 border border-loss/50 text-loss px-6 py-4 rounded-xl">
+    <div *ngIf="errorMessage && !isLoading" class="bg-loss/10 border border-loss/30 text-loss px-6 py-4 rounded-2xl flex items-center gap-4 animate-fadeIn">
+      <div class="w-10 h-10 rounded-full bg-loss/20 flex items-center justify-center shrink-0">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
       {{ errorMessage }}
     </div>
 
     <!-- Portfolio Content -->
-    <div *ngIf="portfolio && !isLoading" class="animate-fadeIn">
-      <!-- Hero Stats Card -->
-      <div class="relative overflow-hidden bg-gradient-to-br from-bg-card to-bg-secondary rounded-2xl p-8 mb-8 border border-gray-800">
-        <!-- Background decoration -->
-        <div class="absolute top-0 right-0 w-64 h-64 bg-accent/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+    <div *ngIf="portfolio && !isLoading">
+      <!-- Hero Section -->
+      <div class="relative mb-10 animate-fadeInUp">
+        <!-- Background glow -->
+        <div class="absolute top-0 left-1/4 w-96 h-96 bg-accent/10 rounded-full blur-[150px] pointer-events-none"></div>
 
-        <div class="relative grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <!-- Left: Main Stats -->
-          <div>
-            <p class="text-text-secondary text-sm mb-2">Total Portfolio Value</p>
-            <h2 class="text-5xl font-bold text-white mb-4">{{ formatCurrency(portfolio.total_value) }}</h2>
+        <div class="relative">
+          <p class="text-text-secondary text-sm font-medium uppercase tracking-wider mb-2">Total Portfolio Value</p>
+          <div class="flex items-baseline gap-4 mb-6">
+            <h1 class="text-display-xl text-white tabular-nums">{{ formatCurrency(portfolio.total_value) }}</h1>
+          </div>
 
-            <div class="flex items-center gap-6">
+          <div class="flex flex-wrap items-center gap-6">
+            <!-- Total P/L Badge -->
+            <div class="flex items-center gap-3 px-4 py-2 rounded-full" [class]="portfolio.total_profit_loss >= 0 ? 'bg-profit/10' : 'bg-loss/10'">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center" [class]="portfolio.total_profit_loss >= 0 ? 'bg-profit/20' : 'bg-loss/20'">
+                <svg *ngIf="portfolio.total_profit_loss >= 0" class="w-4 h-4 text-profit" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                </svg>
+                <svg *ngIf="portfolio.total_profit_loss < 0" class="w-4 h-4 text-loss" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+              </div>
               <div>
-                <p class="text-text-secondary text-xs mb-1">Total P/L</p>
-                <p class="text-xl font-semibold" [ngClass]="getProfitLossClass(portfolio.total_profit_loss)">
+                <p class="text-xs text-text-secondary">All Time</p>
+                <p class="font-semibold tabular-nums" [ngClass]="getProfitLossClass(portfolio.total_profit_loss)">
                   {{ formatCurrency(portfolio.total_profit_loss) }}
-                  <span class="text-sm">({{ formatPercent(portfolio.total_profit_loss_percent) }})</span>
+                  <span class="text-sm opacity-80">({{ formatPercent(portfolio.total_profit_loss_percent) }})</span>
                 </p>
               </div>
-              <div class="w-px h-10 bg-gray-700"></div>
+            </div>
+
+            <!-- Day Change Badge -->
+            <div class="flex items-center gap-3 px-4 py-2 rounded-full" [class]="portfolio.day_change >= 0 ? 'bg-profit/10' : 'bg-loss/10'">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center" [class]="portfolio.day_change >= 0 ? 'bg-profit/20' : 'bg-loss/20'">
+                <svg class="w-4 h-4" [class]="portfolio.day_change >= 0 ? 'text-profit' : 'text-loss'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
+              </div>
               <div>
-                <p class="text-text-secondary text-xs mb-1">Today</p>
-                <p class="text-xl font-semibold" [ngClass]="getProfitLossClass(portfolio.day_change)">
+                <p class="text-xs text-text-secondary">Today</p>
+                <p class="font-semibold tabular-nums" [ngClass]="getProfitLossClass(portfolio.day_change)">
                   {{ formatCurrency(portfolio.day_change) }}
-                  <span class="text-sm">({{ formatPercent(portfolio.day_change_percent) }})</span>
+                  <span class="text-sm opacity-80">({{ formatPercent(portfolio.day_change_percent) }})</span>
                 </p>
               </div>
             </div>
           </div>
+        </div>
+      </div>
 
-          <!-- Right: Mini Chart Preview -->
-          <div class="flex items-center justify-center lg:justify-end">
-            <div class="relative">
-              <div class="w-40 h-40" *ngIf="portfolio.holdings.length > 0">
-                <canvas baseChart
-                  [data]="allocationChartData"
-                  [options]="allocationChartOptions"
-                  type="doughnut">
-                </canvas>
-              </div>
-              <div class="absolute inset-0 flex items-center justify-center">
-                <div class="text-center">
-                  <p class="text-2xl font-bold text-white">{{ portfolio.holdings_count }}</p>
-                  <p class="text-xs text-text-secondary">Holdings</p>
-                </div>
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
+        <!-- Total Invested -->
+        <div class="stat-card group card-hover animate-fadeInUp stagger-1">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div class="relative">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
+                <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
               </div>
             </div>
+            <p class="text-text-secondary text-sm mb-1">Total Invested</p>
+            <p class="text-2xl font-bold text-white tabular-nums">{{ formatCurrency(portfolio.total_cost) }}</p>
+          </div>
+        </div>
+
+        <!-- Holdings Count -->
+        <div class="stat-card group card-hover animate-fadeInUp stagger-2">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div class="relative">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
+                <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+              </div>
+            </div>
+            <p class="text-text-secondary text-sm mb-1">Holdings</p>
+            <p class="text-2xl font-bold text-white">{{ portfolio.holdings_count }}</p>
+          </div>
+        </div>
+
+        <!-- Best Performer -->
+        <div class="stat-card group card-hover animate-fadeInUp stagger-3">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-profit/5 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div class="relative">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-xl bg-profit/10 flex items-center justify-center">
+                <svg class="w-5 h-5 text-profit" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
+              </div>
+            </div>
+            <p class="text-text-secondary text-sm mb-1">Best Performer</p>
+            <div *ngIf="portfolio.holdings.length > 0">
+              <p class="text-2xl font-bold text-white">{{ getBestPerformer()?.ticker || '--' }}</p>
+              <p class="text-sm text-profit font-medium tabular-nums">{{ formatPercent(getBestPerformer()?.profit_loss_percent ?? null) }}</p>
+            </div>
+            <p *ngIf="portfolio.holdings.length === 0" class="text-2xl font-bold text-text-secondary">--</p>
+          </div>
+        </div>
+
+        <!-- Worst Performer -->
+        <div class="stat-card group card-hover animate-fadeInUp stagger-4">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-loss/5 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div class="relative">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-xl bg-loss/10 flex items-center justify-center">
+                <svg class="w-5 h-5 text-loss" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" />
+                </svg>
+              </div>
+            </div>
+            <p class="text-text-secondary text-sm mb-1">Worst Performer</p>
+            <div *ngIf="portfolio.holdings.length > 0">
+              <p class="text-2xl font-bold text-white">{{ getWorstPerformer()?.ticker || '--' }}</p>
+              <p class="text-sm text-loss font-medium tabular-nums">{{ formatPercent(getWorstPerformer()?.profit_loss_percent ?? null) }}</p>
+            </div>
+            <p *ngIf="portfolio.holdings.length === 0" class="text-2xl font-bold text-text-secondary">--</p>
           </div>
         </div>
       </div>
 
-      <!-- Stats Cards Row -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <!-- Total Cost -->
-        <div class="group bg-bg-card hover:bg-bg-secondary/80 rounded-xl p-6 border border-gray-800 transition-all duration-300 hover:border-gray-700 hover:shadow-lg hover:shadow-accent/5">
-          <div class="flex items-center gap-3 mb-3">
-            <div class="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
-              <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <p class="text-text-secondary text-sm">Total Invested</p>
+      <!-- Performance Chart -->
+      <div class="glass-card rounded-2xl p-6 mb-8 animate-fadeInUp" *ngIf="portfolio.holdings.length > 0">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div>
+            <h3 class="text-xl font-semibold text-white">Performance</h3>
+            <p class="text-text-secondary text-sm">Track your portfolio growth over time</p>
           </div>
-          <p class="text-2xl font-bold text-white">{{ formatCurrency(portfolio.total_cost) }}</p>
+          <div class="flex items-center gap-1 bg-white/5 rounded-full p-1">
+            <button
+              *ngFor="let period of ['1mo', '3mo', '6mo', '1y']"
+              (click)="changePerformancePeriod(period)"
+              [class]="performancePeriod === period ? 'bg-accent text-black' : 'text-text-secondary hover:text-white'"
+              class="px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-300"
+            >
+              {{ period.toUpperCase() }}
+            </button>
+          </div>
         </div>
 
-        <!-- Best Performer (placeholder) -->
-        <div class="group bg-bg-card hover:bg-bg-secondary/80 rounded-xl p-6 border border-gray-800 transition-all duration-300 hover:border-gray-700 hover:shadow-lg hover:shadow-profit/5">
-          <div class="flex items-center gap-3 mb-3">
-            <div class="w-10 h-10 rounded-lg bg-profit/10 flex items-center justify-center">
-              <svg class="w-5 h-5 text-profit" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-              </svg>
-            </div>
-            <p class="text-text-secondary text-sm">Best Performer</p>
+        <!-- Performance Stats -->
+        <div *ngIf="performanceData" class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+          <div class="bg-white/5 rounded-xl p-4">
+            <p class="text-text-secondary text-xs mb-1">Period Start</p>
+            <p class="text-white font-semibold tabular-nums">{{ formatCurrency(performanceData.start_value) }}</p>
           </div>
-          <p class="text-2xl font-bold text-white" *ngIf="portfolio.holdings.length > 0">
-            {{ getBestPerformer()?.ticker || '--' }}
-          </p>
-          <p class="text-sm text-profit" *ngIf="portfolio.holdings.length > 0">
-            {{ formatPercent(getBestPerformer()?.profit_loss_percent ?? null) }}
-          </p>
-          <p class="text-2xl font-bold text-text-secondary" *ngIf="portfolio.holdings.length === 0">--</p>
+          <div class="bg-white/5 rounded-xl p-4">
+            <p class="text-text-secondary text-xs mb-1">Current Value</p>
+            <p class="text-white font-semibold tabular-nums">{{ formatCurrency(performanceData.end_value) }}</p>
+          </div>
+          <div class="bg-white/5 rounded-xl p-4">
+            <p class="text-text-secondary text-xs mb-1">Period Return</p>
+            <p class="font-semibold tabular-nums" [ngClass]="getProfitLossClass(performanceData.period_return)">
+              {{ formatCurrency(performanceData.period_return) }}
+            </p>
+          </div>
+          <div class="bg-white/5 rounded-xl p-4">
+            <p class="text-text-secondary text-xs mb-1">Return %</p>
+            <p class="font-semibold tabular-nums" [ngClass]="getProfitLossClass(performanceData.period_return_percent)">
+              {{ formatPercent(performanceData.period_return_percent) }}
+            </p>
+          </div>
         </div>
 
-        <!-- Worst Performer (placeholder) -->
-        <div class="group bg-bg-card hover:bg-bg-secondary/80 rounded-xl p-6 border border-gray-800 transition-all duration-300 hover:border-gray-700 hover:shadow-lg hover:shadow-loss/5">
-          <div class="flex items-center gap-3 mb-3">
-            <div class="w-10 h-10 rounded-lg bg-loss/10 flex items-center justify-center">
-              <svg class="w-5 h-5 text-loss" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" />
-              </svg>
-            </div>
-            <p class="text-text-secondary text-sm">Worst Performer</p>
+        <!-- Chart -->
+        <div *ngIf="isLoadingPerformance" class="h-80 flex items-center justify-center">
+          <div class="relative w-12 h-12">
+            <div class="absolute inset-0 border-2 border-white/10 rounded-full"></div>
+            <div class="absolute inset-0 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>
           </div>
-          <p class="text-2xl font-bold text-white" *ngIf="portfolio.holdings.length > 0">
-            {{ getWorstPerformer()?.ticker || '--' }}
-          </p>
-          <p class="text-sm text-loss" *ngIf="portfolio.holdings.length > 0">
-            {{ formatPercent(getWorstPerformer()?.profit_loss_percent ?? null) }}
-          </p>
-          <p class="text-2xl font-bold text-text-secondary" *ngIf="portfolio.holdings.length === 0">--</p>
+        </div>
+        <div *ngIf="!isLoadingPerformance && performanceData && performanceData.data.length > 0" class="h-80">
+          <canvas baseChart
+            [data]="performanceChartData"
+            [options]="performanceChartOptions"
+            type="line">
+          </canvas>
+        </div>
+        <div *ngIf="!isLoadingPerformance && (!performanceData || performanceData.data.length === 0)" class="h-80 flex items-center justify-center">
+          <p class="text-text-secondary">No performance data available</p>
         </div>
       </div>
 
-      <!-- Two Column Layout: Chart + Holdings -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- AI Insights Section -->
+      <div class="mb-8 animate-fadeInUp">
+        <app-ai-insights
+          (openDigest)="openDigest()"
+        ></app-ai-insights>
+      </div>
+
+      <!-- Two Column: Allocation + Holdings -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Allocation Chart -->
-        <div class="bg-bg-card rounded-xl border border-gray-800 p-6">
-          <h3 class="text-lg font-semibold text-white mb-6">Portfolio Allocation</h3>
+        <div class="glass-card rounded-2xl p-6 animate-fadeInUp">
+          <h3 class="text-lg font-semibold text-white mb-6">Allocation</h3>
 
           <div *ngIf="portfolio.holdings.length === 0" class="py-12 text-center">
             <p class="text-text-secondary">No holdings yet</p>
           </div>
 
           <div *ngIf="portfolio.holdings.length > 0">
-            <div class="h-64 mb-6">
-              <canvas baseChart
-                [data]="allocationChartData"
-                [options]="allocationChartOptions"
-                type="doughnut">
-              </canvas>
+            <div class="h-56 mb-6 flex items-center justify-center">
+              <div class="relative w-48 h-48">
+                <canvas baseChart
+                  [data]="allocationChartData"
+                  [options]="allocationChartOptions"
+                  type="doughnut">
+                </canvas>
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <div class="text-center">
+                    <p class="text-3xl font-bold text-white">{{ portfolio.holdings_count }}</p>
+                    <p class="text-xs text-text-secondary">Assets</p>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- Legend -->
-            <div class="space-y-3">
-              <div *ngFor="let holding of portfolio.holdings; let i = index"
-                   class="flex items-center justify-between text-sm">
+            <div class="space-y-2">
+              <div *ngFor="let holding of portfolio.holdings.slice(0, 5); let i = index"
+                   class="flex items-center justify-between text-sm p-2 rounded-lg hover:bg-white/5 transition-colors">
                 <div class="flex items-center gap-2">
                   <div class="w-3 h-3 rounded-full" [style.backgroundColor]="getColorForIndex(i)"></div>
                   <span class="text-white font-medium">{{ holding.ticker }}</span>
                 </div>
-                <span class="text-text-secondary">{{ getAllocationPercent(holding) }}%</span>
+                <span class="text-text-secondary tabular-nums">{{ getAllocationPercent(holding) }}%</span>
+              </div>
+              <div *ngIf="portfolio.holdings.length > 5" class="text-center pt-2">
+                <span class="text-text-secondary text-sm">+{{ portfolio.holdings.length - 5 }} more</span>
               </div>
             </div>
           </div>
         </div>
 
         <!-- Holdings Table -->
-        <div class="lg:col-span-2 bg-bg-card rounded-xl border border-gray-800 overflow-hidden">
-          <div class="px-6 py-4 border-b border-gray-800 flex items-center justify-between">
-            <h3 class="text-lg font-semibold text-white">Your Holdings</h3>
-            <a routerLink="/holdings" class="text-accent text-sm hover:underline flex items-center gap-1">
+        <div class="lg:col-span-2 glass-card rounded-2xl overflow-hidden animate-fadeInUp">
+          <div class="px-6 py-5 border-b border-white/[0.06] flex items-center justify-between">
+            <div>
+              <h3 class="text-lg font-semibold text-white">Holdings</h3>
+              <p class="text-text-secondary text-sm">Your investment portfolio</p>
+            </div>
+            <a routerLink="/holdings" class="btn-ghost flex items-center gap-1.5 text-sm">
               Manage
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -174,14 +277,14 @@
             </a>
           </div>
 
-          <div *ngIf="portfolio.holdings.length === 0" class="px-6 py-12 text-center">
-            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-bg-secondary flex items-center justify-center">
+          <div *ngIf="portfolio.holdings.length === 0" class="px-6 py-16 text-center">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-white/5 flex items-center justify-center">
               <svg class="w-8 h-8 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
             </div>
             <p class="text-text-secondary mb-4">No holdings yet</p>
-            <a routerLink="/holdings" class="inline-flex items-center gap-2 text-accent hover:underline">
+            <a routerLink="/holdings" class="text-accent hover:underline inline-flex items-center gap-2">
               Add your first holding
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -191,44 +294,45 @@
 
           <div *ngIf="portfolio.holdings.length > 0" class="overflow-x-auto">
             <table class="w-full">
-              <thead class="bg-bg-secondary/50">
-                <tr>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase">Asset</th>
-                  <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase">Price</th>
-                  <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase">Holdings</th>
-                  <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase">P/L</th>
+              <thead>
+                <tr class="border-b border-white/[0.06]">
+                  <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">Asset</th>
+                  <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase tracking-wider">Price</th>
+                  <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase tracking-wider">Value</th>
+                  <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase tracking-wider">P/L</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-gray-800/50">
+              <tbody>
                 <tr *ngFor="let holding of portfolio.holdings; let i = index"
-                    class="hover:bg-bg-secondary/30 transition-colors">
+                    (click)="openStockDetail(holding)"
+                    class="border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors cursor-pointer group">
                   <td class="px-6 py-4">
                     <div class="flex items-center gap-3">
-                      <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-black"
+                      <div class="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold text-black"
                            [style.backgroundColor]="getColorForIndex(i)">
                         {{ holding.ticker.charAt(0) }}
                       </div>
                       <div>
-                        <p class="font-semibold text-white">{{ holding.ticker }}</p>
-                        <p class="text-xs text-text-secondary truncate max-w-[150px]">{{ holding.name }}</p>
+                        <p class="font-semibold text-white group-hover:text-accent transition-colors">{{ holding.ticker }}</p>
+                        <p class="text-xs text-text-secondary truncate max-w-[120px]">{{ holding.name }}</p>
                       </div>
                     </div>
                   </td>
                   <td class="px-6 py-4 text-right">
-                    <p class="text-white">{{ formatCurrency(holding.current_price) }}</p>
-                    <p class="text-xs" [ngClass]="getProfitLossClass(holding.day_change_percent)">
+                    <p class="text-white tabular-nums">{{ formatCurrency(holding.current_price) }}</p>
+                    <p class="text-xs tabular-nums" [ngClass]="getProfitLossClass(holding.day_change_percent)">
                       {{ formatPercent(holding.day_change_percent) }}
                     </p>
                   </td>
                   <td class="px-6 py-4 text-right">
-                    <p class="text-white">{{ formatCurrency(holding.current_value) }}</p>
+                    <p class="text-white tabular-nums">{{ formatCurrency(holding.current_value) }}</p>
                     <p class="text-xs text-text-secondary">{{ holding.quantity }} shares</p>
                   </td>
                   <td class="px-6 py-4 text-right">
-                    <p class="font-medium" [ngClass]="getProfitLossClass(holding.profit_loss)">
+                    <p class="font-medium tabular-nums" [ngClass]="getProfitLossClass(holding.profit_loss)">
                       {{ formatCurrency(holding.profit_loss) }}
                     </p>
-                    <p class="text-xs" [ngClass]="getProfitLossClass(holding.profit_loss_percent)">
+                    <p class="text-xs tabular-nums" [ngClass]="getProfitLossClass(holding.profit_loss_percent)">
                       {{ formatPercent(holding.profit_loss_percent) }}
                     </p>
                   </td>
@@ -240,4 +344,105 @@
       </div>
     </div>
   </main>
+
+  <!-- Stock Detail Modal -->
+  <div *ngIf="showStockModal && selectedStock" class="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 px-4 animate-fadeIn">
+    <div class="glass-card rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden animate-scaleIn">
+      <!-- Modal Header -->
+      <div class="px-6 py-5 border-b border-white/[0.06] flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent/20 to-accent/5 flex items-center justify-center text-accent font-bold text-lg">
+            {{ selectedStock.ticker.charAt(0) }}
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-white">{{ selectedStock.ticker }}</h2>
+            <p class="text-sm text-text-secondary">{{ selectedStock.name }}</p>
+          </div>
+        </div>
+        <button (click)="closeStockModal()" class="w-10 h-10 rounded-xl hover:bg-white/10 flex items-center justify-center text-text-secondary hover:text-white transition-all">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Stock Stats -->
+      <div class="px-6 py-4 bg-white/[0.02] grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div>
+          <p class="text-text-secondary text-xs mb-1">Current Price</p>
+          <p class="text-white font-semibold tabular-nums">{{ formatCurrency(selectedStock.current_price) }}</p>
+        </div>
+        <div>
+          <p class="text-text-secondary text-xs mb-1">Today's Change</p>
+          <p class="font-semibold tabular-nums" [ngClass]="getProfitLossClass(selectedStock.day_change_percent)">
+            {{ formatPercent(selectedStock.day_change_percent) }}
+          </p>
+        </div>
+        <div>
+          <p class="text-text-secondary text-xs mb-1">Your Value</p>
+          <p class="text-white font-semibold tabular-nums">{{ formatCurrency(selectedStock.current_value) }}</p>
+        </div>
+        <div>
+          <p class="text-text-secondary text-xs mb-1">Total P/L</p>
+          <p class="font-semibold tabular-nums" [ngClass]="getProfitLossClass(selectedStock.profit_loss_percent)">
+            {{ formatCurrency(selectedStock.profit_loss) }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Period Selector -->
+      <div class="px-6 pt-4 flex items-center gap-1">
+        <button
+          *ngFor="let period of ['1w', '1mo', '3mo', '6mo', '1y']"
+          (click)="changePeriod(period)"
+          [class]="selectedPeriod === period ? 'bg-accent text-black' : 'bg-white/5 text-text-secondary hover:text-white'"
+          class="px-3 py-1.5 rounded-lg text-sm font-medium transition-all"
+        >
+          {{ period.toUpperCase() }}
+        </button>
+      </div>
+
+      <!-- Price Chart -->
+      <div class="p-6">
+        <div *ngIf="isLoadingHistory" class="h-64 flex items-center justify-center">
+          <div class="relative w-10 h-10">
+            <div class="absolute inset-0 border-2 border-white/10 rounded-full"></div>
+            <div class="absolute inset-0 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        </div>
+        <div *ngIf="!isLoadingHistory" class="h-64">
+          <canvas baseChart
+            [data]="priceChartData"
+            [options]="priceChartOptions"
+            type="line">
+          </canvas>
+        </div>
+      </div>
+
+      <!-- Holdings Info -->
+      <div class="px-6 pb-6">
+        <div class="bg-white/5 rounded-xl p-4">
+          <div class="grid grid-cols-3 gap-4 text-center">
+            <div>
+              <p class="text-text-secondary text-xs mb-1">Shares Owned</p>
+              <p class="text-white font-semibold">{{ selectedStock.quantity }}</p>
+            </div>
+            <div>
+              <p class="text-text-secondary text-xs mb-1">Avg Cost</p>
+              <p class="text-white font-semibold tabular-nums">{{ formatCurrency(selectedStock.avg_cost_basis) }}</p>
+            </div>
+            <div>
+              <p class="text-text-secondary text-xs mb-1">Total Cost</p>
+              <p class="text-white font-semibold tabular-nums">{{ formatCurrency(selectedStock.total_cost) }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Weekly Digest Modal -->
+  <app-weekly-digest
+    [(isOpen)]="showDigest"
+  ></app-weekly-digest>
 </div>

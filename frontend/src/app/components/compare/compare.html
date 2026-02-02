@@ -1,0 +1,200 @@
+<div class="min-h-screen bg-bg-primary">
+  <app-navbar></app-navbar>
+
+  <main class="max-w-7xl mx-auto px-6 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-white mb-2">Stock Comparison</h1>
+      <p class="text-text-secondary">Compare key metrics between two stocks</p>
+    </div>
+
+    <!-- Search Form -->
+    <div class="bg-bg-card rounded-2xl border border-gray-800 p-6 mb-8">
+      <div class="flex flex-col md:flex-row gap-4 items-end">
+        <div class="flex-1">
+          <label class="block text-text-secondary text-sm mb-2">First Stock</label>
+          <input
+            type="text"
+            [(ngModel)]="ticker1"
+            placeholder="e.g., AAPL"
+            class="w-full bg-bg-secondary border border-gray-700 rounded-xl px-4 py-3 text-white uppercase focus:outline-none focus:border-accent"
+          />
+        </div>
+        <div class="flex items-center justify-center text-text-secondary text-2xl font-light px-4">
+          vs
+        </div>
+        <div class="flex-1">
+          <label class="block text-text-secondary text-sm mb-2">Second Stock</label>
+          <input
+            type="text"
+            [(ngModel)]="ticker2"
+            placeholder="e.g., MSFT"
+            class="w-full bg-bg-secondary border border-gray-700 rounded-xl px-4 py-3 text-white uppercase focus:outline-none focus:border-accent"
+          />
+        </div>
+        <button
+          (click)="compare()"
+          [disabled]="isLoading"
+          class="bg-accent hover:bg-accent/80 disabled:bg-accent/50 text-black font-semibold px-8 py-3 rounded-xl transition-all flex items-center gap-2"
+        >
+          <svg *ngIf="!isLoading" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+          <div *ngIf="isLoading" class="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+          {{ isLoading ? 'Comparing...' : 'Compare' }}
+        </button>
+      </div>
+
+      <div *ngIf="errorMessage" class="mt-4 bg-loss/10 border border-loss/50 text-loss px-4 py-3 rounded-xl">
+        {{ errorMessage }}
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex items-center justify-center py-20">
+      <div class="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && !comparison && !errorMessage" class="bg-bg-card rounded-2xl border border-gray-800 p-16 text-center">
+      <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-accent/20 to-accent/5 flex items-center justify-center">
+        <svg class="w-10 h-10 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg>
+      </div>
+      <h3 class="text-xl font-semibold text-white mb-2">Compare Stocks</h3>
+      <p class="text-text-secondary">Enter two ticker symbols above to compare their metrics</p>
+    </div>
+
+    <!-- Comparison Results -->
+    <div *ngIf="comparison && !isLoading" class="space-y-6">
+      <!-- Header Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Stock 1 -->
+        <div class="bg-bg-card rounded-2xl border border-gray-800 p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-2xl font-bold text-white">{{ comparison.stock1.ticker }}</h2>
+              <p class="text-text-secondary text-sm">{{ comparison.stock1.name }}</p>
+            </div>
+            <span class="text-xs px-3 py-1 rounded-full bg-bg-secondary text-text-secondary">
+              {{ comparison.stock1.sector || 'Unknown' }}
+            </span>
+          </div>
+          <div class="flex items-baseline gap-3">
+            <span class="text-3xl font-bold text-white">{{ formatCurrency(comparison.stock1.price) }}</span>
+            <span [class]="getChangeClass(comparison.stock1.change_percent)" class="text-lg font-medium">
+              {{ formatPercent(comparison.stock1.change_percent) }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Stock 2 -->
+        <div class="bg-bg-card rounded-2xl border border-gray-800 p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-2xl font-bold text-white">{{ comparison.stock2.ticker }}</h2>
+              <p class="text-text-secondary text-sm">{{ comparison.stock2.name }}</p>
+            </div>
+            <span class="text-xs px-3 py-1 rounded-full bg-bg-secondary text-text-secondary">
+              {{ comparison.stock2.sector || 'Unknown' }}
+            </span>
+          </div>
+          <div class="flex items-baseline gap-3">
+            <span class="text-3xl font-bold text-white">{{ formatCurrency(comparison.stock2.price) }}</span>
+            <span [class]="getChangeClass(comparison.stock2.change_percent)" class="text-lg font-medium">
+              {{ formatPercent(comparison.stock2.change_percent) }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Metrics Comparison Table -->
+      <div class="bg-bg-card rounded-2xl border border-gray-800 overflow-hidden">
+        <div class="bg-bg-secondary px-6 py-4 border-b border-gray-800">
+          <h3 class="text-lg font-semibold text-white">Key Metrics</h3>
+        </div>
+        <table class="w-full">
+          <thead>
+            <tr class="border-b border-gray-800">
+              <th class="text-left text-text-secondary text-sm font-medium px-6 py-4">Metric</th>
+              <th class="text-center text-white font-semibold px-6 py-4">{{ comparison.stock1.ticker }}</th>
+              <th class="text-center text-white font-semibold px-6 py-4">{{ comparison.stock2.ticker }}</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-800">
+            <tr class="hover:bg-bg-secondary/50">
+              <td class="px-6 py-4 text-text-secondary">Price</td>
+              <td class="px-6 py-4 text-center text-white font-medium">{{ formatCurrency(comparison.stock1.price) }}</td>
+              <td class="px-6 py-4 text-center text-white font-medium">{{ formatCurrency(comparison.stock2.price) }}</td>
+            </tr>
+            <tr class="hover:bg-bg-secondary/50">
+              <td class="px-6 py-4 text-text-secondary">Day Change</td>
+              <td class="px-6 py-4 text-center font-medium" [class]="getChangeClass(comparison.stock1.change_percent)">
+                {{ formatPercent(comparison.stock1.change_percent) }}
+              </td>
+              <td class="px-6 py-4 text-center font-medium" [class]="getChangeClass(comparison.stock2.change_percent)">
+                {{ formatPercent(comparison.stock2.change_percent) }}
+              </td>
+            </tr>
+            <tr class="hover:bg-bg-secondary/50">
+              <td class="px-6 py-4 text-text-secondary">Market Cap</td>
+              <td class="px-6 py-4 text-center font-medium" [class]="getBetterClass(comparison.stock1.market_cap, comparison.stock2.market_cap)">
+                {{ formatMarketCap(comparison.stock1.market_cap) }}
+              </td>
+              <td class="px-6 py-4 text-center font-medium" [class]="getBetterClass(comparison.stock2.market_cap, comparison.stock1.market_cap)">
+                {{ formatMarketCap(comparison.stock2.market_cap) }}
+              </td>
+            </tr>
+            <tr class="hover:bg-bg-secondary/50">
+              <td class="px-6 py-4 text-text-secondary">P/E Ratio</td>
+              <td class="px-6 py-4 text-center font-medium" [class]="getBetterClass(comparison.stock1.pe_ratio, comparison.stock2.pe_ratio, false)">
+                {{ formatNumber(comparison.stock1.pe_ratio) }}
+              </td>
+              <td class="px-6 py-4 text-center font-medium" [class]="getBetterClass(comparison.stock2.pe_ratio, comparison.stock1.pe_ratio, false)">
+                {{ formatNumber(comparison.stock2.pe_ratio) }}
+              </td>
+            </tr>
+            <tr class="hover:bg-bg-secondary/50">
+              <td class="px-6 py-4 text-text-secondary">52W High</td>
+              <td class="px-6 py-4 text-center text-white font-medium">{{ formatCurrency(comparison.stock1.high_52w) }}</td>
+              <td class="px-6 py-4 text-center text-white font-medium">{{ formatCurrency(comparison.stock2.high_52w) }}</td>
+            </tr>
+            <tr class="hover:bg-bg-secondary/50">
+              <td class="px-6 py-4 text-text-secondary">52W Low</td>
+              <td class="px-6 py-4 text-center text-white font-medium">{{ formatCurrency(comparison.stock1.low_52w) }}</td>
+              <td class="px-6 py-4 text-center text-white font-medium">{{ formatCurrency(comparison.stock2.low_52w) }}</td>
+            </tr>
+            <tr class="hover:bg-bg-secondary/50">
+              <td class="px-6 py-4 text-text-secondary">Dividend Yield</td>
+              <td class="px-6 py-4 text-center font-medium" [class]="getBetterClass(comparison.stock1.dividend_yield, comparison.stock2.dividend_yield)">
+                {{ formatPercent(comparison.stock1.dividend_yield) }}
+              </td>
+              <td class="px-6 py-4 text-center font-medium" [class]="getBetterClass(comparison.stock2.dividend_yield, comparison.stock1.dividend_yield)">
+                {{ formatPercent(comparison.stock2.dividend_yield) }}
+              </td>
+            </tr>
+            <tr class="hover:bg-bg-secondary/50">
+              <td class="px-6 py-4 text-text-secondary">Volume</td>
+              <td class="px-6 py-4 text-center text-white font-medium">{{ formatMarketCap(comparison.stock1.volume) }}</td>
+              <td class="px-6 py-4 text-center text-white font-medium">{{ formatMarketCap(comparison.stock2.volume) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Clear Button -->
+      <div class="flex justify-center">
+        <button
+          (click)="clearComparison()"
+          class="text-text-secondary hover:text-white transition-colors flex items-center gap-2"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+          Clear and compare different stocks
+        </button>
+      </div>
+    </div>
+  </main>
+</div>

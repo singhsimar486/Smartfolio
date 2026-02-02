@@ -1,0 +1,204 @@
+<div class="min-h-screen bg-bg-primary">
+  <app-navbar></app-navbar>
+
+  <main class="max-w-7xl mx-auto px-6 py-8">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-3xl font-bold text-white mb-2">Portfolio Goals</h1>
+        <p class="text-text-secondary">Set targets and track your progress</p>
+      </div>
+      <button
+        (click)="openAddModal()"
+        class="bg-accent hover:bg-accent/80 text-black font-semibold px-6 py-3 rounded-xl transition-all flex items-center gap-2"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        </svg>
+        Add Goal
+      </button>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="flex items-center justify-center py-20">
+      <div class="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="errorMessage && !isLoading" class="bg-loss/10 border border-loss/50 text-loss px-6 py-4 rounded-xl">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && goals.length === 0 && !errorMessage" class="bg-bg-card rounded-2xl border border-gray-800 p-16 text-center">
+      <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-accent/20 to-accent/5 flex items-center justify-center">
+        <svg class="w-10 h-10 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+        </svg>
+      </div>
+      <h3 class="text-xl font-semibold text-white mb-2">No goals yet</h3>
+      <p class="text-text-secondary mb-6">Set your first financial goal to start tracking progress</p>
+      <button (click)="openAddModal()" class="bg-accent hover:bg-accent/80 text-black font-semibold px-8 py-3 rounded-xl">
+        Create Your First Goal
+      </button>
+    </div>
+
+    <!-- Goals Grid -->
+    <div *ngIf="!isLoading && goals.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div *ngFor="let goal of goals" class="bg-bg-card rounded-2xl border border-gray-800 p-6 hover:border-gray-700 transition-all group">
+        <!-- Header -->
+        <div class="flex items-start justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-semibold text-white mb-1">{{ goal.name }}</h3>
+            <p class="text-text-secondary text-sm">{{ goal.description || 'No description' }}</p>
+          </div>
+          <button
+            (click)="confirmDelete(goal)"
+            class="p-2 rounded-lg opacity-0 group-hover:opacity-100 bg-bg-secondary hover:bg-loss/20 text-text-secondary hover:text-loss transition-all"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="mb-4">
+          <div class="flex items-center justify-between text-sm mb-2">
+            <span class="text-text-secondary">Progress</span>
+            <span class="text-white font-medium">{{ goal.progress_percent.toFixed(1) }}%</span>
+          </div>
+          <div class="h-3 bg-bg-secondary rounded-full overflow-hidden">
+            <div
+              [class]="getProgressColor(goal.progress_percent)"
+              class="h-full rounded-full transition-all duration-500"
+              [style.width.%]="goal.progress_percent"
+            ></div>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <div class="bg-bg-secondary rounded-xl p-3">
+            <p class="text-text-secondary text-xs mb-1">Current</p>
+            <p class="text-white font-semibold">{{ formatCurrency(goal.current_amount) }}</p>
+          </div>
+          <div class="bg-bg-secondary rounded-xl p-3">
+            <p class="text-text-secondary text-xs mb-1">Target</p>
+            <p class="text-accent font-semibold">{{ formatCurrency(goal.target_amount) }}</p>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="flex items-center justify-between pt-4 border-t border-gray-800/50">
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span class="text-text-secondary text-sm">{{ formatDate(goal.target_date) }}</span>
+          </div>
+          <span
+            *ngIf="goal.days_remaining !== null"
+            [class]="goal.on_track ? 'text-gain' : 'text-warning'"
+            class="text-sm font-medium"
+          >
+            {{ goal.days_remaining }} days left
+          </span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Add Goal Modal -->
+  <div *ngIf="showAddModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 px-4 animate-fadeIn">
+    <div class="bg-bg-card rounded-2xl p-8 w-full max-w-md border border-gray-800 shadow-2xl">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-semibold text-white">Create Goal</h2>
+        <button (click)="closeAddModal()" class="text-text-secondary hover:text-white">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div *ngIf="formError" class="bg-loss/10 border border-loss/50 text-loss px-4 py-3 rounded-xl mb-6">
+        {{ formError }}
+      </div>
+
+      <form (ngSubmit)="createGoal()">
+        <div class="space-y-4 mb-6">
+          <div>
+            <label class="block text-text-secondary text-sm mb-2">Goal Name</label>
+            <input
+              type="text"
+              [(ngModel)]="goalName"
+              name="name"
+              placeholder="e.g., Retirement Fund"
+              class="w-full bg-bg-secondary border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent"
+            />
+          </div>
+          <div>
+            <label class="block text-text-secondary text-sm mb-2">Target Amount</label>
+            <div class="relative">
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary">$</span>
+              <input
+                type="number"
+                [(ngModel)]="targetAmount"
+                name="amount"
+                placeholder="100000"
+                class="w-full bg-bg-secondary border border-gray-700 rounded-xl pl-8 pr-4 py-3 text-white focus:outline-none focus:border-accent"
+              />
+            </div>
+          </div>
+          <div>
+            <label class="block text-text-secondary text-sm mb-2">Target Date (optional)</label>
+            <input
+              type="date"
+              [(ngModel)]="targetDate"
+              name="date"
+              class="w-full bg-bg-secondary border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent"
+            />
+          </div>
+          <div>
+            <label class="block text-text-secondary text-sm mb-2">Description (optional)</label>
+            <textarea
+              [(ngModel)]="description"
+              name="description"
+              rows="2"
+              placeholder="What's this goal for?"
+              class="w-full bg-bg-secondary border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent resize-none"
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="flex gap-4">
+          <button type="button" (click)="closeAddModal()" class="flex-1 border border-gray-700 text-white py-3 rounded-xl hover:bg-bg-secondary">
+            Cancel
+          </button>
+          <button type="submit" [disabled]="isAdding" class="flex-1 bg-accent hover:bg-accent/80 disabled:bg-accent/50 text-black font-semibold py-3 rounded-xl">
+            {{ isAdding ? 'Creating...' : 'Create Goal' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation -->
+  <div *ngIf="showDeleteConfirm" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 px-4 animate-fadeIn">
+    <div class="bg-bg-card rounded-2xl p-8 w-full max-w-sm border border-gray-800 shadow-2xl text-center">
+      <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-loss/10 flex items-center justify-center">
+        <svg class="w-8 h-8 text-loss" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+      </div>
+      <h2 class="text-xl font-semibold text-white mb-2">Delete "{{ deletingName }}"?</h2>
+      <p class="text-text-secondary mb-6">This action cannot be undone.</p>
+      <div class="flex gap-4">
+        <button (click)="cancelDelete()" class="flex-1 border border-gray-700 text-white py-3 rounded-xl hover:bg-bg-secondary">Cancel</button>
+        <button (click)="deleteGoal()" [disabled]="isDeleting" class="flex-1 bg-loss hover:bg-loss/80 text-white font-semibold py-3 rounded-xl">
+          {{ isDeleting ? 'Deleting...' : 'Delete' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

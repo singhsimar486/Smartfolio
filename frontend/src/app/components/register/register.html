@@ -1,104 +1,150 @@
-<div class="min-h-screen bg-bg-primary flex items-center justify-center px-4">
-  <!-- Background decoration -->
-  <div class="fixed inset-0 overflow-hidden pointer-events-none">
-    <div class="absolute top-1/4 -left-32 w-96 h-96 bg-accent/5 rounded-full blur-3xl"></div>
-    <div class="absolute bottom-1/4 -right-32 w-96 h-96 bg-accent/5 rounded-full blur-3xl"></div>
+<div class="min-h-screen bg-bg-primary flex items-center justify-center px-4 relative overflow-hidden">
+  <!-- Animated Background -->
+  <div class="absolute inset-0">
+    <!-- Gradient orbs -->
+    <div class="absolute top-1/4 -left-32 w-[500px] h-[500px] bg-accent/10 rounded-full blur-[120px] animate-float"></div>
+    <div class="absolute bottom-1/4 -right-32 w-[400px] h-[400px] bg-accent/5 rounded-full blur-[100px] animate-float" style="animation-delay: -3s;"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent/[0.03] rounded-full blur-[150px]"></div>
+
+    <!-- Grid pattern -->
+    <div class="absolute inset-0 opacity-[0.02]" style="background-image: linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px); background-size: 60px 60px;"></div>
   </div>
 
-  <div class="max-w-md w-full relative">
-
+  <div class="max-w-md w-full relative z-10">
     <!-- Logo/Brand -->
-    <div class="text-center mb-8">
-      <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-accent to-accent/50 flex items-center justify-center">
-        <svg class="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-        </svg>
+    <div class="text-center mb-10 animate-fadeInUp">
+      <div class="relative inline-block mb-6">
+        <div class="absolute inset-0 bg-accent/30 rounded-2xl blur-2xl animate-glow"></div>
+        <div class="relative w-20 h-20 rounded-2xl bg-gradient-to-br from-accent to-accent/60 flex items-center justify-center shadow-2xl shadow-accent/30">
+          <svg class="w-10 h-10 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+          </svg>
+        </div>
       </div>
-      <h1 class="text-4xl font-bold text-white mb-2">
-        Smart<span class="text-accent">Folio</span>
+      <h1 class="text-4xl md:text-5xl font-bold text-white mb-3 tracking-tight">
+        Smart<span class="text-gradient">Folio</span>
       </h1>
-      <p class="text-text-secondary">Track your portfolio with AI-powered insights</p>
+      <p class="text-text-secondary text-lg">Start tracking your investments</p>
     </div>
 
     <!-- Register Card -->
-    <div class="bg-bg-card rounded-2xl p-8 shadow-2xl border border-gray-800 backdrop-blur-lg">
-      <h2 class="text-2xl font-semibold text-white mb-6">Create an account</h2>
+    <div class="animate-fadeInUp stagger-1">
+      <div class="relative">
+        <!-- Glow effect behind card -->
+        <div class="absolute -inset-1 bg-gradient-to-r from-accent/20 via-transparent to-accent/20 rounded-3xl blur-xl opacity-50"></div>
 
-      <!-- Error Message -->
-      <div *ngIf="errorMessage" class="bg-loss/10 border border-loss/50 text-loss px-4 py-3 rounded-xl mb-6 flex items-center gap-2 animate-fadeIn">
-        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        {{ errorMessage }}
+        <div class="relative glass-card rounded-2xl p-8 shadow-2xl">
+          <h2 class="text-2xl font-semibold text-white mb-2">Create an account</h2>
+          <p class="text-text-secondary text-sm mb-8">Get started with your portfolio tracking</p>
+
+          <!-- Error Message -->
+          <div *ngIf="errorMessage" class="bg-loss/10 border border-loss/30 text-loss px-4 py-3 rounded-xl mb-6 flex items-center gap-3 animate-fadeIn">
+            <div class="w-8 h-8 rounded-full bg-loss/20 flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </div>
+            <span class="text-sm">{{ errorMessage }}</span>
+          </div>
+
+          <!-- Register Form -->
+          <form (ngSubmit)="onSubmit()" class="space-y-5">
+            <!-- Email Field -->
+            <div>
+              <label for="email" class="block text-sm font-medium text-text-secondary mb-2">Email address</label>
+              <div class="relative">
+                <input
+                  type="email"
+                  id="email"
+                  [(ngModel)]="email"
+                  name="email"
+                  placeholder="you@example.com"
+                  class="input-premium pl-11"
+                />
+                <svg class="w-5 h-5 text-text-secondary absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- Password Field -->
+            <div>
+              <label for="password" class="block text-sm font-medium text-text-secondary mb-2">Password</label>
+              <div class="relative">
+                <input
+                  type="password"
+                  id="password"
+                  [(ngModel)]="password"
+                  name="password"
+                  placeholder="Create a password"
+                  class="input-premium pl-11"
+                />
+                <svg class="w-5 h-5 text-text-secondary absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+              <p class="text-text-muted text-xs mt-2">Must be at least 8 characters</p>
+            </div>
+
+            <!-- Confirm Password Field -->
+            <div>
+              <label for="confirmPassword" class="block text-sm font-medium text-text-secondary mb-2">Confirm password</label>
+              <div class="relative">
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  [(ngModel)]="confirmPassword"
+                  name="confirmPassword"
+                  placeholder="Confirm your password"
+                  class="input-premium pl-11"
+                />
+                <svg class="w-5 h-5 text-text-secondary absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button
+              type="submit"
+              [disabled]="isLoading"
+              class="btn-primary w-full flex items-center justify-center gap-2 mt-8"
+            >
+              <svg *ngIf="isLoading" class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span>{{ isLoading ? 'Creating account...' : 'Create Account' }}</span>
+              <svg *ngIf="!isLoading" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </button>
+          </form>
+
+          <!-- Divider -->
+          <div class="relative my-8">
+            <div class="absolute inset-0 flex items-center">
+              <div class="w-full border-t border-white/10"></div>
+            </div>
+            <div class="relative flex justify-center text-sm">
+              <span class="px-4 bg-bg-card text-text-secondary">Already have an account?</span>
+            </div>
+          </div>
+
+          <!-- Login Link -->
+          <a routerLink="/login" class="btn-secondary w-full flex items-center justify-center gap-2">
+            <span>Sign in instead</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+          </a>
+        </div>
       </div>
-
-      <!-- Register Form -->
-      <form (ngSubmit)="onSubmit()">
-        <!-- Email Field -->
-        <div class="mb-5">
-          <label for="email" class="block text-text-secondary text-sm mb-2">Email</label>
-          <input
-            type="email"
-            id="email"
-            [(ngModel)]="email"
-            name="email"
-            placeholder="you@example.com"
-            class="w-full bg-bg-secondary border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all"
-          />
-        </div>
-
-        <!-- Password Field -->
-        <div class="mb-5">
-          <label for="password" class="block text-text-secondary text-sm mb-2">Password</label>
-          <input
-            type="password"
-            id="password"
-            [(ngModel)]="password"
-            name="password"
-            placeholder="••••••••"
-            class="w-full bg-bg-secondary border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all"
-          />
-          <p class="text-text-secondary text-xs mt-2">Must be at least 8 characters</p>
-        </div>
-
-        <!-- Confirm Password Field -->
-        <div class="mb-6">
-          <label for="confirmPassword" class="block text-text-secondary text-sm mb-2">Confirm Password</label>
-          <input
-            type="password"
-            id="confirmPassword"
-            [(ngModel)]="confirmPassword"
-            name="confirmPassword"
-            placeholder="••••••••"
-            class="w-full bg-bg-secondary border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all"
-          />
-        </div>
-
-        <!-- Submit Button -->
-        <button
-          type="submit"
-          [disabled]="isLoading"
-          class="w-full bg-accent hover:bg-accent/80 disabled:bg-accent/50 text-black font-semibold py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-accent/20 flex items-center justify-center gap-2"
-        >
-          <svg *ngIf="isLoading" class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-          {{ isLoading ? 'Creating account...' : 'Create Account' }}
-        </button>
-      </form>
-
-      <!-- Login Link -->
-      <p class="text-center text-text-secondary mt-6">
-        Already have an account?
-        <a routerLink="/login" class="text-accent hover:underline font-medium">Sign in</a>
-      </p>
     </div>
 
     <!-- Footer -->
-    <p class="text-center text-text-secondary text-sm mt-8">
-      Powered by AI sentiment analysis
+    <p class="text-center text-text-muted text-sm mt-8 animate-fadeIn stagger-2">
+      Powered by AI-driven market analysis
     </p>
-
   </div>
 </div>

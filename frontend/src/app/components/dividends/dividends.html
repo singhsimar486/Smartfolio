@@ -1,0 +1,211 @@
+<div class="min-h-screen bg-bg-primary">
+  <app-navbar></app-navbar>
+
+  <main class="max-w-7xl mx-auto px-6 py-8">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-3xl font-bold text-white mb-2">Dividend Tracker</h1>
+        <p class="text-text-secondary">Track your dividend income over time</p>
+      </div>
+      <button
+        (click)="openAddModal()"
+        class="bg-accent hover:bg-accent/80 text-black font-semibold px-6 py-3 rounded-xl transition-all flex items-center gap-2"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        </svg>
+        Add Dividend
+      </button>
+    </div>
+
+    <!-- Summary Cards -->
+    <div *ngIf="summary" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+      <div class="bg-bg-card rounded-2xl border border-gray-800 p-6">
+        <p class="text-text-secondary text-sm mb-1">Total Dividends</p>
+        <p class="text-2xl font-bold text-gain">{{ formatCurrency(summary.total_dividends) }}</p>
+      </div>
+      <div class="bg-bg-card rounded-2xl border border-gray-800 p-6">
+        <p class="text-text-secondary text-sm mb-1">This Year</p>
+        <p class="text-2xl font-bold text-white">{{ formatCurrency(summary.this_year) }}</p>
+      </div>
+      <div class="bg-bg-card rounded-2xl border border-gray-800 p-6">
+        <p class="text-text-secondary text-sm mb-1">This Month</p>
+        <p class="text-2xl font-bold text-white">{{ formatCurrency(summary.this_month) }}</p>
+      </div>
+      <div class="bg-bg-card rounded-2xl border border-gray-800 p-6">
+        <p class="text-text-secondary text-sm mb-1">Monthly Average</p>
+        <p class="text-2xl font-bold text-accent">{{ formatCurrency(getMonthlyAverage()) }}</p>
+      </div>
+    </div>
+
+    <!-- Top Payers -->
+    <div *ngIf="summary && summary.top_payers.length > 0" class="bg-bg-card rounded-2xl border border-gray-800 p-6 mb-8">
+      <h2 class="text-lg font-semibold text-white mb-4">Top Dividend Payers</h2>
+      <div class="flex flex-wrap gap-3">
+        <div *ngFor="let payer of summary.top_payers" class="flex items-center gap-3 bg-bg-secondary rounded-xl px-4 py-3">
+          <span class="text-white font-semibold">{{ payer.ticker }}</span>
+          <span class="text-gain font-medium">{{ formatCurrency(payer.total) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter -->
+    <div class="flex items-center gap-4 mb-6">
+      <label class="text-text-secondary text-sm">Filter by year:</label>
+      <select
+        [(ngModel)]="selectedYear"
+        (ngModelChange)="onYearChange()"
+        class="bg-bg-secondary border border-gray-700 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-accent"
+      >
+        <option [ngValue]="null">All Time</option>
+        <option *ngFor="let year of availableYears" [ngValue]="year">{{ year }}</option>
+      </select>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="flex items-center justify-center py-20">
+      <div class="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="errorMessage && !isLoading" class="bg-loss/10 border border-loss/50 text-loss px-6 py-4 rounded-xl">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && dividends.length === 0 && !errorMessage" class="bg-bg-card rounded-2xl border border-gray-800 p-16 text-center">
+      <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-gain/20 to-gain/5 flex items-center justify-center">
+        <svg class="w-10 h-10 text-gain" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="text-xl font-semibold text-white mb-2">No dividends recorded</h3>
+      <p class="text-text-secondary mb-6">Start tracking your dividend income</p>
+      <button (click)="openAddModal()" class="bg-accent hover:bg-accent/80 text-black font-semibold px-8 py-3 rounded-xl">
+        Record Your First Dividend
+      </button>
+    </div>
+
+    <!-- Dividends Table -->
+    <div *ngIf="!isLoading && dividends.length > 0" class="bg-bg-card rounded-2xl border border-gray-800 overflow-hidden">
+      <table class="w-full">
+        <thead class="bg-bg-secondary">
+          <tr>
+            <th class="text-left text-text-secondary text-sm font-medium px-6 py-4">Ticker</th>
+            <th class="text-left text-text-secondary text-sm font-medium px-6 py-4">Amount</th>
+            <th class="text-left text-text-secondary text-sm font-medium px-6 py-4">Payment Date</th>
+            <th class="text-right text-text-secondary text-sm font-medium px-6 py-4">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-800">
+          <tr *ngFor="let dividend of dividends" class="hover:bg-bg-secondary/50 transition-colors group">
+            <td class="px-6 py-4">
+              <span class="text-white font-semibold">{{ dividend.ticker }}</span>
+            </td>
+            <td class="px-6 py-4">
+              <span class="text-gain font-medium">{{ formatCurrency(dividend.amount) }}</span>
+            </td>
+            <td class="px-6 py-4">
+              <span class="text-text-secondary">{{ formatDate(dividend.payment_date) }}</span>
+            </td>
+            <td class="px-6 py-4 text-right">
+              <button
+                (click)="confirmDelete(dividend)"
+                class="p-2 rounded-lg opacity-0 group-hover:opacity-100 bg-bg-secondary hover:bg-loss/20 text-text-secondary hover:text-loss transition-all"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- Add Dividend Modal -->
+  <div *ngIf="showAddModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 px-4 animate-fadeIn">
+    <div class="bg-bg-card rounded-2xl p-8 w-full max-w-md border border-gray-800 shadow-2xl">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-semibold text-white">Add Dividend</h2>
+        <button (click)="closeAddModal()" class="text-text-secondary hover:text-white">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div *ngIf="formError" class="bg-loss/10 border border-loss/50 text-loss px-4 py-3 rounded-xl mb-6">
+        {{ formError }}
+      </div>
+
+      <form (ngSubmit)="addDividend()">
+        <div class="space-y-4 mb-6">
+          <div>
+            <label class="block text-text-secondary text-sm mb-2">Ticker Symbol</label>
+            <input
+              type="text"
+              [(ngModel)]="ticker"
+              name="ticker"
+              placeholder="e.g., AAPL"
+              class="w-full bg-bg-secondary border border-gray-700 rounded-xl px-4 py-3 text-white uppercase focus:outline-none focus:border-accent"
+            />
+          </div>
+          <div>
+            <label class="block text-text-secondary text-sm mb-2">Amount Received</label>
+            <div class="relative">
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary">$</span>
+              <input
+                type="number"
+                [(ngModel)]="amount"
+                name="amount"
+                step="0.01"
+                placeholder="0.00"
+                class="w-full bg-bg-secondary border border-gray-700 rounded-xl pl-8 pr-4 py-3 text-white focus:outline-none focus:border-accent"
+              />
+            </div>
+          </div>
+          <div>
+            <label class="block text-text-secondary text-sm mb-2">Payment Date</label>
+            <input
+              type="date"
+              [(ngModel)]="paymentDate"
+              name="date"
+              class="w-full bg-bg-secondary border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent"
+            />
+          </div>
+        </div>
+
+        <div class="flex gap-4">
+          <button type="button" (click)="closeAddModal()" class="flex-1 border border-gray-700 text-white py-3 rounded-xl hover:bg-bg-secondary">
+            Cancel
+          </button>
+          <button type="submit" [disabled]="isAdding" class="flex-1 bg-accent hover:bg-accent/80 disabled:bg-accent/50 text-black font-semibold py-3 rounded-xl">
+            {{ isAdding ? 'Adding...' : 'Add Dividend' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation -->
+  <div *ngIf="showDeleteConfirm" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 px-4 animate-fadeIn">
+    <div class="bg-bg-card rounded-2xl p-8 w-full max-w-sm border border-gray-800 shadow-2xl text-center">
+      <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-loss/10 flex items-center justify-center">
+        <svg class="w-8 h-8 text-loss" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+      </div>
+      <h2 class="text-xl font-semibold text-white mb-2">Delete {{ deletingTicker }} dividend?</h2>
+      <p class="text-text-secondary mb-6">This action cannot be undone.</p>
+      <div class="flex gap-4">
+        <button (click)="cancelDelete()" class="flex-1 border border-gray-700 text-white py-3 rounded-xl hover:bg-bg-secondary">Cancel</button>
+        <button (click)="deleteDividend()" [disabled]="isDeleting" class="flex-1 bg-loss hover:bg-loss/80 text-white font-semibold py-3 rounded-xl">
+          {{ isDeleting ? 'Deleting...' : 'Delete' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

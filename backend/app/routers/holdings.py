@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, status
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models import User, Holding
-from app.schemas import HoldingCreate, HoldingUpdate, HoldingResponse
+from app.schemas import HoldingCreate, HoldingUpdate, HoldingResponse, HoldingImportItem, HoldingImportPreview, HoldingImportResult
 from app.services.auth import get_current_user
+from app.services.csv_parser import parse_csv_holdings
 
 
 router = APIRouter(prefix="/holdings", tags=["Holdings"])
@@ -182,5 +183,179 @@ def delete_holding(
     
     db.delete(holding)
     db.commit()
-    
+
     return None
+
+
+@router.post("/import/preview", response_model=HoldingImportPreview)
+async def preview_import(
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Preview CSV import without making changes.
+
+    This endpoint:
+    1. Parses the uploaded CSV file
+    2. Checks each holding against existing holdings
+    3. Returns a preview showing what would be imported/updated
+    """
+    if not file.filename.endswith('.csv'):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="File must be a CSV file"
+        )
+
+    content = await file.read()
+    try:
+        content_str = content.decode('utf-8')
+    except UnicodeDecodeError:
+        try:
+            content_str = content.decode('latin-1')
+        except UnicodeDecodeError:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Could not decode file. Please ensure it's a valid CSV file."
+            )
+
+    parsed = parse_csv_holdings(content_str)
+
+    # Get existing holdings for this user
+    existing_holdings = {
+        h.ticker: h for h in db.query(Holding).filter(Holding.user_id == current_user.id).all()
+    }
+
+    # Build preview items
+    preview_items = []
+    total_new = 0
+    total_update = 0
+    total_skip = 0
+
+    for h in parsed['holdings']:
+        ticker = h['ticker']
+        if ticker in existing_holdings:
+            existing = existing_holdings[ticker]
+            # Check if values are different
+            if (existing.quantity != h['quantity'] or
+                abs(existing.avg_cost_basis - h['avg_cost_basis']) > 0.01):
+                preview_items.append(HoldingImportItem(
+                    ticker=ticker,
+                    quantity=h['quantity'],
+                    avg_cost_basis=h['avg_cost_basis'],
+                    status='update',
+                    message=f"Current: {existing.quantity} shares @ ${existing.avg_cost_basis:.2f}"
+                ))
+                total_update += 1
+            else:
+                preview_items.append(HoldingImportItem(
+                    ticker=ticker,
+                    quantity=h['quantity'],
+                    avg_cost_basis=h['avg_cost_basis'],
+                    status='skip',
+                    message="Already exists with same values"
+                ))
+                total_skip += 1
+        else:
+            preview_items.append(HoldingImportItem(
+                ticker=ticker,
+                quantity=h['quantity'],
+                avg_cost_basis=h['avg_cost_basis'],
+                status='new',
+                message=None
+            ))
+            total_new += 1
+
+    return HoldingImportPreview(
+        holdings=preview_items,
+        errors=parsed['errors'],
+        total_new=total_new,
+        total_update=total_update,
+        total_skip=total_skip
+    )
+
+
+@router.post("/import", response_model=HoldingImportResult)
+async def import_holdings(
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Import holdings from a CSV file.
+
+    This endpoint:
+    1. Parses the uploaded CSV file
+    2. Creates new holdings or updates existing ones
+    3. Returns summary of what was imported
+    """
+    if not file.filename.endswith('.csv'):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="File must be a CSV file"
+        )
+
+    content = await file.read()
+    try:
+        content_str = content.decode('utf-8')
+    except UnicodeDecodeError:
+        try:
+            content_str = content.decode('latin-1')
+        except UnicodeDecodeError:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Could not decode file. Please ensure it's a valid CSV file."
+            )
+
+    parsed = parse_csv_holdings(content_str)
+
+    if not parsed['holdings']:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No valid holdings found in CSV file"
+        )
+
+    # Get existing holdings for this user
+    existing_holdings = {
+        h.ticker: h for h in db.query(Holding).filter(Holding.user_id == current_user.id).all()
+    }
+
+    imported = 0
+    updated = 0
+    skipped = 0
+    errors = parsed['errors'].copy()
+
+    for h in parsed['holdings']:
+        ticker = h['ticker']
+        try:
+            if ticker in existing_holdings:
+                existing = existing_holdings[ticker]
+                # Update if values are different
+                if (existing.quantity != h['quantity'] or
+                    abs(existing.avg_cost_basis - h['avg_cost_basis']) > 0.01):
+                    existing.quantity = h['quantity']
+                    existing.avg_cost_basis = h['avg_cost_basis']
+                    updated += 1
+                else:
+                    skipped += 1
+            else:
+                # Create new holding
+                new_holding = Holding(
+                    user_id=current_user.id,
+                    ticker=ticker,
+                    quantity=h['quantity'],
+                    avg_cost_basis=h['avg_cost_basis']
+                )
+                db.add(new_holding)
+                imported += 1
+        except Exception as e:
+            errors.append(f"Failed to process {ticker}: {str(e)}")
+
+    db.commit()
+
+    return HoldingImportResult(
+        imported=imported,
+        updated=updated,
+        skipped=skipped,
+        errors=errors
+    )

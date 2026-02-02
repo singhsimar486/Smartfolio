@@ -1,10 +1,11 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ApiService, Holding, HoldingCreate } from '../../services/api';
+import { ApiService, Holding, HoldingCreate, TickerSearchResult, HoldingImportItem, HoldingImportPreview } from '../../services/api';
 import { AuthService } from '../../services/auth';
 import { Navbar } from '../navbar/navbar';
 import { Router } from '@angular/router';
+import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-holdings',
@@ -13,7 +14,7 @@ import { Router } from '@angular/router';
   templateUrl: './holdings.html',
   styleUrl: './holdings.css',
 })
-export class Holdings implements OnInit {
+export class Holdings implements OnInit, OnDestroy {
   holdings: Holding[] = [];
   isLoading: boolean = true;
   errorMessage: string = '';
@@ -35,6 +36,22 @@ export class Holdings implements OnInit {
   deletingId: string | null = null;
   isDeleting: boolean = false;
 
+  // Ticker search
+  searchResults: TickerSearchResult[] = [];
+  showDropdown: boolean = false;
+  isSearching: boolean = false;
+  private searchSubject = new Subject<string>();
+  private destroy$ = new Subject<void>();
+
+  // CSV Import
+  showImportModal: boolean = false;
+  importFile: File | null = null;
+  importPreview: HoldingImportPreview | null = null;
+  isLoadingPreview: boolean = false;
+  isImporting: boolean = false;
+  importError: string = '';
+  importSuccess: string = '';
+
   constructor(
     private apiService: ApiService,
     private authService: AuthService,
@@ -49,6 +66,62 @@ export class Holdings implements OnInit {
       return;
     }
     this.loadHoldings();
+    this.setupTickerSearch();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private setupTickerSearch(): void {
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      takeUntil(this.destroy$)
+    ).subscribe(query => {
+      if (query.length >= 1) {
+        this.performSearch(query);
+      } else {
+        this.searchResults = [];
+        this.showDropdown = false;
+      }
+    });
+  }
+
+  private performSearch(query: string): void {
+    this.isSearching = true;
+    this.apiService.searchTickers(query).subscribe({
+      next: (response) => {
+        this.searchResults = response.results;
+        this.showDropdown = this.searchResults.length > 0;
+        this.isSearching = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.searchResults = [];
+        this.showDropdown = false;
+        this.isSearching = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  onTickerInput(): void {
+    this.searchSubject.next(this.ticker);
+  }
+
+  selectTicker(result: TickerSearchResult): void {
+    this.ticker = result.symbol;
+    this.showDropdown = false;
+    this.searchResults = [];
+  }
+
+  hideDropdown(): void {
+    // Delay to allow click event to register
+    setTimeout(() => {
+      this.showDropdown = false;
+    }, 200);
   }
 
   loadHoldings(): void {
@@ -102,6 +175,9 @@ export class Holdings implements OnInit {
     this.formError = '';
     this.editingId = null;
     this.isSaving = false;
+    this.searchResults = [];
+    this.showDropdown = false;
+    this.isSearching = false;
   }
 
   saveHolding(): void {
@@ -205,5 +281,100 @@ export class Holdings implements OnInit {
 
   getUniqueStocks(): number {
     return new Set(this.holdings.map(h => h.ticker)).size;
+  }
+
+  // Import handlers
+  openImportModal(): void {
+    this.importFile = null;
+    this.importPreview = null;
+    this.importError = '';
+    this.importSuccess = '';
+    this.isLoadingPreview = false;
+    this.isImporting = false;
+    this.showImportModal = true;
+  }
+
+  closeImportModal(): void {
+    this.showImportModal = false;
+    this.importFile = null;
+    this.importPreview = null;
+    this.importError = '';
+    this.importSuccess = '';
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.importFile = input.files[0];
+      this.importError = '';
+      this.importSuccess = '';
+      this.importPreview = null;
+      this.loadPreview();
+    }
+  }
+
+  loadPreview(): void {
+    if (!this.importFile) return;
+
+    this.isLoadingPreview = true;
+    this.importError = '';
+
+    this.apiService.previewImport(this.importFile).subscribe({
+      next: (preview) => {
+        this.importPreview = preview;
+        this.isLoadingPreview = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        this.isLoadingPreview = false;
+        this.importError = error.error?.detail || 'Failed to parse CSV file';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  confirmImport(): void {
+    if (!this.importFile) return;
+
+    this.isImporting = true;
+    this.importError = '';
+
+    this.apiService.importHoldings(this.importFile).subscribe({
+      next: (result) => {
+        this.isImporting = false;
+        this.importSuccess = `Successfully imported ${result.imported} new holdings, updated ${result.updated}, skipped ${result.skipped}`;
+        this.importPreview = null;
+        this.importFile = null;
+        this.loadHoldings();
+        this.cdr.detectChanges();
+        // Auto-close after success
+        setTimeout(() => {
+          this.closeImportModal();
+        }, 2000);
+      },
+      error: (error) => {
+        this.isImporting = false;
+        this.importError = error.error?.detail || 'Failed to import holdings';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  getStatusColor(status: string): string {
+    switch (status) {
+      case 'new': return 'text-gain';
+      case 'update': return 'text-accent';
+      case 'skip': return 'text-text-secondary';
+      default: return 'text-white';
+    }
+  }
+
+  getStatusLabel(status: string): string {
+    switch (status) {
+      case 'new': return 'New';
+      case 'update': return 'Update';
+      case 'skip': return 'Skip';
+      default: return status;
+    }
   }
 }

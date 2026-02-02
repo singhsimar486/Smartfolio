@@ -34,6 +34,10 @@ export class AuthService {
   
   public currentUser$ = this.currentUserSubject.asObservable();
 
+  public get currentUserValue(): User | null {
+    return this.currentUserSubject.value;
+  }
+
   constructor(
     private http: HttpClient,
     private router: Router

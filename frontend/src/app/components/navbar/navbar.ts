@@ -18,7 +18,18 @@ export class Navbar {
   }
 
   getUserInitial(): string {
-    const user = this.authService.getToken() ? 'U' : '';
-    return user.charAt(0).toUpperCase();
+    const user = this.authService.currentUserValue;
+    if (user?.email) {
+      return user.email.charAt(0).toUpperCase();
+    }
+    return 'U';
+  }
+
+  getUserName(): string {
+    const user = this.authService.currentUserValue;
+    if (user?.email) {
+      return user.email.split('@')[0];
+    }
+    return 'User';
   }
 }

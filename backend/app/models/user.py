@@ -21,5 +21,12 @@ class User(Base):
         DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
     )
 
-    # Relationship to Holdings
+    # Relationships
     holdings = relationship("Holding", back_populates="user")
+    watchlist = relationship("WatchlistItem", back_populates="user")
+    alerts = relationship("PriceAlert", back_populates="user")
+    insights = relationship("Insight", back_populates="user")
+    chat_messages = relationship("ChatMessage", back_populates="user")
+    weekly_digests = relationship("WeeklyDigest", back_populates="user")
+    goals = relationship("PortfolioGoal", back_populates="user")
+    dividends = relationship("Dividend", back_populates="user")

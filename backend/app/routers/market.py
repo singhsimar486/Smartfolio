@@ -1,6 +1,6 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, Query, status
 
-from app.services.market_data import get_stock_quote, get_stock_history
+from app.services.market_data import get_stock_quote, get_stock_history, search_tickers
 from app.schemas import StockQuote, StockHistory
 
 
@@ -73,3 +73,27 @@ def get_history(ticker: str, period: str = "1mo"):
         )
     
     return history
+
+
+@router.get("/search")
+def search_stocks(
+    q: str = Query(..., min_length=1, description="Search query"),
+    limit: int = Query(10, ge=1, le=20, description="Maximum results to return")
+):
+    """
+    Search for stocks by ticker or company name.
+
+    This endpoint:
+    1. Takes a search query string
+    2. Searches Yahoo Finance for matching stocks
+    3. Returns list of matching tickers with company names
+
+    Args:
+        q: Search query (e.g., "AAPL", "Apple", "tech")
+        limit: Maximum number of results (1-20, default 10)
+
+    Returns:
+        List of matching stocks with symbol, name, exchange, and type
+    """
+    results = search_tickers(q, limit)
+    return {"results": results}

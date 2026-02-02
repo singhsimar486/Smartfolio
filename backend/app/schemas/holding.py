@@ -10,6 +10,32 @@ class HoldingCreate(BaseModel):
     avg_cost_basis: float
 
 
+class HoldingImportItem(BaseModel):
+    """Schema for a single holding in import preview."""
+    ticker: str
+    quantity: float
+    avg_cost_basis: float
+    status: str  # 'new', 'update', 'skip'
+    message: str | None = None
+
+
+class HoldingImportPreview(BaseModel):
+    """Schema for CSV import preview response."""
+    holdings: list[HoldingImportItem]
+    errors: list[str]
+    total_new: int
+    total_update: int
+    total_skip: int
+
+
+class HoldingImportResult(BaseModel):
+    """Schema for CSV import result response."""
+    imported: int
+    updated: int
+    skipped: int
+    errors: list[str]
+
+
 class HoldingUpdate(BaseModel):
     """Schema for updating a holding."""
     ticker: str | None = None

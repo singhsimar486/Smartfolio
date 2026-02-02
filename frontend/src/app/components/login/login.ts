@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth';
 
 @Component({
@@ -11,22 +11,32 @@ import { AuthService } from '../../services/auth';
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
-export class Login {
+export class Login implements OnInit {
   email: string = '';
   password: string = '';
   errorMessage: string = '';
   isLoading: boolean = false;
+  private returnUrl: string = '/dashboard';
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
+  ngOnInit(): void {
+    // Get return URL from query params
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
+
+    // If already logged in, redirect
+    if (this.authService.isLoggedIn()) {
+      this.router.navigate([this.returnUrl]);
+    }
+  }
+
   onSubmit(): void {
-    // Reset error message
     this.errorMessage = '';
-    
-    // Validate inputs
+
     if (!this.email || !this.password) {
       this.errorMessage = 'Please enter email and password';
       return;
@@ -36,8 +46,7 @@ export class Login {
 
     this.authService.login(this.email, this.password).subscribe({
       next: () => {
-        // Login successful - navigate to dashboard
-        this.router.navigate(['/dashboard']);
+        this.router.navigate([this.returnUrl]);
       },
       error: (error) => {
         this.isLoading = false;

@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+from collections import defaultdict
 
 from app.database import get_db
 from app.models import User, Holding
 from app.services.auth import get_current_user
-from app.services.market_data import get_multiple_quotes
+from app.services.market_data import get_multiple_quotes, get_multiple_histories
 
 
 router = APIRouter(prefix="/portfolio", tags=["Portfolio"])
@@ -165,8 +166,124 @@ def get_portfolio_allocation(
     
     # Sort by value descending
     allocations.sort(key=lambda x: x["value"], reverse=True)
-    
+
     return {
         "allocations": allocations,
         "total_value": round(total_value, 2)
+    }
+
+
+@router.get("/performance")
+def get_portfolio_performance(
+    period: str = "1mo",
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Get portfolio performance over time.
+
+    This endpoint:
+    1. Fetches historical data for all holdings
+    2. Calculates portfolio value at each date point
+    3. Returns time series data for charting
+
+    Args:
+        period: Time period ("1mo", "3mo", "6mo", "1y")
+
+    Returns:
+        List of data points with date and portfolio value
+    """
+
+    # Validate period
+    valid_periods = ["1mo", "3mo", "6mo", "1y"]
+    if period not in valid_periods:
+        period = "1mo"
+
+    # Get user's holdings
+    holdings = db.query(Holding).filter(Holding.user_id == current_user.id).all()
+
+    if not holdings:
+        return {
+            "period": period,
+            "data": [],
+            "total_cost": 0,
+            "start_value": 0,
+            "end_value": 0,
+            "total_return": 0,
+            "total_return_percent": 0
+        }
+
+    # Get historical data for all tickers
+    tickers = [h.ticker for h in holdings]
+    histories = get_multiple_histories(tickers, period)
+
+    # Build a mapping of holdings by ticker for quick lookup
+    holdings_map = {h.ticker: h for h in holdings}
+
+    # Calculate portfolio value for each date
+    # First, collect all unique dates across all tickers
+    all_dates = set()
+    for ticker_history in histories.values():
+        for point in ticker_history:
+            all_dates.add(point["date"])
+
+    # Sort dates
+    sorted_dates = sorted(all_dates)
+
+    # For each date, calculate total portfolio value
+    portfolio_data = []
+    last_prices = {}  # Track last known price for each ticker
+
+    for date in sorted_dates:
+        daily_value = 0
+        has_data = False
+
+        for ticker, history in histories.items():
+            holding = holdings_map.get(ticker)
+            if not holding:
+                continue
+
+            # Find price for this date
+            price_for_date = None
+            for point in history:
+                if point["date"] == date:
+                    price_for_date = point["close"]
+                    last_prices[ticker] = price_for_date
+                    break
+
+            # Use last known price if no data for this date
+            if price_for_date is None:
+                price_for_date = last_prices.get(ticker)
+
+            if price_for_date is not None:
+                daily_value += holding.quantity * price_for_date
+                has_data = True
+
+        if has_data:
+            portfolio_data.append({
+                "date": date,
+                "value": round(daily_value, 2)
+            })
+
+    # Calculate total cost and returns
+    total_cost = sum(h.quantity * h.avg_cost_basis for h in holdings)
+    start_value = portfolio_data[0]["value"] if portfolio_data else 0
+    end_value = portfolio_data[-1]["value"] if portfolio_data else 0
+    total_return = end_value - total_cost
+    total_return_percent = (total_return / total_cost * 100) if total_cost > 0 else 0
+
+    # Calculate period return (from start of period to end)
+    period_return = end_value - start_value
+    period_return_percent = (period_return / start_value * 100) if start_value > 0 else 0
+
+    return {
+        "period": period,
+        "data": portfolio_data,
+        "total_cost": round(total_cost, 2),
+        "start_value": round(start_value, 2),
+        "end_value": round(end_value, 2),
+        "total_return": round(total_return, 2),
+        "total_return_percent": round(total_return_percent, 2),
+        "period_return": round(period_return, 2),
+        "period_return_percent": round(period_return_percent, 2)
     }

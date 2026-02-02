@@ -1,0 +1,173 @@
+<!-- Weekly Digest Modal -->
+<div *ngIf="isOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fadeIn">
+  <!-- Backdrop -->
+  <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" (click)="close()"></div>
+
+  <!-- Modal -->
+  <div class="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-bg-card rounded-2xl border border-gray-800 shadow-2xl">
+    <!-- Header -->
+    <div class="sticky top-0 z-10 p-6 border-b border-gray-800 bg-bg-card">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500/20 to-accent/20 flex items-center justify-center">
+            <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-white">Weekly Digest</h2>
+            <p class="text-text-secondary text-sm" *ngIf="digest">
+              {{ formatDate(digest.week_start) }} - {{ formatDate(digest.week_end) }}
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button
+            (click)="refreshDigest()"
+            [disabled]="isRefreshing"
+            class="p-2 rounded-lg text-text-secondary hover:text-white hover:bg-white/5 transition-all disabled:opacity-50"
+            title="Refresh digest"
+          >
+            <svg class="w-5 h-5" [class.animate-spin]="isRefreshing" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          </button>
+          <button (click)="close()" class="p-2 rounded-lg text-text-secondary hover:text-white hover:bg-white/5 transition-all">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="p-12">
+      <div class="flex flex-col items-center justify-center">
+        <div class="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p class="text-text-secondary">Generating your weekly digest...</p>
+      </div>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="errorMessage && !isLoading" class="p-12 text-center">
+      <p class="text-loss mb-4">{{ errorMessage }}</p>
+      <button (click)="loadDigest()" class="text-accent hover:text-accent/80 font-medium">
+        Try Again
+      </button>
+    </div>
+
+    <!-- Digest Content -->
+    <div *ngIf="!isLoading && !errorMessage && digest" class="p-6 space-y-6">
+      <!-- Health Score -->
+      <div class="flex items-center gap-6 p-6 rounded-2xl bg-gradient-to-br" [class]="getHealthBgColor(digest.health_score)">
+        <div class="relative w-28 h-28">
+          <svg class="w-28 h-28 transform -rotate-90">
+            <circle
+              cx="56"
+              cy="56"
+              r="45"
+              stroke="currentColor"
+              stroke-width="8"
+              fill="none"
+              class="text-gray-800"
+            />
+            <circle
+              cx="56"
+              cy="56"
+              r="45"
+              stroke-width="8"
+              fill="none"
+              stroke-linecap="round"
+              [class]="getScoreRingColor(digest.health_score)"
+              [style.stroke-dasharray]="2 * 3.14159 * 45"
+              [style.stroke-dashoffset]="getScoreDashOffset(digest.health_score)"
+              class="transition-all duration-1000"
+            />
+          </svg>
+          <div class="absolute inset-0 flex flex-col items-center justify-center">
+            <span [class]="getHealthColor(digest.health_score)" class="text-3xl font-bold">{{ digest.health_score }}</span>
+            <span class="text-text-secondary text-xs">/ 100</span>
+          </div>
+        </div>
+        <div class="flex-1">
+          <h3 class="text-lg font-semibold text-white mb-1">Portfolio Health</h3>
+          <p [class]="getHealthColor(digest.health_score)" class="text-2xl font-bold mb-2">{{ digest.health_label }}</p>
+          <p class="text-text-secondary text-sm">{{ digest.summary }}</p>
+        </div>
+      </div>
+
+      <!-- Weekly Performance -->
+      <div class="grid grid-cols-2 gap-4">
+        <div class="p-5 rounded-xl bg-bg-secondary border border-gray-800">
+          <p class="text-text-secondary text-sm mb-1">Portfolio Value</p>
+          <p class="text-2xl font-bold text-white">{{ formatCurrency(digest.portfolio_value) }}</p>
+        </div>
+        <div class="p-5 rounded-xl bg-bg-secondary border border-gray-800">
+          <p class="text-text-secondary text-sm mb-1">Weekly Change</p>
+          <p class="text-2xl font-bold" [class]="digest.weekly_change >= 0 ? 'text-gain' : 'text-loss'">
+            {{ digest.weekly_change >= 0 ? '+' : '' }}{{ formatCurrency(digest.weekly_change) }}
+            <span class="text-base font-medium">({{ digest.weekly_change_pct >= 0 ? '+' : '' }}{{ digest.weekly_change_pct.toFixed(2) }}%)</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Key Highlights -->
+      <div>
+        <h4 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+          <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+          Key Highlights
+        </h4>
+        <div class="space-y-3">
+          <div *ngFor="let highlight of digest.highlights" class="flex items-start gap-3 p-4 rounded-xl bg-bg-secondary border border-gray-800">
+            <div class="shrink-0 w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center">
+              <svg class="w-3.5 h-3.5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <p class="text-white text-sm">{{ highlight }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recommendations -->
+      <div>
+        <h4 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+          <svg class="w-5 h-5 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+          </svg>
+          Recommendations
+        </h4>
+        <div class="space-y-3">
+          <div *ngFor="let rec of digest.recommendations; let i = index" class="flex items-start gap-3 p-4 rounded-xl bg-bg-secondary border border-gray-800">
+            <div class="shrink-0 w-6 h-6 rounded-full bg-warning/20 flex items-center justify-center text-warning text-xs font-bold">
+              {{ i + 1 }}
+            </div>
+            <p class="text-white text-sm">{{ rec }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Outlook -->
+      <div class="p-5 rounded-xl bg-gradient-to-br from-accent/10 to-purple-500/10 border border-accent/20">
+        <h4 class="text-sm font-medium text-accent mb-2 flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+          Looking Ahead
+        </h4>
+        <p class="text-white">{{ digest.outlook }}</p>
+      </div>
+
+      <!-- Footer -->
+      <div class="text-center pt-4 border-t border-gray-800">
+        <p class="text-text-secondary text-xs">
+          Generated {{ formatDate(digest.generated_at) }} | AI insights are for informational purposes only
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
