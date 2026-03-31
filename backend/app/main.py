@@ -22,16 +22,10 @@ app = FastAPI(
     version="0.1.0"
 )
 
-frontend_url = os.getenv("FRONTEND_URL", "http://localhost:4200")
-allowed_origins = [
-    frontend_url,
-    "http://localhost:4200",
-    "https://smartfolio-omega.vercel.app",
-]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
