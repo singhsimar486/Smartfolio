@@ -1,29 +1,12 @@
 import os
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import Response
 from contextlib import asynccontextmanager
 
 from app.routers import auth, holdings, market, portfolio, news, watchlist, alerts, insights, goals, dividends, settings, compare
 from app.database import engine, Base
 from app import models  # Import all models to register them
-
-
-class CORSMiddlewareCustom(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next):
-        if request.method == "OPTIONS":
-            response = Response()
-            response.headers["Access-Control-Allow-Origin"] = "*"
-            response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
-            response.headers["Access-Control-Allow-Headers"] = "*"
-            return response
-
-        response = await call_next(request)
-        response.headers["Access-Control-Allow-Origin"] = "*"
-        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
-        response.headers["Access-Control-Allow-Headers"] = "*"
-        return response
 
 
 @asynccontextmanager
@@ -40,7 +23,21 @@ app = FastAPI(
     version="0.1.0"
 )
 
-app.add_middleware(CORSMiddlewareCustom)
+
+@app.middleware("http")
+async def add_cors_headers(request: Request, call_next):
+    # Handle preflight OPTIONS request
+    if request.method == "OPTIONS":
+        response = Response()
+    else:
+        response = await call_next(request)
+
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS, PATCH"
+    response.headers["Access-Control-Allow-Headers"] = "*"
+    response.headers["Access-Control-Max-Age"] = "86400"
+    return response
+
 
 app.include_router(auth.router)
 app.include_router(holdings.router)
@@ -58,7 +55,7 @@ app.include_router(compare.router)
 
 @app.get("/")
 def root():
-    return {"message": "Welcome to SmartFolio API", "version": "cors-fix-v2"}
+    return {"message": "Welcome to SmartFolio API", "version": "cors-fix-v4"}
 
 
 @app.get("/health")
