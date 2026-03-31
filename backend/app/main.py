@@ -46,7 +46,7 @@ app.include_router(compare.router)
 
 @app.get("/")
 def root():
-    return {"message": "Welcome to SmartFolio API"}
+    return {"message": "Welcome to SmartFolio API", "version": "cors-fix-v2"}
 
 
 @app.get("/health")
