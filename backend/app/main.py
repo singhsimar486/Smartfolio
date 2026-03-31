@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -21,9 +22,10 @@ app = FastAPI(
     version="0.1.0"
 )
 
+frontend_url = os.getenv("FRONTEND_URL", "http://localhost:4200")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:4200"],
+    allow_origins=[frontend_url],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -46,3 +48,8 @@ app.include_router(compare.router)
 @app.get("/")
 def root():
     return {"message": "Welcome to SmartFolio API"}
+
+
+@app.get("/health")
+def health_check():
+    return {"status": "healthy"}
