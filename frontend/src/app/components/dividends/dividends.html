@@ -27,11 +27,11 @@
       </div>
       <div class="bg-bg-card rounded-2xl border border-gray-800 p-6">
         <p class="text-text-secondary text-sm mb-1">This Year</p>
-        <p class="text-2xl font-bold text-white">{{ formatCurrency(summary.this_year) }}</p>
+        <p class="text-2xl font-bold text-white">{{ formatCurrency(summary.total_this_year) }}</p>
       </div>
       <div class="bg-bg-card rounded-2xl border border-gray-800 p-6">
         <p class="text-text-secondary text-sm mb-1">This Month</p>
-        <p class="text-2xl font-bold text-white">{{ formatCurrency(summary.this_month) }}</p>
+        <p class="text-2xl font-bold text-white">{{ formatCurrency(summary.total_this_month) }}</p>
       </div>
       <div class="bg-bg-card rounded-2xl border border-gray-800 p-6">
         <p class="text-text-secondary text-sm mb-1">Monthly Average</p>
@@ -40,10 +40,10 @@
     </div>
 
     <!-- Top Payers -->
-    <div *ngIf="summary && summary.top_payers.length > 0" class="bg-bg-card rounded-2xl border border-gray-800 p-6 mb-8">
+    <div *ngIf="summary && summary.by_ticker.length > 0" class="bg-bg-card rounded-2xl border border-gray-800 p-6 mb-8">
       <h2 class="text-lg font-semibold text-white mb-4">Top Dividend Payers</h2>
       <div class="flex flex-wrap gap-3">
-        <div *ngFor="let payer of summary.top_payers" class="flex items-center gap-3 bg-bg-secondary rounded-xl px-4 py-3">
+        <div *ngFor="let payer of summary.by_ticker" class="flex items-center gap-3 bg-bg-secondary rounded-xl px-4 py-3">
           <span class="text-white font-semibold">{{ payer.ticker }}</span>
           <span class="text-gain font-medium">{{ formatCurrency(payer.total) }}</span>
         </div>

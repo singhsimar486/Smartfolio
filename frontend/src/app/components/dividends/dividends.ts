@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ApiService, Dividend, DividendSummary } from '../../services/api';
+import { ApiService, DividendRecord, DividendSummary } from '../../services/api';
 import { AuthService } from '../../services/auth';
 import { ToastService } from '../../services/toast';
 import { Navbar } from '../navbar/navbar';
@@ -14,7 +14,7 @@ import { Navbar } from '../navbar/navbar';
   templateUrl: './dividends.html',
 })
 export class Dividends implements OnInit {
-  dividends: Dividend[] = [];
+  dividends: DividendRecord[] = [];
   summary: DividendSummary | null = null;
   isLoading: boolean = true;
   errorMessage: string = '';
@@ -65,7 +65,7 @@ export class Dividends implements OnInit {
 
   loadDividends(): void {
     this.isLoading = true;
-    this.apiService.getDividends(this.selectedYear || undefined).subscribe({
+    this.apiService.getDividends().subscribe({
       next: (data) => {
         this.dividends = data;
         this.isLoading = false;
@@ -126,6 +126,8 @@ export class Dividends implements OnInit {
     this.apiService.addDividend({
       ticker: this.ticker.toUpperCase(),
       amount: this.amount,
+      shares: 0,
+      per_share: this.amount,
       payment_date: this.paymentDate
     }).subscribe({
       next: () => {
@@ -143,7 +145,7 @@ export class Dividends implements OnInit {
     });
   }
 
-  confirmDelete(dividend: Dividend): void {
+  confirmDelete(dividend: DividendRecord): void {
     this.deletingId = dividend.id;
     this.deletingTicker = dividend.ticker;
     this.showDeleteConfirm = true;

@@ -2,7 +2,7 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ApiService, StockComparison } from '../../services/api';
+import { ApiService } from '../../services/api';
 import { AuthService } from '../../services/auth';
 import { Navbar } from '../navbar/navbar';
 
@@ -15,7 +15,7 @@ import { Navbar } from '../navbar/navbar';
 export class Compare {
   ticker1: string = '';
   ticker2: string = '';
-  comparison: StockComparison | null = null;
+  comparison: any = null;
   isLoading: boolean = false;
   errorMessage: string = '';
 
@@ -48,9 +48,28 @@ export class Compare {
     this.errorMessage = '';
     this.comparison = null;
 
-    this.apiService.compareStocks(this.ticker1.toUpperCase(), this.ticker2.toUpperCase()).subscribe({
+    this.apiService.compareStocks([this.ticker1.toUpperCase(), this.ticker2.toUpperCase()]).subscribe({
       next: (data) => {
-        this.comparison = data;
+        if (data.stocks && data.stocks.length >= 2) {
+          const s1 = data.stocks[0];
+          const s2 = data.stocks[1];
+          this.comparison = {
+            stock1: {
+              ...s1,
+              price: s1.current_price,
+              change_percent: s1.day_change_percent,
+              high_52w: s1.fifty_two_week_high,
+              low_52w: s1.fifty_two_week_low
+            },
+            stock2: {
+              ...s2,
+              price: s2.current_price,
+              change_percent: s2.day_change_percent,
+              high_52w: s2.fifty_two_week_high,
+              low_52w: s2.fifty_two_week_low
+            }
+          };
+        }
         this.isLoading = false;
         this.cdr.detectChanges();
       },

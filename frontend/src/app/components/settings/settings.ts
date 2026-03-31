@@ -161,6 +161,6 @@ export class Settings {
   }
 
   getUserEmail(): string {
-    return this.authService.currentUser?.email || '';
+    return this.authService.currentUserValue?.email || '';
   }
 }
