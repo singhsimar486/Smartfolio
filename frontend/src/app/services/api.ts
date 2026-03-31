@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth';
+import { environment } from '../../environments/environment';
 
 /**
  * Interface for a stock holding
@@ -420,7 +421,7 @@ export interface HoldingImportResult {
 })
 export class ApiService {
 
-  private apiUrl = 'http://127.0.0.1:8000';
+  private apiUrl = environment.apiUrl;
 
   constructor(
     private http: HttpClient,
