@@ -86,3 +86,8 @@ def test_cors_options():
 @app.get("/test-cors")
 def test_cors_get():
     return {"cors": "working", "version": "v5"}
+
+
+@app.post("/test-post")
+def test_post(request: Request):
+    return {"post": "working", "version": "v5"}
