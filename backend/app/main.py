@@ -1,6 +1,5 @@
 import os
 from fastapi import FastAPI, Request
-from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import Response
 from contextlib import asynccontextmanager
 
@@ -63,31 +62,9 @@ app.include_router(compare.router)
 
 @app.get("/")
 def root():
-    return {"message": "Welcome to SmartFolio API", "version": "cors-fix-v5"}
+    return {"message": "Welcome to SmartFolio API"}
 
 
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
-
-
-@app.options("/test-cors")
-def test_cors_options():
-    return Response(
-        status_code=200,
-        headers={
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-            "Access-Control-Allow-Headers": "*",
-        }
-    )
-
-
-@app.get("/test-cors")
-def test_cors_get():
-    return {"cors": "working", "version": "v5"}
-
-
-@app.post("/test-post")
-def test_post(request: Request):
-    return {"post": "working", "version": "v5"}
