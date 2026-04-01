@@ -28,9 +28,17 @@ app = FastAPI(
 async def add_cors_headers(request: Request, call_next):
     # Handle preflight OPTIONS request
     if request.method == "OPTIONS":
-        response = Response()
-    else:
+        response = Response(status_code=200)
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS, PATCH"
+        response.headers["Access-Control-Allow-Headers"] = "*"
+        response.headers["Access-Control-Max-Age"] = "86400"
+        return response
+
+    try:
         response = await call_next(request)
+    except Exception as e:
+        response = Response(content=str(e), status_code=500)
 
     response.headers["Access-Control-Allow-Origin"] = "*"
     response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS, PATCH"
@@ -55,7 +63,7 @@ app.include_router(compare.router)
 
 @app.get("/")
 def root():
-    return {"message": "Welcome to SmartFolio API", "version": "cors-fix-v4"}
+    return {"message": "Welcome to SmartFolio API", "version": "cors-fix-v5"}
 
 
 @app.get("/health")
