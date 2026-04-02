@@ -1,7 +1,7 @@
 from datetime import datetime
 import uuid
 
-from sqlalchemy import String, Float, DateTime, ForeignKey
+from sqlalchemy import String, Float, DateTime, ForeignKey, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
@@ -19,7 +19,7 @@ class Holding(Base):
     ticker: Mapped[str] = mapped_column(String(10), nullable=False)
     quantity: Mapped[float] = mapped_column(Float, nullable=False)
     avg_cost_basis: Mapped[float] = mapped_column(Float, nullable=False)
-    realized_gains: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
+    realized_gains: Mapped[float | None] = mapped_column(Float, default=0.0, server_default=text('0.0'), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime, default=datetime.utcnow, onupdate=datetime.utcnow

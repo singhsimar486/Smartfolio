@@ -12,6 +12,16 @@ from app import models  # Import all models to register them
 async def lifespan(app: FastAPI):
     # Create all database tables on startup
     Base.metadata.create_all(bind=engine)
+
+    # Add realized_gains column if it doesn't exist (migration)
+    from sqlalchemy import text, inspect
+    inspector = inspect(engine)
+    columns = [col['name'] for col in inspector.get_columns('holdings')]
+    if 'realized_gains' not in columns:
+        with engine.connect() as conn:
+            conn.execute(text('ALTER TABLE holdings ADD COLUMN realized_gains FLOAT DEFAULT 0.0'))
+            conn.commit()
+
     yield
 
 
