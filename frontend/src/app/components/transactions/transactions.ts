@@ -209,7 +209,7 @@ export class Transactions implements OnInit, OnDestroy {
         this.isSaving = false;
         this.closeModal();
         this.loadTransactions();
-        this.toastService.showSuccess('Transaction recorded successfully');
+        this.toastService.showSuccess('Success', 'Transaction recorded successfully');
       },
       error: (error) => {
         this.isSaving = false;
@@ -239,11 +239,11 @@ export class Transactions implements OnInit, OnDestroy {
         this.isDeleting = false;
         this.cancelDelete();
         this.loadTransactions();
-        this.toastService.showSuccess('Transaction deleted');
+        this.toastService.showSuccess('Deleted', 'Transaction removed successfully');
       },
       error: () => {
         this.isDeleting = false;
-        this.toastService.showError('Failed to delete transaction');
+        this.toastService.showError('Error', 'Failed to delete transaction');
       }
     });
   }
