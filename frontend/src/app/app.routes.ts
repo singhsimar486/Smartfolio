@@ -8,11 +8,12 @@ import { Watchlist } from './components/watchlist/watchlist';
 import { Alerts } from './components/alerts/alerts';
 import { Transactions } from './components/transactions/transactions';
 import { Gains } from './components/gains/gains';
+import { Landing } from './components/landing/landing';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
-  // Default route - redirect to dashboard
-  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+  // Landing page for visitors
+  { path: '', component: Landing },
 
   // Auth routes (public)
   { path: 'login', component: Login },

@@ -1,0 +1,272 @@
+<!-- Navigation -->
+<nav class="fixed top-0 left-0 right-0 z-50 glass">
+  <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+    <!-- Logo -->
+    <a routerLink="/" class="flex items-center gap-3 group">
+      <div class="w-10 h-10 rounded-xl bg-accent flex items-center justify-center">
+        <svg class="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+        </svg>
+      </div>
+      <span class="text-xl font-bold tracking-tight">
+        <span class="text-white">Smart</span><span class="text-accent">Folio</span>
+      </span>
+    </a>
+
+    <!-- Nav Links -->
+    <div class="hidden md:flex items-center gap-8">
+      <button (click)="scrollToSection('features')" class="nav-link">Features</button>
+      <button (click)="scrollToSection('stats')" class="nav-link">Stats</button>
+      <button (click)="scrollToSection('cta')" class="nav-link">Get Started</button>
+    </div>
+
+    <!-- CTA Buttons -->
+    <div class="flex items-center gap-4">
+      <a routerLink="/login" class="hidden sm:block nav-link">Sign In</a>
+      <a routerLink="/register" class="btn-primary text-sm px-6 py-3">
+        Get Started
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero-section relative pt-32 pb-20 overflow-hidden">
+  <!-- Background Effects -->
+  <div class="absolute inset-0 grid-bg opacity-50"></div>
+  <div class="glow-orb -top-64 -right-64 opacity-30"></div>
+  <div class="glow-orb -bottom-64 -left-64 opacity-20"></div>
+
+  <div class="relative max-w-7xl mx-auto px-6">
+    <!-- Hero Content -->
+    <div class="text-center max-w-5xl mx-auto">
+      <!-- Tagline -->
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-8 animate-fadeInDown">
+        <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
+        <span class="text-sm text-text-secondary">Intelligent Portfolio Tracking</span>
+      </div>
+
+      <!-- Main Headline -->
+      <h1 class="text-hero mb-8 animate-fadeInUp">
+        <span class="text-white">Track.</span>
+        <span class="text-gradient"> Analyze.</span>
+        <br />
+        <span class="text-white">Grow.</span>
+      </h1>
+
+      <!-- Subheadline -->
+      <p class="text-xl md:text-2xl text-text-secondary max-w-2xl mx-auto mb-12 animate-fadeInUp delay-200" style="animation-delay: 0.2s;">
+        The smartest way to manage your investments. Real-time tracking, AI-powered insights, and beautiful analytics.
+      </p>
+
+      <!-- CTA Buttons -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fadeInUp delay-300" style="animation-delay: 0.3s;">
+        <a routerLink="/register" class="btn-primary text-lg px-10 py-5">
+          Start Free
+          <svg class="w-5 h-5 inline-block ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </a>
+        <a routerLink="/login" class="btn-secondary text-lg px-10 py-5">
+          Sign In
+        </a>
+      </div>
+    </div>
+
+    <!-- Hero Visual -->
+    <div class="relative mt-20 animate-fadeInUp delay-400" style="animation-delay: 0.4s;">
+      <div class="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+        <!-- Mock Dashboard Preview -->
+        <div class="bg-bg-card p-6 md:p-8">
+          <!-- Header Bar -->
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+              <div class="w-3 h-3 rounded-full bg-loss"></div>
+              <div class="w-3 h-3 rounded-full bg-warning"></div>
+              <div class="w-3 h-3 rounded-full bg-accent"></div>
+            </div>
+            <div class="text-text-secondary text-sm">smartfolio.app/dashboard</div>
+          </div>
+
+          <!-- Stats Row -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-white/5 rounded-xl p-4">
+              <p class="text-text-secondary text-sm mb-1">Total Value</p>
+              <p class="text-2xl md:text-3xl font-bold text-white">$124,582</p>
+              <p class="text-accent text-sm">+12.4%</p>
+            </div>
+            <div class="bg-white/5 rounded-xl p-4">
+              <p class="text-text-secondary text-sm mb-1">Today's Gain</p>
+              <p class="text-2xl md:text-3xl font-bold text-accent">+$2,847</p>
+              <p class="text-accent text-sm">+2.3%</p>
+            </div>
+            <div class="bg-white/5 rounded-xl p-4">
+              <p class="text-text-secondary text-sm mb-1">Holdings</p>
+              <p class="text-2xl md:text-3xl font-bold text-white">24</p>
+              <p class="text-text-secondary text-sm">Stocks</p>
+            </div>
+            <div class="bg-white/5 rounded-xl p-4">
+              <p class="text-text-secondary text-sm mb-1">AI Score</p>
+              <p class="text-2xl md:text-3xl font-bold text-accent">92</p>
+              <p class="text-text-secondary text-sm">Excellent</p>
+            </div>
+          </div>
+
+          <!-- Chart Placeholder -->
+          <div class="bg-white/5 rounded-xl p-6 h-48 flex items-end justify-between gap-2">
+            <div class="flex-1 bg-gradient-to-t from-accent/50 to-accent/5 rounded-t-lg h-[30%]"></div>
+            <div class="flex-1 bg-gradient-to-t from-accent/50 to-accent/5 rounded-t-lg h-[45%]"></div>
+            <div class="flex-1 bg-gradient-to-t from-accent/50 to-accent/5 rounded-t-lg h-[35%]"></div>
+            <div class="flex-1 bg-gradient-to-t from-accent/50 to-accent/5 rounded-t-lg h-[60%]"></div>
+            <div class="flex-1 bg-gradient-to-t from-accent/50 to-accent/5 rounded-t-lg h-[50%]"></div>
+            <div class="flex-1 bg-gradient-to-t from-accent/50 to-accent/5 rounded-t-lg h-[75%]"></div>
+            <div class="flex-1 bg-gradient-to-t from-accent/50 to-accent/5 rounded-t-lg h-[65%]"></div>
+            <div class="flex-1 bg-gradient-to-t from-accent/50 to-accent/5 rounded-t-lg h-[80%]"></div>
+            <div class="flex-1 bg-gradient-to-t from-accent to-accent/20 rounded-t-lg h-[90%]"></div>
+            <div class="flex-1 bg-gradient-to-t from-accent to-accent/20 rounded-t-lg h-[95%]"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Glow Effect Behind Card -->
+      <div class="absolute -inset-4 bg-accent/10 rounded-3xl blur-3xl -z-10"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Marquee Section -->
+<section class="py-12 border-y border-white/10 overflow-hidden bg-bg-secondary/50">
+  <div class="marquee-container">
+    <div class="marquee-content">
+      <span *ngFor="let stat of stats; let i = index" class="flex items-center mx-12">
+        <span class="text-4xl md:text-5xl font-bold text-white mr-3">{{ stat.value }}</span>
+        <span class="text-text-secondary text-lg">{{ stat.label }}</span>
+        <span class="mx-12 text-accent text-2xl">*</span>
+      </span>
+      <!-- Duplicate for seamless loop -->
+      <span *ngFor="let stat of stats; let i = index" class="flex items-center mx-12">
+        <span class="text-4xl md:text-5xl font-bold text-white mr-3">{{ stat.value }}</span>
+        <span class="text-text-secondary text-lg">{{ stat.label }}</span>
+        <span class="mx-12 text-accent text-2xl">*</span>
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="py-32 relative">
+  <div class="max-w-7xl mx-auto px-6">
+    <!-- Section Header -->
+    <div class="text-center mb-20 scroll-animate opacity-0 translate-y-10">
+      <h2 class="text-display-lg mb-6">
+        <span class="text-white">Everything you need to</span>
+        <br />
+        <span class="text-gradient">invest smarter</span>
+      </h2>
+      <p class="text-xl text-text-secondary max-w-2xl mx-auto">
+        Powerful features designed to give you the edge in today's markets.
+      </p>
+    </div>
+
+    <!-- Features Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div *ngFor="let feature of features; let i = index"
+           class="card-premium p-8 scroll-animate opacity-0 translate-y-10"
+           [style.animation-delay]="(i * 0.1) + 's'">
+        <!-- Icon -->
+        <div class="w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center mb-6">
+          <ng-container [ngSwitch]="feature.icon">
+            <svg *ngSwitchCase="'chart'" class="w-7 h-7 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+            </svg>
+            <svg *ngSwitchCase="'brain'" class="w-7 h-7 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+            <svg *ngSwitchCase="'bell'" class="w-7 h-7 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+            <svg *ngSwitchCase="'pie'" class="w-7 h-7 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
+            </svg>
+          </ng-container>
+        </div>
+
+        <!-- Content -->
+        <h3 class="text-2xl font-bold text-white mb-3">{{ feature.title }}</h3>
+        <p class="text-text-secondary text-lg leading-relaxed">{{ feature.description }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats Section -->
+<section id="stats" class="py-32 relative bg-bg-secondary/30">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+      <div class="text-center scroll-animate opacity-0 translate-y-10">
+        <p class="display-number text-gradient mb-2">12K+</p>
+        <p class="text-text-secondary text-lg">Active Traders</p>
+      </div>
+      <div class="text-center scroll-animate opacity-0 translate-y-10" style="animation-delay: 0.1s;">
+        <p class="display-number text-white mb-2">$2.4M</p>
+        <p class="text-text-secondary text-lg">Assets Tracked</p>
+      </div>
+      <div class="text-center scroll-animate opacity-0 translate-y-10" style="animation-delay: 0.2s;">
+        <p class="display-number text-gradient mb-2">99.9%</p>
+        <p class="text-text-secondary text-lg">Uptime</p>
+      </div>
+      <div class="text-center scroll-animate opacity-0 translate-y-10" style="animation-delay: 0.3s;">
+        <p class="display-number text-white mb-2">50K+</p>
+        <p class="text-text-secondary text-lg">Stocks & ETFs</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section id="cta" class="py-32 relative overflow-hidden">
+  <!-- Background -->
+  <div class="absolute inset-0 bg-gradient-to-b from-bg-primary via-accent/5 to-bg-primary"></div>
+  <div class="glow-orb top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-20"></div>
+
+  <div class="relative max-w-4xl mx-auto px-6 text-center">
+    <h2 class="text-display-lg mb-6 scroll-animate opacity-0 translate-y-10">
+      <span class="text-white">Ready to take control of</span>
+      <br />
+      <span class="text-gradient">your investments?</span>
+    </h2>
+    <p class="text-xl text-text-secondary mb-12 scroll-animate opacity-0 translate-y-10" style="animation-delay: 0.1s;">
+      Join thousands of smart investors using SmartFolio to track, analyze, and grow their portfolios.
+    </p>
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 scroll-animate opacity-0 translate-y-10" style="animation-delay: 0.2s;">
+      <a routerLink="/register" class="btn-primary text-lg px-12 py-5">
+        Create Free Account
+      </a>
+      <a routerLink="/login" class="btn-secondary text-lg px-12 py-5">
+        Sign In
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="py-12 border-t border-white/10">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
+          <svg class="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+          </svg>
+        </div>
+        <span class="text-lg font-bold">
+          <span class="text-white">Smart</span><span class="text-accent">Folio</span>
+        </span>
+      </div>
+      <p class="text-text-secondary text-sm">
+        &copy; 2024 SmartFolio. All rights reserved.
+      </p>
+    </div>
+  </div>
+</footer>
