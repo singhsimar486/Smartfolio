@@ -216,7 +216,18 @@ export class Dashboard implements OnInit {
     },
     plugins: {
       legend: {
-        display: false
+        display: true,
+        position: 'top',
+        align: 'end',
+        labels: {
+          color: '#A0A0A0',
+          usePointStyle: true,
+          pointStyle: 'line',
+          padding: 16,
+          font: {
+            size: 12
+          }
+        }
       },
       tooltip: {
         backgroundColor: '#242424',
@@ -226,7 +237,10 @@ export class Dashboard implements OnInit {
         borderWidth: 1,
         padding: 12,
         callbacks: {
-          label: (context) => `Portfolio Value: $${(context.parsed.y ?? 0).toLocaleString()}`
+          label: (context) => {
+            const label = context.dataset.label || '';
+            return `${label}: $${(context.parsed.y ?? 0).toLocaleString()}`;
+          }
         }
       }
     }
@@ -324,20 +338,37 @@ export class Dashboard implements OnInit {
     const isPositive = data.period_return >= 0;
     const color = isPositive ? '#00FF88' : '#FF4444';
 
+    // Create cost basis array (horizontal line at total_cost)
+    const costBasisData = data.data.map(() => data.total_cost);
+
     this.performanceChartData = {
       labels: data.data.map(d => this.formatChartDate(d.date)),
-      datasets: [{
-        data: data.data.map(d => d.value),
-        borderColor: color,
-        backgroundColor: isPositive ? 'rgba(0, 255, 136, 0.1)' : 'rgba(255, 68, 68, 0.1)',
-        fill: true,
-        tension: 0.4,
-        pointRadius: 0,
-        pointHoverRadius: 6,
-        pointHoverBackgroundColor: color,
-        pointHoverBorderColor: '#FFFFFF',
-        pointHoverBorderWidth: 2
-      }]
+      datasets: [
+        {
+          label: 'Portfolio Value',
+          data: data.data.map(d => d.value),
+          borderColor: color,
+          backgroundColor: isPositive ? 'rgba(0, 255, 136, 0.1)' : 'rgba(255, 68, 68, 0.1)',
+          fill: true,
+          tension: 0.4,
+          pointRadius: 0,
+          pointHoverRadius: 6,
+          pointHoverBackgroundColor: color,
+          pointHoverBorderColor: '#FFFFFF',
+          pointHoverBorderWidth: 2
+        },
+        {
+          label: 'Cost Basis',
+          data: costBasisData,
+          borderColor: '#666666',
+          borderDash: [5, 5],
+          backgroundColor: 'transparent',
+          fill: false,
+          tension: 0,
+          pointRadius: 0,
+          pointHoverRadius: 0
+        }
+      ]
     };
   }
 

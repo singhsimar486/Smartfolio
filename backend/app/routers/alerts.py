@@ -8,6 +8,7 @@ from app.models.alert import PriceAlert, AlertCondition
 from app.schemas.alert import AlertCreate, AlertUpdate, AlertResponse, AlertCheckResult
 from app.services.auth import get_current_user
 from app.services.market_data import get_stock_quote
+from app.services.email import send_alert_email, is_email_configured
 
 
 router = APIRouter(prefix="/alerts", tags=["Alerts"])
@@ -125,6 +126,19 @@ def check_alerts(
             alert.triggered_at = datetime.utcnow()
             alert.triggered_price = current_price
 
+            stock_name = quote.get("name")
+
+            # Send email notification if configured
+            if is_email_configured() and current_user.email:
+                send_alert_email(
+                    to_email=current_user.email,
+                    ticker=alert.ticker,
+                    condition=alert.condition.value,
+                    target_price=alert.target_price,
+                    current_price=current_price,
+                    stock_name=stock_name
+                )
+
             triggered_alerts.append(AlertResponse(
                 id=alert.id,
                 ticker=alert.ticker,
@@ -136,7 +150,7 @@ def check_alerts(
                 triggered_price=alert.triggered_price,
                 created_at=alert.created_at,
                 current_price=current_price,
-                stock_name=quote.get("name")
+                stock_name=stock_name
             ))
 
     db.commit()

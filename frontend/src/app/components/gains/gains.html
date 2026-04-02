@@ -1,0 +1,147 @@
+<app-navbar></app-navbar>
+
+<div class="min-h-screen bg-bg-primary p-6">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-white">Realized & Unrealized Gains</h1>
+      <p class="text-text-secondary mt-1">Track your portfolio gains for tax planning</p>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="card p-8 text-center">
+      <div class="animate-spin w-8 h-8 border-2 border-accent border-t-transparent rounded-full mx-auto mb-4"></div>
+      <p class="text-text-secondary">Loading gains data...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="errorMessage && !isLoading" class="card p-8 text-center border border-loss/20 bg-loss/5">
+      <svg class="w-12 h-12 text-loss mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
+      <p class="text-loss">{{ errorMessage }}</p>
+    </div>
+
+    <!-- Main Content -->
+    <div *ngIf="!isLoading && !errorMessage && gains">
+      <!-- Summary Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- Unrealized Gains -->
+        <div class="card p-6 border" [ngClass]="getBackgroundClass(gains.unrealized_gains)">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-text-secondary text-sm">Unrealized Gains</span>
+            <svg class="w-5 h-5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+            </svg>
+          </div>
+          <p class="text-3xl font-bold" [ngClass]="getGainClass(gains.unrealized_gains)">
+            {{ formatCurrency(gains.unrealized_gains) }}
+          </p>
+          <p class="text-sm mt-1" [ngClass]="getGainClass(gains.unrealized_gains_percent)">
+            {{ formatPercent(gains.unrealized_gains_percent) }}
+          </p>
+          <p class="text-xs text-text-secondary mt-2">From current holdings at market prices</p>
+        </div>
+
+        <!-- Realized Gains -->
+        <div class="card p-6 border" [ngClass]="getBackgroundClass(gains.realized_gains)">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-text-secondary text-sm">Realized Gains</span>
+            <svg class="w-5 h-5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <p class="text-3xl font-bold" [ngClass]="getGainClass(gains.realized_gains)">
+            {{ formatCurrency(gains.realized_gains) }}
+          </p>
+          <p class="text-xs text-text-secondary mt-2">From completed sell transactions</p>
+        </div>
+
+        <!-- Total Gains -->
+        <div class="card p-6 border" [ngClass]="getBackgroundClass(gains.total_gains)">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-text-secondary text-sm">Total Gains</span>
+            <svg class="w-5 h-5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <p class="text-3xl font-bold" [ngClass]="getGainClass(gains.total_gains)">
+            {{ formatCurrency(gains.total_gains) }}
+          </p>
+          <p class="text-xs text-text-secondary mt-2">Combined realized + unrealized</p>
+        </div>
+      </div>
+
+      <!-- Tax Info Banner -->
+      <div class="card p-4 mb-8 border border-accent/20 bg-accent/5">
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-accent flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <div>
+            <p class="text-white font-medium">Tax Planning Tip</p>
+            <p class="text-text-secondary text-sm mt-1">
+              Only <span class="text-white">realized gains</span> are taxable. Unrealized gains become taxable when you sell.
+              Consider your holding period (short-term vs long-term) for tax rate implications.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Holdings Breakdown -->
+      <div class="card overflow-hidden">
+        <div class="p-6 border-b border-white/10">
+          <h2 class="text-xl font-bold text-white">Holdings Breakdown</h2>
+          <p class="text-text-secondary text-sm mt-1">Gains by individual holding</p>
+        </div>
+
+        <div *ngIf="gains.holdings.length === 0" class="p-8 text-center">
+          <svg class="w-12 h-12 text-text-secondary/50 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+          </svg>
+          <p class="text-text-secondary">No holdings to display</p>
+        </div>
+
+        <div *ngIf="gains.holdings.length > 0" class="overflow-x-auto">
+          <table class="w-full">
+            <thead class="bg-white/5">
+              <tr>
+                <th class="text-left text-text-secondary text-sm font-medium px-6 py-4">Holding</th>
+                <th class="text-right text-text-secondary text-sm font-medium px-6 py-4">Cost Basis</th>
+                <th class="text-right text-text-secondary text-sm font-medium px-6 py-4">Current Value</th>
+                <th class="text-right text-text-secondary text-sm font-medium px-6 py-4">Unrealized</th>
+                <th class="text-right text-text-secondary text-sm font-medium px-6 py-4">Realized</th>
+                <th class="text-right text-text-secondary text-sm font-medium px-6 py-4">Total</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5">
+              <tr *ngFor="let holding of gains.holdings" class="hover:bg-white/[0.02] transition-colors">
+                <td class="px-6 py-4">
+                  <div>
+                    <span class="font-semibold text-white">{{ holding.ticker }}</span>
+                    <p class="text-text-secondary text-sm">{{ holding.name }}</p>
+                  </div>
+                </td>
+                <td class="px-6 py-4 text-right text-text-secondary">
+                  {{ formatCurrency(holding.cost_basis) }}
+                </td>
+                <td class="px-6 py-4 text-right text-white">
+                  {{ formatCurrency(holding.current_value) }}
+                </td>
+                <td class="px-6 py-4 text-right font-medium" [ngClass]="getGainClass(holding.unrealized)">
+                  {{ formatCurrency(holding.unrealized) }}
+                </td>
+                <td class="px-6 py-4 text-right font-medium" [ngClass]="getGainClass(holding.realized)">
+                  {{ formatCurrency(holding.realized) }}
+                </td>
+                <td class="px-6 py-4 text-right font-bold" [ngClass]="getGainClass(holding.unrealized + holding.realized)">
+                  {{ formatCurrency(holding.unrealized + holding.realized) }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

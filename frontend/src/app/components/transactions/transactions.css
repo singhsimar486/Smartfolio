@@ -1,0 +1,7 @@
+.badge-success {
+  @apply px-3 py-1 text-xs font-semibold rounded-full bg-profit/20 text-profit;
+}
+
+.badge-danger {
+  @apply px-3 py-1 text-xs font-semibold rounded-full bg-loss/20 text-loss;
+}

@@ -3,3 +3,4 @@ from app.schemas.holding import HoldingCreate, HoldingUpdate, HoldingResponse, H
 from app.schemas.market import StockQuote, StockHistory, HoldingWithMarketData
 from app.schemas.alert import AlertCreate, AlertUpdate, AlertResponse, AlertCheckResult
 from app.schemas.insight import InsightResponse, ChatMessageCreate, ChatMessageResponse, ChatResponse, WeeklyDigestResponse, InsightsOverview
+from app.schemas.transaction import TransactionCreate, TransactionUpdate, TransactionResponse

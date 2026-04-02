@@ -321,6 +321,55 @@ export interface DividendCreate {
 }
 
 /**
+ * Interface for a transaction record
+ */
+export interface Transaction {
+  id: string;
+  holding_id: string;
+  ticker: string;
+  type: 'BUY' | 'SELL';
+  quantity: number;
+  price_per_unit: number;
+  total_value: number;
+  transaction_date: string;
+  created_at: string;
+}
+
+/**
+ * Interface for creating a transaction
+ */
+export interface TransactionCreate {
+  ticker: string;
+  type: 'BUY' | 'SELL';
+  quantity: number;
+  price_per_unit: number;
+  transaction_date: string;
+}
+
+/**
+ * Interface for gains summary
+ */
+export interface GainsSummary {
+  unrealized_gains: number;
+  unrealized_gains_percent: number;
+  realized_gains: number;
+  total_gains: number;
+  holdings: HoldingGains[];
+}
+
+/**
+ * Interface for per-holding gains
+ */
+export interface HoldingGains {
+  ticker: string;
+  name: string;
+  unrealized: number;
+  realized: number;
+  cost_basis: number;
+  current_value: number;
+}
+
+/**
  * Interface for stock comparison data
  */
 export interface StockCompareData {
@@ -835,6 +884,54 @@ export class ApiService {
   deleteDividend(id: string): Observable<void> {
     return this.http.delete<void>(
       `${this.apiUrl}/dividends/${id}`,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  // ============ TRANSACTIONS ============
+
+  /**
+   * Get all transactions for current user
+   */
+  getTransactions(ticker?: string, type?: string): Observable<Transaction[]> {
+    let url = `${this.apiUrl}/transactions/`;
+    const params: string[] = [];
+    if (ticker) params.push(`ticker=${ticker}`);
+    if (type) params.push(`type=${type}`);
+    if (params.length > 0) url += `?${params.join('&')}`;
+
+    return this.http.get<Transaction[]>(url, { headers: this.getAuthHeaders() });
+  }
+
+  /**
+   * Create a new transaction
+   */
+  createTransaction(transaction: TransactionCreate): Observable<Transaction> {
+    return this.http.post<Transaction>(
+      `${this.apiUrl}/transactions/`,
+      transaction,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  /**
+   * Delete a transaction
+   */
+  deleteTransaction(id: string): Observable<void> {
+    return this.http.delete<void>(
+      `${this.apiUrl}/transactions/${id}`,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  // ============ GAINS ============
+
+  /**
+   * Get gains summary (realized and unrealized)
+   */
+  getGainsSummary(): Observable<GainsSummary> {
+    return this.http.get<GainsSummary>(
+      `${this.apiUrl}/portfolio/gains`,
       { headers: this.getAuthHeaders() }
     );
   }

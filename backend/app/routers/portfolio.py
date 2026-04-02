@@ -173,6 +173,82 @@ def get_portfolio_allocation(
     }
 
 
+@router.get("/gains")
+def get_portfolio_gains(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Get realized and unrealized gains for the portfolio.
+
+    Returns:
+        - unrealized_gains: Gains from current holdings at market prices
+        - realized_gains: Gains from completed sell transactions
+        - total_gains: Sum of both
+        - Per-holding breakdown
+    """
+
+    # Get user's holdings
+    holdings = db.query(Holding).filter(Holding.user_id == current_user.id).all()
+
+    if not holdings:
+        return {
+            "unrealized_gains": 0,
+            "unrealized_gains_percent": 0,
+            "realized_gains": 0,
+            "total_gains": 0,
+            "holdings": []
+        }
+
+    # Get market data for all holdings
+    tickers = [h.ticker for h in holdings]
+    market_data = get_multiple_quotes(tickers)
+
+    # Calculate gains per holding
+    holdings_gains = []
+    total_unrealized = 0
+    total_realized = 0
+    total_cost = 0
+
+    for holding in holdings:
+        quote = market_data.get(holding.ticker)
+        cost_basis = holding.quantity * holding.avg_cost_basis
+        total_cost += cost_basis
+
+        # Realized gains from sells
+        realized = holding.realized_gains if hasattr(holding, 'realized_gains') and holding.realized_gains else 0
+        total_realized += realized
+
+        # Unrealized gains (current value - cost basis)
+        current_value = 0
+        unrealized = 0
+
+        if quote and quote.get("current_price") and holding.quantity > 0:
+            current_value = holding.quantity * quote["current_price"]
+            unrealized = current_value - cost_basis
+            total_unrealized += unrealized
+
+        holdings_gains.append({
+            "ticker": holding.ticker,
+            "name": quote.get("name", "Unknown") if quote else "Unknown",
+            "unrealized": round(unrealized, 2),
+            "realized": round(realized, 2),
+            "cost_basis": round(cost_basis, 2),
+            "current_value": round(current_value, 2)
+        })
+
+    # Calculate percentages
+    unrealized_percent = (total_unrealized / total_cost * 100) if total_cost > 0 else 0
+
+    return {
+        "unrealized_gains": round(total_unrealized, 2),
+        "unrealized_gains_percent": round(unrealized_percent, 2),
+        "realized_gains": round(total_realized, 2),
+        "total_gains": round(total_unrealized + total_realized, 2),
+        "holdings": holdings_gains
+    }
+
+
 @router.get("/performance")
 def get_portfolio_performance(
     period: str = "1mo",
