@@ -15,17 +15,17 @@ module.exports = {
         'text-secondary': '#888888',
         'text-muted': '#555555',
 
-        // Lime accent (like Lando Norris)
-        'accent': '#CCFF00',
-        'accent-dark': '#99CC00',
-        'accent-glow': 'rgba(204, 255, 0, 0.15)',
+        // Arctic Blue - cool, professional, sleek
+        'accent': '#38BDF8',
+        'accent-dark': '#0EA5E9',
+        'accent-light': '#7DD3FC',
+        'accent-glow': 'rgba(56, 189, 248, 0.15)',
 
-        // Secondary colors
-        'lime': '#CCFF00',
-        'profit': '#CCFF00',
-        'gain': '#CCFF00',
-        'loss': '#FF4444',
-        'warning': '#FFAA00',
+        // Status colors
+        'profit': '#22C55E',
+        'gain': '#22C55E',
+        'loss': '#EF4444',
+        'warning': '#F59E0B',
 
         // Borders
         'border': 'rgba(255, 255, 255, 0.08)',
@@ -149,21 +149,21 @@ module.exports = {
         'xs': '2px',
       },
       boxShadow: {
-        'glow-sm': '0 0 20px rgba(204, 255, 0, 0.1)',
-        'glow': '0 0 40px rgba(204, 255, 0, 0.15)',
-        'glow-lg': '0 0 80px rgba(204, 255, 0, 0.2)',
-        'glow-xl': '0 0 120px rgba(204, 255, 0, 0.25)',
-        'glow-profit': '0 0 40px rgba(204, 255, 0, 0.15)',
-        'glow-loss': '0 0 40px rgba(255, 68, 68, 0.15)',
+        'glow-sm': '0 0 20px rgba(56, 189, 248, 0.1)',
+        'glow': '0 0 40px rgba(56, 189, 248, 0.15)',
+        'glow-lg': '0 0 80px rgba(56, 189, 248, 0.2)',
+        'glow-xl': '0 0 120px rgba(56, 189, 248, 0.25)',
+        'glow-profit': '0 0 40px rgba(34, 197, 94, 0.15)',
+        'glow-loss': '0 0 40px rgba(239, 68, 68, 0.15)',
         'card': '0 4px 24px rgba(0, 0, 0, 0.5)',
         'card-hover': '0 20px 60px rgba(0, 0, 0, 0.7)',
-        'inner-glow': 'inset 0 0 60px rgba(204, 255, 0, 0.03)',
+        'inner-glow': 'inset 0 0 60px rgba(56, 189, 248, 0.03)',
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
-        'hero-gradient': 'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(204, 255, 0, 0.15), transparent)',
-        'card-gradient': 'linear-gradient(180deg, rgba(204, 255, 0, 0.03) 0%, transparent 100%)',
+        'hero-gradient': 'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(56, 189, 248, 0.12), transparent)',
+        'card-gradient': 'linear-gradient(180deg, rgba(56, 189, 248, 0.03) 0%, transparent 100%)',
         'noise': "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E\")",
       },
     },
