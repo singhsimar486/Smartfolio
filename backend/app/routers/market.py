@@ -1,7 +1,8 @@
 from fastapi import APIRouter, HTTPException, Query, status
 
 from app.services.market_data import get_stock_quote, get_stock_history, search_tickers
-from app.schemas import StockQuote, StockHistory
+from app.services.prediction import predict_prices
+from app.schemas import StockQuote, StockHistory, PredictionResponse
 
 
 router = APIRouter(prefix="/market", tags=["Market Data"])
@@ -97,3 +98,40 @@ def search_stocks(
     """
     results = search_tickers(q, limit)
     return {"results": results}
+
+
+@router.get("/predict/{ticker}", response_model=PredictionResponse)
+def get_prediction(
+    ticker: str,
+    days: int = Query(30, ge=7, le=90, description="Days to predict ahead")
+):
+    """
+    Get stock price prediction using ensemble algorithm.
+
+    This endpoint:
+    1. Fetches 6 months of historical data
+    2. Applies ensemble of prediction models:
+       - Linear Regression (trend)
+       - Exponential Moving Average (momentum)
+       - Mean Reversion (equilibrium)
+    3. Calculates confidence bands based on volatility
+
+    Args:
+        ticker: Stock symbol (e.g., "AAPL", "GOOGL")
+        days: Number of days to predict (7-90, default 30)
+
+    Returns:
+        Predicted prices with upper/lower confidence bounds
+
+    DISCLAIMER: Predictions are mathematical projections based on
+    historical data. They are NOT financial advice.
+    """
+    prediction = predict_prices(ticker.upper(), days_ahead=days)
+
+    if not prediction:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Could not generate prediction for '{ticker.upper()}'. Insufficient historical data."
+        )
+
+    return prediction

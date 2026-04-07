@@ -386,6 +386,41 @@ export interface StockCompareData {
 }
 
 /**
+ * Interface for prediction data point
+ */
+export interface PredictionPoint {
+  date: string;
+  predicted_price: number;
+  upper_bound: number;
+  lower_bound: number;
+}
+
+/**
+ * Interface for prediction summary
+ */
+export interface PredictionSummary {
+  days_ahead: number;
+  final_predicted_price: number;
+  predicted_change: number;
+  predicted_change_percent: number;
+  confidence_score: number;
+  volatility: number;
+  rsi: number;
+  trend_direction: string;
+}
+
+/**
+ * Interface for stock prediction response
+ */
+export interface StockPrediction {
+  ticker: string;
+  current_price: number;
+  predictions: PredictionPoint[];
+  summary: PredictionSummary;
+  disclaimer: string;
+}
+
+/**
  * Interface for password change
  */
 export interface PasswordChange {
@@ -615,6 +650,15 @@ export class ApiService {
   searchTickers(query: string, limit: number = 10): Observable<TickerSearchResponse> {
     return this.http.get<TickerSearchResponse>(
       `${this.apiUrl}/market/search?q=${encodeURIComponent(query)}&limit=${limit}`
+    );
+  }
+
+  /**
+   * Get stock price prediction (public endpoint)
+   */
+  getStockPrediction(ticker: string, days: number = 30): Observable<StockPrediction> {
+    return this.http.get<StockPrediction>(
+      `${this.apiUrl}/market/predict/${ticker}?days=${days}`
     );
   }
 

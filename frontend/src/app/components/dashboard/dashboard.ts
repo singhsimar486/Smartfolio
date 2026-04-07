@@ -17,7 +17,7 @@ import {
   LinearScale,
   Filler
 } from 'chart.js';
-import { ApiService, PortfolioSummary, HoldingWithMarketData, PortfolioPerformance } from '../../services/api';
+import { ApiService, PortfolioSummary, HoldingWithMarketData, PortfolioPerformance, StockPrediction } from '../../services/api';
 import { AuthService } from '../../services/auth';
 import { ToastService } from '../../services/toast';
 import { Navbar } from '../navbar/navbar';
@@ -56,6 +56,11 @@ export class Dashboard implements OnInit {
   showStockModal: boolean = false;
   isLoadingHistory: boolean = false;
   selectedPeriod: string = '1mo';
+
+  // Stock prediction
+  prediction: StockPrediction | null = null;
+  isLoadingPrediction: boolean = false;
+  showPrediction: boolean = true;
 
   // Portfolio performance
   performanceData: PortfolioPerformance | null = null;
@@ -136,7 +141,7 @@ export class Dashboard implements OnInit {
         },
         ticks: {
           color: '#A0A0A0',
-          maxTicksLimit: 6
+          maxTicksLimit: 8
         }
       },
       y: {
@@ -152,7 +157,22 @@ export class Dashboard implements OnInit {
     },
     plugins: {
       legend: {
-        display: false
+        display: true,
+        position: 'top',
+        align: 'end',
+        labels: {
+          color: '#A0A0A0',
+          usePointStyle: true,
+          pointStyle: 'line',
+          padding: 12,
+          font: {
+            size: 11
+          },
+          filter: (item) => {
+            // Hide upper/lower bound from legend
+            return item.text !== 'Upper Bound' && item.text !== 'Lower Bound';
+          }
+        }
       },
       tooltip: {
         backgroundColor: '#242424',
@@ -161,8 +181,15 @@ export class Dashboard implements OnInit {
         borderColor: '#333',
         borderWidth: 1,
         padding: 12,
+        filter: (item) => {
+          // Hide upper/lower bound from tooltip
+          return item.dataset.label !== 'Upper Bound' && item.dataset.label !== 'Lower Bound';
+        },
         callbacks: {
-          label: (context) => `$${(context.parsed.y ?? 0).toFixed(2)}`
+          label: (context) => {
+            const label = context.dataset.label || '';
+            return `${label}: $${(context.parsed.y ?? 0).toFixed(2)}`;
+          }
         }
       }
     }
@@ -408,18 +435,140 @@ export class Dashboard implements OnInit {
 
   loadPriceHistory(ticker: string, period: string): void {
     this.isLoadingHistory = true;
+    this.prediction = null;
 
     this.apiService.getStockHistory(ticker, period).subscribe({
       next: (data: PriceHistory[]) => {
         this.updatePriceChart(data);
         this.isLoadingHistory = false;
         this.cdr.detectChanges();
+
+        // Load prediction data after history loads
+        if (this.showPrediction) {
+          this.loadPrediction(ticker);
+        }
       },
       error: () => {
         this.isLoadingHistory = false;
         this.cdr.detectChanges();
       }
     });
+  }
+
+  loadPrediction(ticker: string): void {
+    this.isLoadingPrediction = true;
+
+    this.apiService.getStockPrediction(ticker, 30).subscribe({
+      next: (data: StockPrediction) => {
+        this.prediction = data;
+        this.addPredictionToChart(data);
+        this.isLoadingPrediction = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.isLoadingPrediction = false;
+        this.prediction = null;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  togglePrediction(): void {
+    this.showPrediction = !this.showPrediction;
+    if (this.selectedStock) {
+      if (this.showPrediction && !this.prediction) {
+        this.loadPrediction(this.selectedStock.ticker);
+      } else if (!this.showPrediction && this.prediction) {
+        // Remove prediction datasets from chart
+        this.priceChartData = {
+          labels: this.priceChartData.labels,
+          datasets: [this.priceChartData.datasets[0]]
+        };
+        this.cdr.detectChanges();
+      }
+    }
+  }
+
+  addPredictionToChart(prediction: StockPrediction): void {
+    if (!this.priceChartData.labels || !this.priceChartData.datasets[0]) return;
+
+    const existingLabels = this.priceChartData.labels as string[];
+    const existingData = this.priceChartData.datasets[0].data as number[];
+
+    // Create prediction labels and data
+    const predictionLabels = prediction.predictions.map(p => this.formatChartDate(p.date));
+    const predictionPrices = prediction.predictions.map(p => p.predicted_price);
+    const upperBound = prediction.predictions.map(p => p.upper_bound);
+    const lowerBound = prediction.predictions.map(p => p.lower_bound);
+
+    // Combine labels
+    const allLabels = [...existingLabels, ...predictionLabels];
+
+    // Pad historical data with nulls for prediction period
+    const historicalPadded = [...existingData, ...Array(predictionLabels.length).fill(null)];
+
+    // Pad prediction data with nulls for historical period, except last point for connection
+    const predictionPadded = [...Array(existingLabels.length - 1).fill(null), existingData[existingData.length - 1], ...predictionPrices];
+    const upperPadded = [...Array(existingLabels.length - 1).fill(null), existingData[existingData.length - 1], ...upperBound];
+    const lowerPadded = [...Array(existingLabels.length - 1).fill(null), existingData[existingData.length - 1], ...lowerBound];
+
+    const isPositive = existingData.length > 1 && existingData[existingData.length - 1] >= existingData[0];
+    const color = isPositive ? '#00FF88' : '#FF4444';
+
+    this.priceChartData = {
+      labels: allLabels,
+      datasets: [
+        {
+          label: 'Historical',
+          data: historicalPadded,
+          borderColor: color,
+          backgroundColor: isPositive ? 'rgba(0, 255, 136, 0.1)' : 'rgba(255, 68, 68, 0.1)',
+          fill: true,
+          tension: 0.4,
+          pointRadius: 0,
+          pointHoverRadius: 6,
+          pointHoverBackgroundColor: color,
+          pointHoverBorderColor: '#FFFFFF',
+          pointHoverBorderWidth: 2
+        },
+        {
+          label: 'Prediction',
+          data: predictionPadded,
+          borderColor: '#38BDF8',
+          borderDash: [8, 4],
+          backgroundColor: 'transparent',
+          fill: false,
+          tension: 0.4,
+          pointRadius: 0,
+          pointHoverRadius: 6,
+          pointHoverBackgroundColor: '#38BDF8',
+          pointHoverBorderColor: '#FFFFFF',
+          pointHoverBorderWidth: 2
+        },
+        {
+          label: 'Upper Bound',
+          data: upperPadded,
+          borderColor: 'rgba(56, 189, 248, 0.3)',
+          borderDash: [4, 4],
+          backgroundColor: 'rgba(56, 189, 248, 0.05)',
+          fill: '+1',
+          tension: 0.4,
+          pointRadius: 0,
+          pointHoverRadius: 0
+        },
+        {
+          label: 'Lower Bound',
+          data: lowerPadded,
+          borderColor: 'rgba(56, 189, 248, 0.3)',
+          borderDash: [4, 4],
+          backgroundColor: 'transparent',
+          fill: false,
+          tension: 0.4,
+          pointRadius: 0,
+          pointHoverRadius: 0
+        }
+      ]
+    };
   }
 
   updatePriceChart(history: PriceHistory[]): void {
