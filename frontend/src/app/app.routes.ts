@@ -9,6 +9,7 @@ import { Alerts } from './components/alerts/alerts';
 import { Transactions } from './components/transactions/transactions';
 import { Gains } from './components/gains/gains';
 import { Landing } from './components/landing/landing';
+import { StockLookup } from './components/stock-lookup/stock-lookup';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -27,6 +28,7 @@ export const routes: Routes = [
   { path: 'sentiment', component: Sentiment, canActivate: [authGuard] },
   { path: 'transactions', component: Transactions, canActivate: [authGuard] },
   { path: 'gains', component: Gains, canActivate: [authGuard] },
+  { path: 'lookup', component: StockLookup, canActivate: [authGuard] },
 
   // Wildcard - redirect unknown routes to dashboard
   { path: '**', redirectTo: '/dashboard' }
