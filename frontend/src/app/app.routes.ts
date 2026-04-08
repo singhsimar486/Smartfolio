@@ -10,6 +10,7 @@ import { Transactions } from './components/transactions/transactions';
 import { Gains } from './components/gains/gains';
 import { Landing } from './components/landing/landing';
 import { StockLookup } from './components/stock-lookup/stock-lookup';
+import { Pricing } from './components/pricing/pricing';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -19,6 +20,7 @@ export const routes: Routes = [
   // Auth routes (public)
   { path: 'login', component: Login },
   { path: 'register', component: Register },
+  { path: 'pricing', component: Pricing },
 
   // Protected routes (require login)
   { path: 'dashboard', component: Dashboard, canActivate: [authGuard] },

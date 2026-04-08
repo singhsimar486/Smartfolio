@@ -429,6 +429,42 @@ export interface PasswordChange {
 }
 
 /**
+ * Interface for subscription status
+ */
+export interface SubscriptionStatus {
+  tier: string;
+  status: string;
+  ends_at: string | null;
+  stripe_customer_id: string | null;
+  referral_code: string | null;
+  referral_count: number;
+}
+
+/**
+ * Interface for checkout response
+ */
+export interface CheckoutResponse {
+  checkout_url: string;
+  session_id: string;
+}
+
+/**
+ * Interface for portal response
+ */
+export interface PortalResponse {
+  portal_url: string;
+}
+
+/**
+ * Interface for referral info
+ */
+export interface ReferralInfo {
+  referral_code: string;
+  referral_count: number;
+  referral_link: string;
+}
+
+/**
  * Interface for portfolio performance data point
  */
 export interface PerformanceDataPoint {
@@ -1055,6 +1091,72 @@ export class ApiService {
         headers: this.getAuthHeaders(),
         responseType: 'blob'
       }
+    );
+  }
+
+  // ============ SUBSCRIPTIONS ============
+
+  /**
+   * Get subscription status
+   */
+  getSubscriptionStatus(): Observable<SubscriptionStatus> {
+    return this.http.get<SubscriptionStatus>(
+      `${this.apiUrl}/subscriptions/status`,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  /**
+   * Create checkout session for subscription
+   */
+  createCheckout(plan: string): Observable<CheckoutResponse> {
+    return this.http.post<CheckoutResponse>(
+      `${this.apiUrl}/subscriptions/checkout?plan=${plan}`,
+      {},
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  /**
+   * Create customer portal session
+   */
+  createPortalSession(): Observable<PortalResponse> {
+    return this.http.post<PortalResponse>(
+      `${this.apiUrl}/subscriptions/portal`,
+      {},
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  /**
+   * Cancel subscription
+   */
+  cancelSubscription(): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(
+      `${this.apiUrl}/subscriptions/cancel`,
+      {},
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  /**
+   * Get referral code
+   */
+  getReferralCode(): Observable<ReferralInfo> {
+    return this.http.get<ReferralInfo>(
+      `${this.apiUrl}/subscriptions/referral-code`,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  /**
+   * Apply referral code
+   */
+  applyReferralCode(code: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(
+      `${this.apiUrl}/subscriptions/apply-referral?code=${code}`,
+      {},
+      { headers: this.getAuthHeaders() }
     );
   }
 }

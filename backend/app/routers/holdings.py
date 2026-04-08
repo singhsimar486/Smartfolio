@@ -6,6 +6,7 @@ from app.models import User, Holding
 from app.schemas import HoldingCreate, HoldingUpdate, HoldingResponse, HoldingImportItem, HoldingImportPreview, HoldingImportResult
 from app.services.auth import get_current_user
 from app.services.csv_parser import parse_csv_holdings
+from app.services.limits import check_holdings_limit
 
 
 router = APIRouter(prefix="/holdings", tags=["Holdings"])
@@ -19,14 +20,17 @@ def create_holding(
 ):
     """
     Create a new holding for the logged-in user.
-    
+
     This endpoint:
     1. Takes the holding data (ticker, quantity, avg_cost_basis)
     2. Gets the current user from JWT token
     3. Creates a new holding linked to that user
     4. Returns the created holding
     """
-    
+
+    # Check subscription limits
+    check_holdings_limit(current_user, db)
+
     # Check if user already has this ticker
     existing_holding = db.query(Holding).filter(
         Holding.user_id == current_user.id,

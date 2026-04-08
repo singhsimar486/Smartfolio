@@ -3,7 +3,7 @@ from fastapi import FastAPI, Request
 from starlette.responses import Response
 from contextlib import asynccontextmanager
 
-from app.routers import auth, holdings, market, portfolio, news, watchlist, alerts, insights, goals, dividends, settings, compare, transactions
+from app.routers import auth, holdings, market, portfolio, news, watchlist, alerts, insights, goals, dividends, settings, compare, transactions, subscriptions
 from app.database import engine, Base
 from app import models  # Import all models to register them
 
@@ -20,6 +20,35 @@ async def lifespan(app: FastAPI):
     if 'realized_gains' not in columns:
         with engine.connect() as conn:
             conn.execute(text('ALTER TABLE holdings ADD COLUMN realized_gains FLOAT DEFAULT 0.0'))
+            conn.commit()
+
+    # Add subscription columns to users table (migration)
+    user_columns = [col['name'] for col in inspector.get_columns('users')]
+    migrations = []
+    if 'subscription_tier' not in user_columns:
+        migrations.append("ALTER TABLE users ADD COLUMN subscription_tier VARCHAR(20) DEFAULT 'free'")
+    if 'stripe_customer_id' not in user_columns:
+        migrations.append("ALTER TABLE users ADD COLUMN stripe_customer_id VARCHAR(255)")
+    if 'stripe_subscription_id' not in user_columns:
+        migrations.append("ALTER TABLE users ADD COLUMN stripe_subscription_id VARCHAR(255)")
+    if 'subscription_status' not in user_columns:
+        migrations.append("ALTER TABLE users ADD COLUMN subscription_status VARCHAR(20) DEFAULT 'active'")
+    if 'subscription_ends_at' not in user_columns:
+        migrations.append("ALTER TABLE users ADD COLUMN subscription_ends_at TIMESTAMP")
+    if 'referral_code' not in user_columns:
+        migrations.append("ALTER TABLE users ADD COLUMN referral_code VARCHAR(20) UNIQUE")
+    if 'referred_by' not in user_columns:
+        migrations.append("ALTER TABLE users ADD COLUMN referred_by VARCHAR(36)")
+    if 'referral_count' not in user_columns:
+        migrations.append("ALTER TABLE users ADD COLUMN referral_count INTEGER DEFAULT 0")
+
+    if migrations:
+        with engine.connect() as conn:
+            for migration in migrations:
+                try:
+                    conn.execute(text(migration))
+                except Exception:
+                    pass  # Column might already exist
             conn.commit()
 
     yield
@@ -69,6 +98,7 @@ app.include_router(dividends.router)
 app.include_router(settings.router)
 app.include_router(compare.router)
 app.include_router(transactions.router)
+app.include_router(subscriptions.router)
 
 
 @app.get("/")

@@ -1,0 +1,238 @@
+<div class="min-h-screen bg-bg-primary">
+  <!-- Header -->
+  <nav class="border-b border-white/[0.06]">
+    <div class="max-w-7xl mx-auto px-6 py-4">
+      <div class="flex items-center justify-between">
+        <a routerLink="/" class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-accent flex items-center justify-center">
+            <svg class="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+            </svg>
+          </div>
+          <span class="text-xl font-bold">
+            <span class="text-white">Smart</span><span class="text-accent">Folio</span>
+          </span>
+        </a>
+        <div class="flex items-center gap-4">
+          <a *ngIf="!isLoggedIn" routerLink="/login" class="text-text-secondary hover:text-white transition-colors">Login</a>
+          <a *ngIf="!isLoggedIn" routerLink="/register" class="btn-primary !py-2 !px-5">Get Started</a>
+          <a *ngIf="isLoggedIn" routerLink="/dashboard" class="btn-primary !py-2 !px-5">Dashboard</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="max-w-7xl mx-auto px-6 py-16">
+    <!-- Hero -->
+    <div class="text-center mb-16 animate-fadeInUp">
+      <h1 class="text-display-lg text-white mb-4">Simple, Transparent Pricing</h1>
+      <p class="text-text-secondary text-xl max-w-2xl mx-auto mb-8">
+        Start free and upgrade when you're ready. No hidden fees, cancel anytime.
+      </p>
+
+      <!-- Billing Toggle -->
+      <div class="inline-flex items-center gap-4 bg-white/5 rounded-full p-2">
+        <button
+          (click)="isYearly = false"
+          [class]="!isYearly ? 'bg-accent text-black' : 'text-text-secondary hover:text-white'"
+          class="px-6 py-2 rounded-full font-medium transition-all"
+        >
+          Monthly
+        </button>
+        <button
+          (click)="isYearly = true"
+          [class]="isYearly ? 'bg-accent text-black' : 'text-text-secondary hover:text-white'"
+          class="px-6 py-2 rounded-full font-medium transition-all flex items-center gap-2"
+        >
+          Yearly
+          <span class="text-xs bg-profit text-black px-2 py-0.5 rounded-full">Save 33%</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Pricing Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
+      <div
+        *ngFor="let tier of tiers; let i = index"
+        class="relative rounded-2xl p-8 transition-all duration-500 animate-fadeInUp"
+        [class]="tier.highlighted ? 'bg-gradient-to-b from-accent/20 to-bg-card border-2 border-accent/50 scale-105 z-10' : 'bg-bg-card border border-white/10 hover:border-white/20'"
+        [style.animation-delay]="(i * 100) + 'ms'"
+      >
+        <!-- Popular Badge -->
+        <div *ngIf="tier.highlighted" class="absolute -top-4 left-1/2 -translate-x-1/2">
+          <span class="bg-accent text-black text-sm font-bold px-4 py-1 rounded-full">Most Popular</span>
+        </div>
+
+        <!-- Tier Header -->
+        <div class="mb-6">
+          <h3 class="text-xl font-bold text-white mb-2">{{ tier.name }}</h3>
+          <p class="text-text-secondary text-sm">{{ tier.description }}</p>
+        </div>
+
+        <!-- Price -->
+        <div class="mb-8">
+          <div class="flex items-baseline gap-1">
+            <span class="text-4xl font-bold text-white">${{ getPrice(tier) }}</span>
+            <span class="text-text-secondary">{{ getPriceLabel(tier) }}</span>
+          </div>
+          <p *ngIf="tier.price > 0 && isYearly" class="text-profit text-sm mt-1">
+            Save {{ getSavings(tier) }}% with yearly billing
+          </p>
+        </div>
+
+        <!-- CTA Button -->
+        <button
+          (click)="selectPlan(tier)"
+          [class]="tier.highlighted ? 'btn-primary w-full mb-8' : 'btn-secondary w-full mb-8'"
+        >
+          {{ tier.cta }}
+        </button>
+
+        <!-- Features -->
+        <div class="space-y-3">
+          <p class="text-sm font-medium text-white mb-4">What's included:</p>
+          <div *ngFor="let feature of tier.features" class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-profit shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span class="text-text-secondary text-sm">{{ feature }}</span>
+          </div>
+
+          <!-- Not Included (for free tier) -->
+          <div *ngIf="tier.notIncluded" class="pt-4 border-t border-white/10 mt-4">
+            <div *ngFor="let feature of tier.notIncluded" class="flex items-start gap-3 opacity-50">
+              <svg class="w-5 h-5 text-text-secondary shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              <span class="text-text-secondary text-sm">{{ feature }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature Comparison Table -->
+    <div class="mb-20">
+      <h2 class="text-2xl font-bold text-white text-center mb-10">Compare All Features</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="border-b border-white/10">
+              <th class="text-left py-4 px-6 text-text-secondary font-medium">Feature</th>
+              <th class="text-center py-4 px-6 text-white font-medium">Free</th>
+              <th class="text-center py-4 px-6 text-accent font-medium">Pro</th>
+              <th class="text-center py-4 px-6 text-white font-medium">Pro+</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5">
+            <tr>
+              <td class="py-4 px-6 text-white">Holdings</td>
+              <td class="py-4 px-6 text-center text-text-secondary">10</td>
+              <td class="py-4 px-6 text-center text-white">Unlimited</td>
+              <td class="py-4 px-6 text-center text-white">Unlimited</td>
+            </tr>
+            <tr>
+              <td class="py-4 px-6 text-white">Price Alerts</td>
+              <td class="py-4 px-6 text-center text-text-secondary">1</td>
+              <td class="py-4 px-6 text-center text-white">Unlimited</td>
+              <td class="py-4 px-6 text-center text-white">Unlimited</td>
+            </tr>
+            <tr>
+              <td class="py-4 px-6 text-white">Stock Lookups</td>
+              <td class="py-4 px-6 text-center text-text-secondary">5/day</td>
+              <td class="py-4 px-6 text-center text-white">Unlimited</td>
+              <td class="py-4 px-6 text-center text-white">Unlimited</td>
+            </tr>
+            <tr>
+              <td class="py-4 px-6 text-white">AI Insights</td>
+              <td class="py-4 px-6 text-center"><svg class="w-5 h-5 text-loss mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></td>
+              <td class="py-4 px-6 text-center"><svg class="w-5 h-5 text-profit mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></td>
+              <td class="py-4 px-6 text-center"><svg class="w-5 h-5 text-profit mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></td>
+            </tr>
+            <tr>
+              <td class="py-4 px-6 text-white">Price Predictions</td>
+              <td class="py-4 px-6 text-center"><svg class="w-5 h-5 text-loss mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></td>
+              <td class="py-4 px-6 text-center text-white">30 days</td>
+              <td class="py-4 px-6 text-center text-white">90 days</td>
+            </tr>
+            <tr>
+              <td class="py-4 px-6 text-white">Realized/Unrealized Gains</td>
+              <td class="py-4 px-6 text-center"><svg class="w-5 h-5 text-loss mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></td>
+              <td class="py-4 px-6 text-center"><svg class="w-5 h-5 text-profit mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></td>
+              <td class="py-4 px-6 text-center"><svg class="w-5 h-5 text-profit mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></td>
+            </tr>
+            <tr>
+              <td class="py-4 px-6 text-white">Weekly Digest</td>
+              <td class="py-4 px-6 text-center"><svg class="w-5 h-5 text-loss mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></td>
+              <td class="py-4 px-6 text-center"><svg class="w-5 h-5 text-profit mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></td>
+              <td class="py-4 px-6 text-center"><svg class="w-5 h-5 text-profit mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></td>
+            </tr>
+            <tr>
+              <td class="py-4 px-6 text-white">Email Notifications</td>
+              <td class="py-4 px-6 text-center"><svg class="w-5 h-5 text-loss mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></td>
+              <td class="py-4 px-6 text-center"><svg class="w-5 h-5 text-profit mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></td>
+              <td class="py-4 px-6 text-center"><svg class="w-5 h-5 text-profit mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></td>
+            </tr>
+            <tr>
+              <td class="py-4 px-6 text-white">Multiple Portfolios</td>
+              <td class="py-4 px-6 text-center"><svg class="w-5 h-5 text-loss mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></td>
+              <td class="py-4 px-6 text-center"><svg class="w-5 h-5 text-loss mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></td>
+              <td class="py-4 px-6 text-center"><svg class="w-5 h-5 text-profit mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></td>
+            </tr>
+            <tr>
+              <td class="py-4 px-6 text-white">API Access</td>
+              <td class="py-4 px-6 text-center"><svg class="w-5 h-5 text-loss mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></td>
+              <td class="py-4 px-6 text-center"><svg class="w-5 h-5 text-loss mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></td>
+              <td class="py-4 px-6 text-center"><svg class="w-5 h-5 text-profit mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></td>
+            </tr>
+            <tr>
+              <td class="py-4 px-6 text-white">Support</td>
+              <td class="py-4 px-6 text-center text-text-secondary">Community</td>
+              <td class="py-4 px-6 text-center text-white">Priority Email</td>
+              <td class="py-4 px-6 text-center text-white">Dedicated</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="mb-20">
+      <h2 class="text-2xl font-bold text-white text-center mb-10">Frequently Asked Questions</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        <div *ngFor="let faq of faqs" class="bg-bg-card rounded-xl p-6 border border-white/10">
+          <h3 class="text-white font-semibold mb-2">{{ faq.question }}</h3>
+          <p class="text-text-secondary text-sm">{{ faq.answer }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="text-center bg-gradient-to-r from-accent/10 via-accent/5 to-accent/10 rounded-2xl p-12 border border-accent/20">
+      <h2 class="text-2xl font-bold text-white mb-4">Ready to take control of your investments?</h2>
+      <p class="text-text-secondary mb-8 max-w-xl mx-auto">
+        Join thousands of investors who use SmartFolio to track their portfolios and make smarter decisions.
+      </p>
+      <a routerLink="/register" class="btn-primary inline-flex items-center gap-2">
+        Start Free Trial
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+        </svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="border-t border-white/10 mt-20">
+    <div class="max-w-7xl mx-auto px-6 py-8">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+        <p class="text-text-secondary text-sm">&copy; 2024 SmartFolio. All rights reserved.</p>
+        <div class="flex items-center gap-6">
+          <a href="#" class="text-text-secondary hover:text-white text-sm transition-colors">Privacy Policy</a>
+          <a href="#" class="text-text-secondary hover:text-white text-sm transition-colors">Terms of Service</a>
+          <a href="#" class="text-text-secondary hover:text-white text-sm transition-colors">Contact</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>

@@ -9,6 +9,7 @@ from app.schemas.alert import AlertCreate, AlertUpdate, AlertResponse, AlertChec
 from app.services.auth import get_current_user
 from app.services.market_data import get_stock_quote
 from app.services.email import send_alert_email, is_email_configured
+from app.services.limits import check_alerts_limit
 
 
 router = APIRouter(prefix="/alerts", tags=["Alerts"])
@@ -39,6 +40,9 @@ def create_alert(
     current_user: User = Depends(get_current_user)
 ):
     """Create a new price alert."""
+    # Check subscription limits
+    check_alerts_limit(current_user, db)
+
     ticker = alert_data.ticker.upper()
 
     # Validate ticker exists
