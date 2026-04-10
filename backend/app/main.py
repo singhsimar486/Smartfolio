@@ -3,7 +3,7 @@ from fastapi import FastAPI, Request
 from starlette.responses import Response
 from contextlib import asynccontextmanager
 
-from app.routers import auth, holdings, market, portfolio, news, watchlist, alerts, insights, goals, dividends, settings, compare, transactions, subscriptions
+from app.routers import auth, holdings, market, portfolio, news, watchlist, alerts, insights, goals, dividends, settings, compare, transactions, subscriptions, competitions
 from app.database import engine, Base
 from app import models  # Import all models to register them
 
@@ -99,6 +99,7 @@ app.include_router(settings.router)
 app.include_router(compare.router)
 app.include_router(transactions.router)
 app.include_router(subscriptions.router)
+app.include_router(competitions.router)
 
 
 @app.get("/")

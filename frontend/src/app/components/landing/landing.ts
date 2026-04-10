@@ -42,6 +42,16 @@ export class Landing implements OnInit, OnDestroy, AfterViewInit {
       title: 'Portfolio Analytics',
       description: 'Visualize allocation, track gains, and optimize your investments.'
     },
+    {
+      icon: 'trophy',
+      title: 'Trading Arena',
+      description: 'Compete in virtual trading competitions with $100K paper money. Win prizes and earn achievements.'
+    },
+    {
+      icon: 'target',
+      title: 'Price Predictions',
+      description: 'View AI-powered stock price predictions with confidence bands and trend analysis.'
+    },
   ];
 
   ngOnInit(): void {

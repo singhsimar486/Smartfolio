@@ -6,3 +6,6 @@ from app.models.alert import PriceAlert
 from app.models.insight import Insight, ChatMessage, WeeklyDigest
 from app.models.goal import PortfolioGoal
 from app.models.dividend import Dividend
+from app.models.competition import (
+    Competition, VirtualPortfolio, VirtualHolding, VirtualTrade, Achievement
+)

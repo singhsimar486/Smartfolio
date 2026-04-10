@@ -1,0 +1,436 @@
+<div class="arena-container">
+  <!-- Header -->
+  <div class="arena-header">
+    <div class="header-content">
+      <h1 class="arena-title">Trading Arena</h1>
+      <p class="arena-subtitle">Compete with virtual $100K portfolios and win prizes</p>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="stats-overview" *ngIf="stats">
+      <div class="stat-item">
+        <span class="stat-value">{{ stats.total_competitions }}</span>
+        <span class="stat-label">Competitions</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">{{ stats.total_trades }}</span>
+        <span class="stat-label">Total Trades</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">{{ stats.win_rate.toFixed(0) }}%</span>
+        <span class="stat-label">Win Rate</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">{{ stats.achievements_unlocked }}/{{ stats.total_achievements }}</span>
+        <span class="stat-label">Achievements</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="loading">
+    <div class="loading-spinner"></div>
+    <p>Loading arena...</p>
+  </div>
+
+  <!-- Main Content -->
+  <div class="arena-content" *ngIf="!loading">
+    <!-- Tabs -->
+    <div class="tabs">
+      <button
+        class="tab"
+        [class.active]="activeTab === 'competitions'"
+        (click)="activeTab = 'competitions'"
+      >
+        Competitions
+      </button>
+      <button
+        class="tab"
+        [class.active]="activeTab === 'portfolio'"
+        (click)="activeTab = 'portfolio'"
+        [disabled]="!portfolio"
+      >
+        My Portfolio
+      </button>
+      <button
+        class="tab"
+        [class.active]="activeTab === 'leaderboard'"
+        (click)="activeTab = 'leaderboard'"
+        [disabled]="!activeCompetition?.user_joined"
+      >
+        Leaderboard
+      </button>
+      <button
+        class="tab"
+        [class.active]="activeTab === 'trades'"
+        (click)="activeTab = 'trades'"
+        [disabled]="!portfolio"
+      >
+        Trade History
+      </button>
+      <button
+        class="tab"
+        [class.active]="activeTab === 'achievements'"
+        (click)="activeTab = 'achievements'"
+      >
+        Achievements
+      </button>
+    </div>
+
+    <!-- Competitions Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'competitions'">
+      <div class="filter-bar">
+        <button
+          class="filter-btn"
+          [class.active]="statusFilter === 'all'"
+          (click)="statusFilter = 'all'"
+        >All</button>
+        <button
+          class="filter-btn"
+          [class.active]="statusFilter === 'active'"
+          (click)="statusFilter = 'active'"
+        >Active</button>
+        <button
+          class="filter-btn"
+          [class.active]="statusFilter === 'upcoming'"
+          (click)="statusFilter = 'upcoming'"
+        >Upcoming</button>
+        <button
+          class="filter-btn"
+          [class.active]="statusFilter === 'ended'"
+          (click)="statusFilter = 'ended'"
+        >Ended</button>
+      </div>
+
+      <div class="competitions-grid">
+        <div
+          class="competition-card"
+          *ngFor="let comp of getFilteredCompetitions()"
+          [class.selected]="activeCompetition?.id === comp.id"
+          (click)="selectCompetition(comp)"
+        >
+          <div class="comp-header">
+            <span class="comp-type">{{ getTypeLabel(comp.type) }}</span>
+            <span class="comp-status" [ngClass]="getStatusClass(comp.status)">
+              {{ comp.status | titlecase }}
+            </span>
+          </div>
+
+          <h3 class="comp-name">{{ comp.name }}</h3>
+          <p class="comp-description">{{ comp.description }}</p>
+
+          <div class="comp-details">
+            <div class="detail">
+              <span class="detail-label">Starting Balance</span>
+              <span class="detail-value">{{ formatCurrency(comp.starting_balance) }}</span>
+            </div>
+            <div class="detail">
+              <span class="detail-label">Participants</span>
+              <span class="detail-value">{{ comp.participant_count }}{{ comp.max_participants ? '/' + comp.max_participants : '' }}</span>
+            </div>
+            <div class="detail">
+              <span class="detail-label">Dates</span>
+              <span class="detail-value">{{ formatDate(comp.start_date) }} - {{ formatDate(comp.end_date) }}</span>
+            </div>
+            <div class="detail" *ngIf="comp.prize_description">
+              <span class="detail-label">Prize</span>
+              <span class="detail-value prize">{{ comp.prize_description }}</span>
+            </div>
+          </div>
+
+          <div class="comp-footer">
+            <span class="user-rank" *ngIf="comp.user_joined && comp.user_rank">
+              Your Rank: #{{ comp.user_rank }}
+            </span>
+            <button
+              class="join-btn"
+              *ngIf="!comp.user_joined && comp.status !== 'ended'"
+              [disabled]="joining"
+              (click)="joinCompetition(comp); $event.stopPropagation()"
+            >
+              {{ joining ? 'Joining...' : 'Join Competition' }}
+            </button>
+            <span class="joined-badge" *ngIf="comp.user_joined">
+              Joined
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="getFilteredCompetitions().length === 0">
+        <p>No {{ statusFilter === 'all' ? '' : statusFilter }} competitions found.</p>
+      </div>
+    </div>
+
+    <!-- Portfolio Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'portfolio' && portfolio">
+      <div class="portfolio-header">
+        <div class="portfolio-value">
+          <span class="value-label">Portfolio Value</span>
+          <span class="value-amount">{{ formatCurrency(portfolio.total_value) }}</span>
+          <span
+            class="value-change"
+            [class.positive]="portfolio.total_return >= 0"
+            [class.negative]="portfolio.total_return < 0"
+          >
+            {{ formatCurrency(portfolio.total_return) }} ({{ formatPercent(portfolio.total_return_percent) }})
+          </span>
+        </div>
+
+        <div class="portfolio-stats">
+          <div class="pstat">
+            <span class="pstat-value">{{ formatCurrency(portfolio.cash_balance) }}</span>
+            <span class="pstat-label">Cash Available</span>
+          </div>
+          <div class="pstat">
+            <span class="pstat-value">#{{ portfolio.current_rank || '-' }}</span>
+            <span class="pstat-label">Current Rank</span>
+          </div>
+          <div class="pstat">
+            <span class="pstat-value">{{ portfolio.trades_count }}</span>
+            <span class="pstat-label">Total Trades</span>
+          </div>
+          <div class="pstat">
+            <span class="pstat-value">{{ portfolio.winning_trades }}/{{ portfolio.losing_trades }}</span>
+            <span class="pstat-label">Wins/Losses</span>
+          </div>
+        </div>
+
+        <div class="trade-actions" *ngIf="activeCompetition?.status === 'active'">
+          <button class="trade-btn buy" (click)="openTradeModal('BUY')">Buy Stock</button>
+          <button class="trade-btn sell" (click)="openTradeModal('SELL')">Sell Stock</button>
+        </div>
+      </div>
+
+      <!-- Holdings -->
+      <div class="holdings-section">
+        <h3>Holdings</h3>
+        <div class="holdings-table" *ngIf="portfolio.holdings.length > 0">
+          <div class="table-header">
+            <span>Ticker</span>
+            <span>Quantity</span>
+            <span>Avg Cost</span>
+            <span>Current Price</span>
+            <span>Value</span>
+            <span>P/L</span>
+          </div>
+          <div class="table-row" *ngFor="let holding of portfolio.holdings">
+            <span class="ticker">{{ holding.ticker }}</span>
+            <span>{{ holding.quantity }}</span>
+            <span>{{ formatCurrency(holding.avg_cost) }}</span>
+            <span>{{ holding.current_price ? formatCurrency(holding.current_price) : '-' }}</span>
+            <span>{{ formatCurrency(getHoldingValue(holding)) }}</span>
+            <span
+              [class.positive]="(holding.profit_loss || 0) >= 0"
+              [class.negative]="(holding.profit_loss || 0) < 0"
+            >
+              {{ holding.profit_loss ? formatCurrency(holding.profit_loss) : '-' }}
+              <small *ngIf="holding.profit_loss_percent">({{ formatPercent(holding.profit_loss_percent) }})</small>
+            </span>
+          </div>
+        </div>
+        <div class="empty-holdings" *ngIf="portfolio.holdings.length === 0">
+          <p>No holdings yet. Start trading to build your portfolio!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Leaderboard Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'leaderboard'">
+      <div class="leaderboard-header" *ngIf="activeCompetition">
+        <h3>{{ activeCompetition.name }} - Leaderboard</h3>
+      </div>
+
+      <div class="leaderboard-table" *ngIf="leaderboard.length > 0">
+        <div class="lb-header">
+          <span>Rank</span>
+          <span>Trader</span>
+          <span>Portfolio Value</span>
+          <span>Return</span>
+          <span>Trades</span>
+        </div>
+        <div
+          class="lb-row"
+          *ngFor="let entry of leaderboard"
+          [class.current-user]="entry.is_current_user"
+          [class.top-3]="entry.rank <= 3"
+        >
+          <span class="rank">
+            <span class="rank-badge" *ngIf="entry.rank <= 3">{{ getRankBadge(entry.rank) }}</span>
+            <span *ngIf="entry.rank > 3">#{{ entry.rank }}</span>
+          </span>
+          <span class="username">
+            {{ entry.username }}
+            <span class="you-badge" *ngIf="entry.is_current_user">(You)</span>
+          </span>
+          <span>{{ formatCurrency(entry.total_value) }}</span>
+          <span
+            [class.positive]="entry.total_return_percent >= 0"
+            [class.negative]="entry.total_return_percent < 0"
+          >
+            {{ formatPercent(entry.total_return_percent) }}
+          </span>
+          <span>{{ entry.trades_count }}</span>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="leaderboard.length === 0">
+        <p>No participants yet.</p>
+      </div>
+    </div>
+
+    <!-- Trades Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'trades'">
+      <div class="trades-table" *ngIf="trades.length > 0">
+        <div class="trades-header">
+          <span>Date</span>
+          <span>Ticker</span>
+          <span>Type</span>
+          <span>Quantity</span>
+          <span>Price</span>
+          <span>Total</span>
+          <span>P/L</span>
+        </div>
+        <div class="trades-row" *ngFor="let trade of trades">
+          <span>{{ formatDateTime(trade.executed_at) }}</span>
+          <span class="ticker">{{ trade.ticker }}</span>
+          <span class="trade-type" [ngClass]="trade.type.toLowerCase()">{{ trade.type }}</span>
+          <span>{{ trade.quantity }}</span>
+          <span>{{ formatCurrency(trade.price) }}</span>
+          <span>{{ formatCurrency(trade.total_value) }}</span>
+          <span
+            *ngIf="trade.realized_pl !== null"
+            [class.positive]="trade.realized_pl >= 0"
+            [class.negative]="trade.realized_pl < 0"
+          >
+            {{ formatCurrency(trade.realized_pl) }}
+          </span>
+          <span *ngIf="trade.realized_pl === null">-</span>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="trades.length === 0">
+        <p>No trades yet. Start trading to see your history!</p>
+      </div>
+    </div>
+
+    <!-- Achievements Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'achievements'">
+      <div class="achievements-section">
+        <h3>Unlocked Achievements</h3>
+        <div class="achievements-grid" *ngIf="getUnlockedAchievements().length > 0">
+          <div class="achievement-card unlocked" *ngFor="let ach of getUnlockedAchievements()">
+            <span class="ach-icon">{{ ach.icon }}</span>
+            <span class="ach-name">{{ ach.name }}</span>
+            <span class="ach-desc">{{ ach.description }}</span>
+            <span class="ach-date" *ngIf="ach.unlocked_at">{{ formatDate(ach.unlocked_at) }}</span>
+          </div>
+        </div>
+        <div class="empty-achievements" *ngIf="getUnlockedAchievements().length === 0">
+          <p>No achievements unlocked yet. Start trading to earn badges!</p>
+        </div>
+      </div>
+
+      <div class="achievements-section">
+        <h3>Locked Achievements</h3>
+        <div class="achievements-grid">
+          <div class="achievement-card locked" *ngFor="let ach of getLockedAchievements()">
+            <span class="ach-icon locked-icon">?</span>
+            <span class="ach-name">{{ ach.name }}</span>
+            <span class="ach-desc">{{ ach.description }}</span>
+            <div class="progress-bar" *ngIf="ach.target > 1">
+              <div class="progress-fill" [style.width.%]="(ach.progress / ach.target) * 100"></div>
+              <span class="progress-text">{{ ach.progress }}/{{ ach.target }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trade Modal -->
+  <div class="modal-overlay" *ngIf="showTradeModal" (click)="closeTradeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ tradeType === 'BUY' ? 'Buy Stock' : 'Sell Stock' }}</h3>
+        <button class="close-btn" (click)="closeTradeModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Stock Ticker</label>
+          <input
+            type="text"
+            [(ngModel)]="tradeTicker"
+            (input)="searchTicker()"
+            placeholder="Search by symbol..."
+            [disabled]="tradeType === 'SELL'"
+          />
+          <div class="ticker-results" *ngIf="tickerSearchResults.length > 0">
+            <div
+              class="ticker-result"
+              *ngFor="let result of tickerSearchResults"
+              (click)="selectTicker(result.symbol)"
+            >
+              <span class="result-symbol">{{ result.symbol }}</span>
+              <span class="result-name">{{ result.name }}</span>
+            </div>
+          </div>
+
+          <!-- For sell, show holdings -->
+          <div class="holdings-select" *ngIf="tradeType === 'SELL' && portfolio">
+            <div
+              class="holding-option"
+              *ngFor="let h of portfolio.holdings"
+              [class.selected]="tradeTicker === h.ticker"
+              (click)="selectTicker(h.ticker)"
+            >
+              <span>{{ h.ticker }}</span>
+              <span>{{ h.quantity }} shares</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Quantity</label>
+          <input
+            type="number"
+            [(ngModel)]="tradeQuantity"
+            min="1"
+            placeholder="Number of shares"
+          />
+        </div>
+
+        <div class="trade-summary" *ngIf="tradePrice">
+          <div class="summary-row">
+            <span>Price per share:</span>
+            <span>{{ formatCurrency(tradePrice) }}</span>
+          </div>
+          <div class="summary-row total">
+            <span>Total:</span>
+            <span>{{ formatCurrency(tradeTotal) }}</span>
+          </div>
+          <div class="summary-row" *ngIf="tradeType === 'BUY' && portfolio">
+            <span>Cash Available:</span>
+            <span [class.insufficient]="tradeTotal > portfolio.cash_balance">
+              {{ formatCurrency(portfolio.cash_balance) }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="cancel-btn" (click)="closeTradeModal()">Cancel</button>
+        <button
+          class="execute-btn"
+          [class.buy]="tradeType === 'BUY'"
+          [class.sell]="tradeType === 'SELL'"
+          [disabled]="!canExecuteTrade || tradeLoading"
+          (click)="executeTrade()"
+        >
+          {{ tradeLoading ? 'Executing...' : 'Execute ' + tradeType }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

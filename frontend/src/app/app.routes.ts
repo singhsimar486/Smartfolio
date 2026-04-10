@@ -11,6 +11,7 @@ import { Gains } from './components/gains/gains';
 import { Landing } from './components/landing/landing';
 import { StockLookup } from './components/stock-lookup/stock-lookup';
 import { Pricing } from './components/pricing/pricing';
+import { ArenaComponent } from './components/arena/arena';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -31,6 +32,7 @@ export const routes: Routes = [
   { path: 'transactions', component: Transactions, canActivate: [authGuard] },
   { path: 'gains', component: Gains, canActivate: [authGuard] },
   { path: 'lookup', component: StockLookup, canActivate: [authGuard] },
+  { path: 'arena', component: ArenaComponent, canActivate: [authGuard] },
 
   // Wildcard - redirect unknown routes to dashboard
   { path: '**', redirectTo: '/dashboard' }

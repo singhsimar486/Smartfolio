@@ -464,6 +464,131 @@ export interface ReferralInfo {
   referral_link: string;
 }
 
+// ============ COMPETITION INTERFACES ============
+
+/**
+ * Interface for a competition
+ */
+export interface Competition {
+  id: string;
+  name: string;
+  description: string | null;
+  type: 'weekly' | 'monthly' | 'special';
+  status: 'upcoming' | 'active' | 'ended';
+  starting_balance: number;
+  max_participants: number | null;
+  entry_fee: number;
+  prize_description: string | null;
+  start_date: string;
+  end_date: string;
+  created_at: string;
+  participant_count: number;
+  user_joined: boolean;
+  user_rank: number | null;
+}
+
+/**
+ * Interface for a virtual portfolio in a competition
+ */
+export interface VirtualPortfolio {
+  id: string;
+  user_id: string;
+  competition_id: string;
+  cash_balance: number;
+  total_value: number;
+  total_return: number;
+  total_return_percent: number;
+  current_rank: number | null;
+  best_rank: number | null;
+  trades_count: number;
+  winning_trades: number;
+  losing_trades: number;
+  joined_at: string;
+  last_trade_at: string | null;
+  holdings: VirtualHolding[];
+}
+
+/**
+ * Interface for a virtual holding
+ */
+export interface VirtualHolding {
+  id: string;
+  ticker: string;
+  quantity: number;
+  avg_cost: number;
+  current_price: number | null;
+  current_value: number | null;
+  profit_loss: number | null;
+  profit_loss_percent: number | null;
+}
+
+/**
+ * Interface for a virtual trade
+ */
+export interface VirtualTrade {
+  id: string;
+  ticker: string;
+  type: 'BUY' | 'SELL';
+  quantity: number;
+  price: number;
+  total_value: number;
+  realized_pl: number | null;
+  executed_at: string;
+}
+
+/**
+ * Interface for making a virtual trade
+ */
+export interface VirtualTradeCreate {
+  ticker: string;
+  type: 'BUY' | 'SELL';
+  quantity: number;
+}
+
+/**
+ * Interface for leaderboard entry
+ */
+export interface LeaderboardEntry {
+  rank: number;
+  user_id: string;
+  username: string;
+  total_value: number;
+  total_return: number;
+  total_return_percent: number;
+  trades_count: number;
+  is_current_user: boolean;
+}
+
+/**
+ * Interface for achievement
+ */
+export interface Achievement {
+  id: string;
+  code: string;
+  name: string;
+  description: string;
+  icon: string;
+  type: 'trading' | 'competition' | 'streak' | 'milestone';
+  progress: number;
+  target: number;
+  unlocked: boolean;
+  unlocked_at: string | null;
+}
+
+/**
+ * Interface for user competition stats
+ */
+export interface CompetitionStats {
+  total_competitions: number;
+  active_competitions: number;
+  best_rank: number | null;
+  total_trades: number;
+  total_profit_loss: number;
+  win_rate: number;
+  achievements_unlocked: number;
+  total_achievements: number;
+}
+
 /**
  * Interface for portfolio performance data point
  */
@@ -1156,6 +1281,99 @@ export class ApiService {
     return this.http.post<{ message: string }>(
       `${this.apiUrl}/subscriptions/apply-referral?code=${code}`,
       {},
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  // ============ COMPETITIONS ============
+
+  /**
+   * Get list of competitions
+   */
+  getCompetitions(status?: string): Observable<Competition[]> {
+    let url = `${this.apiUrl}/competitions/`;
+    if (status) url += `?status=${status}`;
+    return this.http.get<Competition[]>(url, { headers: this.getAuthHeaders() });
+  }
+
+  /**
+   * Get a single competition
+   */
+  getCompetition(id: string): Observable<Competition> {
+    return this.http.get<Competition>(
+      `${this.apiUrl}/competitions/${id}`,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  /**
+   * Join a competition
+   */
+  joinCompetition(competitionId: string): Observable<VirtualPortfolio> {
+    return this.http.post<VirtualPortfolio>(
+      `${this.apiUrl}/competitions/${competitionId}/join`,
+      {},
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  /**
+   * Get user's portfolio for a competition
+   */
+  getCompetitionPortfolio(competitionId: string): Observable<VirtualPortfolio> {
+    return this.http.get<VirtualPortfolio>(
+      `${this.apiUrl}/competitions/${competitionId}/portfolio`,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  /**
+   * Make a virtual trade
+   */
+  makeVirtualTrade(competitionId: string, trade: VirtualTradeCreate): Observable<{ trade: VirtualTrade; portfolio: VirtualPortfolio }> {
+    return this.http.post<{ trade: VirtualTrade; portfolio: VirtualPortfolio }>(
+      `${this.apiUrl}/competitions/${competitionId}/trade`,
+      trade,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  /**
+   * Get trade history for a competition
+   */
+  getCompetitionTrades(competitionId: string): Observable<VirtualTrade[]> {
+    return this.http.get<VirtualTrade[]>(
+      `${this.apiUrl}/competitions/${competitionId}/trades`,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  /**
+   * Get competition leaderboard
+   */
+  getLeaderboard(competitionId: string, limit: number = 50): Observable<LeaderboardEntry[]> {
+    return this.http.get<LeaderboardEntry[]>(
+      `${this.apiUrl}/competitions/${competitionId}/leaderboard?limit=${limit}`,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  /**
+   * Get user's achievements
+   */
+  getAchievements(): Observable<Achievement[]> {
+    return this.http.get<Achievement[]>(
+      `${this.apiUrl}/competitions/achievements/me`,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  /**
+   * Get user's competition stats
+   */
+  getCompetitionStats(): Observable<CompetitionStats> {
+    return this.http.get<CompetitionStats>(
+      `${this.apiUrl}/competitions/stats/me`,
       { headers: this.getAuthHeaders() }
     );
   }
