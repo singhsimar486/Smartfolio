@@ -50,4 +50,13 @@ export class ToastService {
     const message = `Price hit $${currentPrice.toFixed(2)} (target: ${conditionText} $${targetPrice.toFixed(2)})`;
     this.show('alert', title, message, 8000);
   }
+
+  // Shorthand methods for arena component compatibility
+  success(message: string, duration: number = 5000): void {
+    this.show('success', 'Success', message, duration);
+  }
+
+  error(message: string, duration: number = 5000): void {
+    this.show('error', 'Error', message, duration);
+  }
 }

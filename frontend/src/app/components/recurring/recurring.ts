@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ApiService, RecurringInvestment, RecurringSummary, RecurringCreate } from '../../services/api';
+import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../services/auth';
 import { ToastService } from '../../services/toast';
 import { Navbar } from '../navbar/navbar';
@@ -61,7 +62,7 @@ export class Recurring implements OnInit {
   loadPlans(): void {
     this.isLoading = true;
     this.apiService.getRecurringInvestments().subscribe({
-      next: (data) => {
+      next: (data: RecurringInvestment[]) => {
         this.plans = data;
         this.isLoading = false;
         this.cdr.detectChanges();
@@ -76,7 +77,7 @@ export class Recurring implements OnInit {
 
   loadSummary(): void {
     this.apiService.getRecurringSummary().subscribe({
-      next: (data) => {
+      next: (data: RecurringSummary) => {
         this.summary = data;
         this.cdr.detectChanges();
       },
@@ -128,7 +129,7 @@ export class Recurring implements OnInit {
         this.loadSummary();
         this.isAdding = false;
       },
-      error: (error) => {
+      error: (error: HttpErrorResponse) => {
         this.isAdding = false;
         this.formError = error.error?.detail || 'Failed to create plan';
         this.cdr.detectChanges();
@@ -138,7 +139,7 @@ export class Recurring implements OnInit {
 
   toggleActive(plan: RecurringInvestment): void {
     this.apiService.updateRecurringInvestment(plan.id, { is_active: !plan.is_active }).subscribe({
-      next: (updated) => {
+      next: (updated: RecurringInvestment) => {
         const status = updated.is_active ? 'activated' : 'paused';
         this.toastService.showSuccess('Updated', `${plan.ticker} plan ${status}`);
         this.loadPlans();
@@ -152,7 +153,7 @@ export class Recurring implements OnInit {
 
   executePlan(plan: RecurringInvestment): void {
     this.apiService.executeRecurringInvestment(plan.id).subscribe({
-      next: (updated) => {
+      next: (_updated: RecurringInvestment) => {
         this.toastService.showSuccess('Executed', `Invested $${plan.amount} in ${plan.ticker}`);
         this.loadPlans();
         this.loadSummary();

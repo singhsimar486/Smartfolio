@@ -48,7 +48,7 @@ export class Allocation implements OnInit {
   loadAllocation(): void {
     this.isLoading = true;
     this.apiService.getAllocation().subscribe({
-      next: (data) => {
+      next: (data: AllocationResponse) => {
         this.allocation = data;
         this.isLoading = false;
         this.cdr.detectChanges();

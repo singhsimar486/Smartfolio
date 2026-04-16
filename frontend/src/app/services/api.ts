@@ -661,6 +661,104 @@ export interface HoldingImportResult {
   errors: string[];
 }
 
+// ============ RECURRING INVESTMENTS INTERFACES ============
+
+/**
+ * Interface for an upcoming investment
+ */
+export interface UpcomingInvestment {
+  ticker: string;
+  amount: number;
+  date: string;
+}
+
+/**
+ * Interface for a recurring investment plan
+ */
+export interface RecurringInvestment {
+  id: string;
+  user_id: string;
+  ticker: string;
+  stock_name: string | null;
+  amount: number;
+  frequency: string;
+  is_active: boolean;
+  start_date: string;
+  next_investment_date: string;
+  total_invested: number;
+  total_shares: number;
+  current_value: number | null;
+  gain_loss: number | null;
+  gain_loss_percent: number | null;
+  executions_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+/**
+ * Interface for recurring investment summary
+ */
+export interface RecurringSummary {
+  active_plans: number;
+  total_plans: number;
+  total_monthly_investment: number;
+  total_invested_all_time: number;
+  upcoming_investments: UpcomingInvestment[];
+}
+
+/**
+ * Interface for creating a recurring investment
+ */
+export interface RecurringCreate {
+  ticker: string;
+  amount: number;
+  frequency: string;
+  start_date: string;
+}
+
+/**
+ * Interface for updating a recurring investment
+ */
+export interface RecurringUpdate {
+  amount?: number;
+  frequency?: string;
+  is_active?: boolean;
+}
+
+// ============ ALLOCATION INTERFACES ============
+
+/**
+ * Interface for sector allocation
+ */
+export interface SectorAllocation {
+  sector: string;
+  value: number;
+  percentage: number;
+  holdings_count: number;
+  tickers: string[];
+}
+
+/**
+ * Interface for holding allocation
+ */
+export interface HoldingAllocation {
+  ticker: string;
+  name: string;
+  sector: string | null;
+  value: number;
+  percentage: number;
+}
+
+/**
+ * Interface for allocation response
+ */
+export interface AllocationResponse {
+  total_value: number;
+  by_sector: SectorAllocation[];
+  by_holding: HoldingAllocation[];
+  recommendations: string[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -1374,6 +1472,83 @@ export class ApiService {
   getCompetitionStats(): Observable<CompetitionStats> {
     return this.http.get<CompetitionStats>(
       `${this.apiUrl}/competitions/stats/me`,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  // ============ RECURRING INVESTMENTS ============
+
+  /**
+   * Get all recurring investments
+   */
+  getRecurringInvestments(): Observable<RecurringInvestment[]> {
+    return this.http.get<RecurringInvestment[]>(
+      `${this.apiUrl}/recurring/`,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  /**
+   * Get recurring investments summary
+   */
+  getRecurringSummary(): Observable<RecurringSummary> {
+    return this.http.get<RecurringSummary>(
+      `${this.apiUrl}/recurring/summary`,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  /**
+   * Create a new recurring investment
+   */
+  createRecurringInvestment(data: RecurringCreate): Observable<RecurringInvestment> {
+    return this.http.post<RecurringInvestment>(
+      `${this.apiUrl}/recurring/`,
+      data,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  /**
+   * Update a recurring investment
+   */
+  updateRecurringInvestment(id: string, data: RecurringUpdate): Observable<RecurringInvestment> {
+    return this.http.put<RecurringInvestment>(
+      `${this.apiUrl}/recurring/${id}`,
+      data,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  /**
+   * Execute a recurring investment manually
+   */
+  executeRecurringInvestment(id: string): Observable<RecurringInvestment> {
+    return this.http.post<RecurringInvestment>(
+      `${this.apiUrl}/recurring/${id}/execute`,
+      {},
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  /**
+   * Delete a recurring investment
+   */
+  deleteRecurringInvestment(id: string): Observable<void> {
+    return this.http.delete<void>(
+      `${this.apiUrl}/recurring/${id}`,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  // ============ ALLOCATION ============
+
+  /**
+   * Get portfolio allocation analysis
+   */
+  getAllocation(): Observable<AllocationResponse> {
+    return this.http.get<AllocationResponse>(
+      `${this.apiUrl}/portfolio/allocation`,
       { headers: this.getAuthHeaders() }
     );
   }
