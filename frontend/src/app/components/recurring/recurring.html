@@ -1,0 +1,261 @@
+<div class="min-h-screen bg-bg-primary">
+  <app-navbar></app-navbar>
+
+  <main class="max-w-7xl mx-auto px-6 py-8">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-3xl font-bold text-white mb-2">Recurring Investments</h1>
+        <p class="text-text-secondary">Automate your dollar-cost averaging strategy</p>
+      </div>
+      <button
+        (click)="openAddModal()"
+        class="bg-accent hover:bg-accent/80 text-black font-semibold px-6 py-3 rounded-xl transition-all flex items-center gap-2"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        </svg>
+        New DCA Plan
+      </button>
+    </div>
+
+    <!-- Summary Cards -->
+    <div *ngIf="summary" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="bg-bg-card rounded-2xl border border-gray-800 p-5">
+        <p class="text-text-secondary text-sm mb-1">Active Plans</p>
+        <p class="text-2xl font-bold text-accent">{{ summary.active_plans }}</p>
+        <p class="text-text-secondary text-xs mt-1">of {{ summary.total_plans }} total</p>
+      </div>
+      <div class="bg-bg-card rounded-2xl border border-gray-800 p-5">
+        <p class="text-text-secondary text-sm mb-1">Monthly Investment</p>
+        <p class="text-2xl font-bold text-white">{{ formatCurrency(summary.total_monthly_investment) }}</p>
+      </div>
+      <div class="bg-bg-card rounded-2xl border border-gray-800 p-5">
+        <p class="text-text-secondary text-sm mb-1">Total Invested</p>
+        <p class="text-2xl font-bold text-gain">{{ formatCurrency(summary.total_invested_all_time) }}</p>
+      </div>
+      <div class="bg-bg-card rounded-2xl border border-gray-800 p-5">
+        <p class="text-text-secondary text-sm mb-1">Upcoming (7 days)</p>
+        <p class="text-2xl font-bold text-white">{{ summary.upcoming_investments.length }}</p>
+      </div>
+    </div>
+
+    <!-- Upcoming Investments -->
+    <div *ngIf="summary && summary.upcoming_investments.length > 0" class="bg-bg-card rounded-2xl border border-gray-800 p-6 mb-8">
+      <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+        <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        Upcoming Investments
+      </h2>
+      <div class="flex flex-wrap gap-3">
+        <div *ngFor="let inv of summary.upcoming_investments" class="flex items-center gap-3 bg-bg-secondary rounded-xl px-4 py-3">
+          <span class="text-white font-semibold">{{ inv.ticker }}</span>
+          <span class="text-accent font-medium">{{ formatCurrency(inv.amount) }}</span>
+          <span class="text-text-secondary text-sm">{{ formatDate(inv.date) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="flex items-center justify-center py-20">
+      <div class="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="errorMessage && !isLoading" class="bg-loss/10 border border-loss/50 text-loss px-6 py-4 rounded-xl">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && plans.length === 0 && !errorMessage" class="bg-bg-card rounded-2xl border border-gray-800 p-16 text-center">
+      <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-accent/20 to-accent/5 flex items-center justify-center">
+        <svg class="w-10 h-10 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+      </div>
+      <h3 class="text-xl font-semibold text-white mb-2">No recurring investments</h3>
+      <p class="text-text-secondary mb-6">Set up DCA plans to invest automatically</p>
+      <button (click)="openAddModal()" class="bg-accent hover:bg-accent/80 text-black font-semibold px-8 py-3 rounded-xl">
+        Create Your First DCA Plan
+      </button>
+    </div>
+
+    <!-- Plans Grid -->
+    <div *ngIf="!isLoading && plans.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div *ngFor="let plan of plans" class="bg-bg-card rounded-2xl border border-gray-800 p-6 hover:border-gray-700 transition-all group">
+        <!-- Header -->
+        <div class="flex items-start justify-between mb-4">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <h3 class="text-xl font-bold text-white">{{ plan.ticker }}</h3>
+              <span
+                [class]="plan.is_active ? 'bg-gain/20 text-gain' : 'bg-gray-700 text-text-secondary'"
+                class="text-xs px-2 py-1 rounded-full"
+              >
+                {{ plan.is_active ? 'Active' : 'Paused' }}
+              </span>
+            </div>
+            <p class="text-text-secondary text-sm">{{ plan.stock_name || plan.ticker }}</p>
+          </div>
+          <button
+            (click)="confirmDelete(plan)"
+            class="p-2 rounded-lg opacity-0 group-hover:opacity-100 bg-bg-secondary hover:bg-loss/20 text-text-secondary hover:text-loss transition-all"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Investment Details -->
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <div class="bg-bg-secondary rounded-xl p-3">
+            <p class="text-text-secondary text-xs mb-1">Amount</p>
+            <p class="text-white font-semibold">{{ formatCurrency(plan.amount) }}</p>
+            <p class="text-text-secondary text-xs">{{ getFrequencyLabel(plan.frequency) }}</p>
+          </div>
+          <div class="bg-bg-secondary rounded-xl p-3">
+            <p class="text-text-secondary text-xs mb-1">Next Investment</p>
+            <p class="text-white font-semibold">{{ formatDate(plan.next_investment_date) }}</p>
+            <p class="text-accent text-xs">{{ getDaysUntil(plan.next_investment_date) }} days</p>
+          </div>
+        </div>
+
+        <!-- Performance -->
+        <div *ngIf="plan.total_invested > 0" class="bg-bg-secondary rounded-xl p-3 mb-4">
+          <div class="flex justify-between mb-2">
+            <span class="text-text-secondary text-sm">Total Invested</span>
+            <span class="text-white font-medium">{{ formatCurrency(plan.total_invested) }}</span>
+          </div>
+          <div class="flex justify-between mb-2">
+            <span class="text-text-secondary text-sm">Current Value</span>
+            <span class="text-white font-medium">{{ formatCurrency(plan.current_value || 0) }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-text-secondary text-sm">Gain/Loss</span>
+            <span [class]="getGainClass(plan.gain_loss)" class="font-medium">
+              {{ formatCurrency(plan.gain_loss || 0) }}
+              <span class="text-xs">({{ (plan.gain_loss_percent || 0).toFixed(2) }}%)</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex gap-2">
+          <button
+            (click)="toggleActive(plan)"
+            [class]="plan.is_active ? 'border-warning text-warning hover:bg-warning/10' : 'border-gain text-gain hover:bg-gain/10'"
+            class="flex-1 border py-2 rounded-xl text-sm font-medium transition-all"
+          >
+            {{ plan.is_active ? 'Pause' : 'Resume' }}
+          </button>
+          <button
+            *ngIf="plan.is_active"
+            (click)="executePlan(plan)"
+            class="flex-1 bg-accent hover:bg-accent/80 text-black py-2 rounded-xl text-sm font-semibold transition-all"
+          >
+            Invest Now
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Add Plan Modal -->
+  <div *ngIf="showAddModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 px-4 animate-fadeIn">
+    <div class="bg-bg-card rounded-2xl p-8 w-full max-w-md border border-gray-800 shadow-2xl">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-semibold text-white">New DCA Plan</h2>
+        <button (click)="closeAddModal()" class="text-text-secondary hover:text-white">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div *ngIf="formError" class="bg-loss/10 border border-loss/50 text-loss px-4 py-3 rounded-xl mb-6">
+        {{ formError }}
+      </div>
+
+      <form (ngSubmit)="createPlan()">
+        <div class="space-y-4 mb-6">
+          <div>
+            <label class="block text-text-secondary text-sm mb-2">Ticker Symbol</label>
+            <input
+              type="text"
+              [(ngModel)]="ticker"
+              name="ticker"
+              placeholder="e.g., VTI"
+              class="w-full bg-bg-secondary border border-gray-700 rounded-xl px-4 py-3 text-white uppercase focus:outline-none focus:border-accent"
+            />
+          </div>
+
+          <div>
+            <label class="block text-text-secondary text-sm mb-2">Investment Amount</label>
+            <div class="relative">
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary">$</span>
+              <input
+                type="number"
+                [(ngModel)]="amount"
+                name="amount"
+                step="0.01"
+                placeholder="100.00"
+                class="w-full bg-bg-secondary border border-gray-700 rounded-xl pl-8 pr-4 py-3 text-white focus:outline-none focus:border-accent"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-text-secondary text-sm mb-2">Frequency</label>
+            <select
+              [(ngModel)]="frequency"
+              name="frequency"
+              class="w-full bg-bg-secondary border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent"
+            >
+              <option *ngFor="let f of frequencies" [value]="f.value">{{ f.label }}</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-text-secondary text-sm mb-2">Start Date</label>
+            <input
+              type="date"
+              [(ngModel)]="startDate"
+              name="startDate"
+              class="w-full bg-bg-secondary border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent"
+            />
+          </div>
+        </div>
+
+        <div class="flex gap-4">
+          <button type="button" (click)="closeAddModal()" class="flex-1 border border-gray-700 text-white py-3 rounded-xl hover:bg-bg-secondary">
+            Cancel
+          </button>
+          <button type="submit" [disabled]="isAdding" class="flex-1 bg-accent hover:bg-accent/80 disabled:bg-accent/50 text-black font-semibold py-3 rounded-xl">
+            {{ isAdding ? 'Creating...' : 'Create Plan' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation -->
+  <div *ngIf="showDeleteConfirm" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 px-4 animate-fadeIn">
+    <div class="bg-bg-card rounded-2xl p-8 w-full max-w-sm border border-gray-800 shadow-2xl text-center">
+      <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-loss/10 flex items-center justify-center">
+        <svg class="w-8 h-8 text-loss" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+      </div>
+      <h2 class="text-xl font-semibold text-white mb-2">Delete {{ deletingTicker }} plan?</h2>
+      <p class="text-text-secondary mb-6">This will remove the DCA plan. Your holdings won't be affected.</p>
+      <div class="flex gap-4">
+        <button (click)="cancelDelete()" class="flex-1 border border-gray-700 text-white py-3 rounded-xl hover:bg-bg-secondary">Cancel</button>
+        <button (click)="deletePlan()" [disabled]="isDeleting" class="flex-1 bg-loss hover:bg-loss/80 text-white font-semibold py-3 rounded-xl">
+          {{ isDeleting ? 'Deleting...' : 'Delete' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
