@@ -9,3 +9,4 @@ from app.models.dividend import Dividend
 from app.models.competition import (
     Competition, VirtualPortfolio, VirtualHolding, VirtualTrade, Achievement
 )
+from app.models.recurring import RecurringInvestment

@@ -46,3 +46,4 @@ class User(Base):
     weekly_digests = relationship("WeeklyDigest", back_populates="user")
     goals = relationship("PortfolioGoal", back_populates="user")
     dividends = relationship("Dividend", back_populates="user")
+    recurring_investments = relationship("RecurringInvestment", back_populates="user")
