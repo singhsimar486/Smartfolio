@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subject, takeUntil, forkJoin } from 'rxjs';
+import { Subject, takeUntil, forkJoin, of, catchError } from 'rxjs';
 import {
   ApiService,
   Competition,
@@ -69,10 +69,35 @@ export class ArenaComponent implements OnInit, OnDestroy {
   loadData() {
     this.loading = true;
 
+    // Use catchError for each observable to prevent forkJoin from failing completely
     forkJoin({
-      competitions: this.api.getCompetitions(),
-      achievements: this.api.getAchievements(),
-      stats: this.api.getCompetitionStats()
+      competitions: this.api.getCompetitions().pipe(
+        catchError(err => {
+          console.error('Failed to load competitions:', err);
+          return of([] as Competition[]);
+        })
+      ),
+      achievements: this.api.getAchievements().pipe(
+        catchError(err => {
+          console.error('Failed to load achievements:', err);
+          return of([] as Achievement[]);
+        })
+      ),
+      stats: this.api.getCompetitionStats().pipe(
+        catchError(err => {
+          console.error('Failed to load stats:', err);
+          return of({
+            competitions_joined: 0,
+            total_trades: 0,
+            winning_trades: 0,
+            losing_trades: 0,
+            win_rate: 0,
+            best_rank: null,
+            achievements_unlocked: 0,
+            achievements_total: 0
+          } as CompetitionStats);
+        })
+      )
     })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -90,6 +115,7 @@ export class ArenaComponent implements OnInit, OnDestroy {
           this.loading = false;
         },
         error: (err) => {
+          console.error('Arena loadData error:', err);
           this.toast.error('Failed to load arena data');
           this.loading = false;
         }
