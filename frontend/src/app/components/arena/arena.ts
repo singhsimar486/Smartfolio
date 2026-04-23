@@ -87,14 +87,14 @@ export class ArenaComponent implements OnInit, OnDestroy {
         catchError(err => {
           console.error('Failed to load stats:', err);
           return of({
-            competitions_joined: 0,
-            total_trades: 0,
-            winning_trades: 0,
-            losing_trades: 0,
-            win_rate: 0,
+            total_competitions: 0,
+            active_competitions: 0,
             best_rank: null,
+            total_trades: 0,
+            total_profit_loss: 0,
+            win_rate: 0,
             achievements_unlocked: 0,
-            achievements_total: 0
+            total_achievements: 0
           } as CompetitionStats);
         })
       )

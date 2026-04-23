@@ -358,14 +358,20 @@ def get_my_stats(
     current_user: User = Depends(get_current_user)
 ):
     """Get current user's overall competition stats."""
+    # Get user's portfolios
     portfolios = db.query(VirtualPortfolio).filter(
         VirtualPortfolio.user_id == current_user.id
     ).all()
 
     total_trades = sum(p.trades_count for p in portfolios)
     total_wins = sum(p.winning_trades for p in portfolios)
-    total_losses = sum(p.losing_trades for p in portfolios)
-    competitions_joined = len(portfolios)
+    total_profit_loss = sum(p.total_return for p in portfolios)
+
+    # Count total and active competitions
+    total_competitions = db.query(func.count(Competition.id)).scalar() or 0
+    active_competitions = db.query(func.count(Competition.id)).filter(
+        Competition.status == CompetitionStatus.ACTIVE
+    ).scalar() or 0
 
     # Best placement
     best_rank = None
@@ -378,19 +384,19 @@ def get_my_stats(
     unlocked_count = db.query(func.count(Achievement.id)).filter(
         Achievement.user_id == current_user.id,
         Achievement.unlocked == True
-    ).scalar()
+    ).scalar() or 0
 
     total_achievements = len(ACHIEVEMENT_DEFINITIONS)
 
     return {
-        "competitions_joined": competitions_joined,
-        "total_trades": total_trades,
-        "winning_trades": total_wins,
-        "losing_trades": total_losses,
-        "win_rate": (total_wins / total_trades * 100) if total_trades > 0 else 0,
+        "total_competitions": total_competitions,
+        "active_competitions": active_competitions,
         "best_rank": best_rank,
+        "total_trades": total_trades,
+        "total_profit_loss": total_profit_loss,
+        "win_rate": (total_wins / total_trades * 100) if total_trades > 0 else 0,
         "achievements_unlocked": unlocked_count,
-        "achievements_total": total_achievements
+        "total_achievements": total_achievements
     }
 
 
