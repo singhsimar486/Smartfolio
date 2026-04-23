@@ -303,6 +303,97 @@ def create_default_competition(db: Session) -> Competition:
 
 # ============ Endpoints ============
 
+# NOTE: Static routes must come BEFORE parameterized routes like /{competition_id}
+# Otherwise FastAPI will match "/achievements/me" as competition_id="achievements"
+
+@router.get("/achievements/me", response_model=List[AchievementResponse])
+def get_my_achievements(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Get current user's achievements."""
+    achievements = db.query(Achievement).filter(
+        Achievement.user_id == current_user.id
+    ).order_by(desc(Achievement.unlocked), desc(Achievement.unlocked_at)).all()
+
+    # Add any missing achievement definitions
+    existing_codes = {a.code for a in achievements}
+
+    for defn in ACHIEVEMENT_DEFINITIONS:
+        if defn["code"] not in existing_codes:
+            new_achievement = Achievement(
+                user_id=current_user.id,
+                code=defn["code"],
+                name=defn["name"],
+                description=defn["description"],
+                icon=defn["icon"],
+                type=defn["type"],
+                progress=0,
+                target=defn["target"],
+                unlocked=False
+            )
+            db.add(new_achievement)
+            achievements.append(new_achievement)
+
+    db.commit()
+
+    return [
+        AchievementResponse(
+            code=a.code,
+            name=a.name,
+            description=a.description,
+            icon=a.icon,
+            type=a.type.value if isinstance(a.type, AchievementType) else a.type,
+            progress=a.progress,
+            target=a.target,
+            unlocked=a.unlocked,
+            unlocked_at=a.unlocked_at
+        ) for a in achievements
+    ]
+
+
+@router.get("/stats/me")
+def get_my_stats(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Get current user's overall competition stats."""
+    portfolios = db.query(VirtualPortfolio).filter(
+        VirtualPortfolio.user_id == current_user.id
+    ).all()
+
+    total_trades = sum(p.trades_count for p in portfolios)
+    total_wins = sum(p.winning_trades for p in portfolios)
+    total_losses = sum(p.losing_trades for p in portfolios)
+    competitions_joined = len(portfolios)
+
+    # Best placement
+    best_rank = None
+    for p in portfolios:
+        if p.best_rank:
+            if best_rank is None or p.best_rank < best_rank:
+                best_rank = p.best_rank
+
+    # Unlocked achievements
+    unlocked_count = db.query(func.count(Achievement.id)).filter(
+        Achievement.user_id == current_user.id,
+        Achievement.unlocked == True
+    ).scalar()
+
+    total_achievements = len(ACHIEVEMENT_DEFINITIONS)
+
+    return {
+        "competitions_joined": competitions_joined,
+        "total_trades": total_trades,
+        "winning_trades": total_wins,
+        "losing_trades": total_losses,
+        "win_rate": (total_wins / total_trades * 100) if total_trades > 0 else 0,
+        "best_rank": best_rank,
+        "achievements_unlocked": unlocked_count,
+        "achievements_total": total_achievements
+    }
+
+
 @router.get("/", response_model=List[CompetitionResponse])
 def list_competitions(
     status: Optional[str] = Query(None, description="Filter by status"),
@@ -773,91 +864,3 @@ def get_leaderboard(
         ))
 
     return result
-
-
-@router.get("/achievements/me", response_model=List[AchievementResponse])
-def get_my_achievements(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    """Get current user's achievements."""
-    achievements = db.query(Achievement).filter(
-        Achievement.user_id == current_user.id
-    ).order_by(desc(Achievement.unlocked), desc(Achievement.unlocked_at)).all()
-
-    # Add any missing achievement definitions
-    existing_codes = {a.code for a in achievements}
-
-    for defn in ACHIEVEMENT_DEFINITIONS:
-        if defn["code"] not in existing_codes:
-            new_achievement = Achievement(
-                user_id=current_user.id,
-                code=defn["code"],
-                name=defn["name"],
-                description=defn["description"],
-                icon=defn["icon"],
-                type=defn["type"],
-                progress=0,
-                target=defn["target"],
-                unlocked=False
-            )
-            db.add(new_achievement)
-            achievements.append(new_achievement)
-
-    db.commit()
-
-    return [
-        AchievementResponse(
-            code=a.code,
-            name=a.name,
-            description=a.description,
-            icon=a.icon,
-            type=a.type.value if isinstance(a.type, AchievementType) else a.type,
-            progress=a.progress,
-            target=a.target,
-            unlocked=a.unlocked,
-            unlocked_at=a.unlocked_at
-        ) for a in achievements
-    ]
-
-
-@router.get("/stats/me")
-def get_my_stats(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    """Get current user's overall competition stats."""
-    portfolios = db.query(VirtualPortfolio).filter(
-        VirtualPortfolio.user_id == current_user.id
-    ).all()
-
-    total_trades = sum(p.trades_count for p in portfolios)
-    total_wins = sum(p.winning_trades for p in portfolios)
-    total_losses = sum(p.losing_trades for p in portfolios)
-    competitions_joined = len(portfolios)
-
-    # Best placement
-    best_rank = None
-    for p in portfolios:
-        if p.best_rank:
-            if best_rank is None or p.best_rank < best_rank:
-                best_rank = p.best_rank
-
-    # Unlocked achievements
-    unlocked_count = db.query(func.count(Achievement.id)).filter(
-        Achievement.user_id == current_user.id,
-        Achievement.unlocked == True
-    ).scalar()
-
-    total_achievements = len(ACHIEVEMENT_DEFINITIONS)
-
-    return {
-        "competitions_joined": competitions_joined,
-        "total_trades": total_trades,
-        "winning_trades": total_wins,
-        "losing_trades": total_losses,
-        "win_rate": (total_wins / total_trades * 100) if total_trades > 0 else 0,
-        "best_rank": best_rank,
-        "achievements_unlocked": unlocked_count,
-        "achievements_total": total_achievements
-    }

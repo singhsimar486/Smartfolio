@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartFolio - Pitch Deck</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    .slide {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 4rem 6rem;
+      position: relative;
+      scroll-snap-align: start;
+    }
+    html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+    .gradient-text {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .gradient-bg {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    }
+    .card {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .glow {
+      box-shadow: 0 0 60px rgba(99, 102, 241, 0.3);
+    }
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .stat-card {
+      background: linear-gradient(145deg, rgba(99,102,241,0.1), rgba(139,92,246,0.05));
+      border: 1px solid rgba(99,102,241,0.2);
+    }
+    .tier-card {
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .tier-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+    .tier-popular {
+      border: 2px solid #8b5cf6;
+      position: relative;
+    }
+    .tier-popular::before {
+      content: 'MOST POPULAR';
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+    }
+    .problem-card {
+      background: linear-gradient(145deg, rgba(239,68,68,0.1), rgba(239,68,68,0.05));
+      border-left: 4px solid #ef4444;
+    }
+    .solution-card {
+      background: linear-gradient(145deg, rgba(34,197,94,0.1), rgba(34,197,94,0.05));
+      border-left: 4px solid #22c55e;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    .float { animation: float 3s ease-in-out infinite; }
+    .slide-number {
+      position: absolute;
+      bottom: 2rem;
+      right: 3rem;
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.3);
+    }
+
+    /* Print/PDF styles */
+    @media print {
+      html, body {
+        margin: 0;
+        padding: 0;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .slide {
+        min-height: 100vh;
+        height: 100vh;
+        max-height: 100vh;
+        page-break-after: always;
+        page-break-inside: avoid;
+        break-after: page;
+        break-inside: avoid;
+        overflow: hidden;
+        box-sizing: border-box;
+      }
+      .slide:last-child {
+        page-break-after: auto;
+      }
+      .gradient-text {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6, #a855f7);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .float {
+        animation: none;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-white">
+
+  <!-- Slide 1: Title -->
+  <section class="slide relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-indigo-950 via-slate-950 to-purple-950"></div>
+    <div class="absolute top-20 right-20 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-20 left-20 w-72 h-72 bg-purple-500/20 rounded-full blur-3xl"></div>
+
+    <div class="relative z-10 text-center">
+      <div class="inline-flex items-center gap-3 mb-8">
+        <div class="w-16 h-16 gradient-bg rounded-2xl flex items-center justify-center glow">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+          </svg>
+        </div>
+        <span class="text-4xl font-bold">SmartFolio</span>
+      </div>
+
+      <h1 class="text-6xl md:text-7xl font-black mb-6 leading-tight">
+        AI-Powered Portfolio<br/>
+        <span class="gradient-text">Intelligence</span>
+      </h1>
+
+      <p class="text-2xl text-slate-300 mb-12 max-w-3xl mx-auto">
+        Track. Analyze. Compete. Grow.
+      </p>
+
+      <div class="flex justify-center gap-8 text-slate-400">
+        <div class="text-center">
+          <div class="text-3xl font-bold text-white">$2.5T+</div>
+          <div class="text-sm">Retail Trading Market</div>
+        </div>
+        <div class="w-px bg-slate-700"></div>
+        <div class="text-center">
+          <div class="text-3xl font-bold text-white">150M+</div>
+          <div class="text-sm">US Retail Investors</div>
+        </div>
+        <div class="w-px bg-slate-700"></div>
+        <div class="text-center">
+          <div class="text-3xl font-bold text-white">73%</div>
+          <div class="text-sm">Want AI Insights</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-number">01 / 10</div>
+  </section>
+
+  <!-- Slide 2: Problem -->
+  <section class="slide bg-slate-950">
+    <div class="max-w-6xl mx-auto">
+      <p class="text-indigo-400 font-semibold mb-4 tracking-wide">THE PROBLEM</p>
+      <h2 class="text-5xl font-bold mb-12">Retail investors are <span class="text-red-400">flying blind</span></h2>
+
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="problem-card rounded-xl p-6">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 bg-red-500/20 rounded-xl flex items-center justify-center shrink-0">
+              <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold mb-2">Spreadsheet Chaos</h3>
+              <p class="text-slate-400">Manual tracking across multiple brokerages. No real-time data. Hours wasted on data entry.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="problem-card rounded-xl p-6">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 bg-red-500/20 rounded-xl flex items-center justify-center shrink-0">
+              <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold mb-2">Decision Paralysis</h3>
+              <p class="text-slate-400">Overwhelming market data. No personalized guidance. Analysis takes expertise most don't have.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="problem-card rounded-xl p-6">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 bg-red-500/20 rounded-xl flex items-center justify-center shrink-0">
+              <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold mb-2">Missing Opportunities</h3>
+              <p class="text-slate-400">No price alerts. Missing market moves. Constantly checking apps for updates.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="problem-card rounded-xl p-6">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 bg-red-500/20 rounded-xl flex items-center justify-center shrink-0">
+              <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold mb-2">Learning Gap</h3>
+              <p class="text-slate-400">No safe way to practice trading. Real money stakes. Fear of costly mistakes.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-12 p-6 bg-slate-900/50 rounded-xl border border-slate-800 text-center">
+        <p class="text-2xl font-semibold">
+          <span class="text-red-400">87%</span> of retail investors say existing tools don't give them actionable insights
+        </p>
+      </div>
+    </div>
+    <div class="slide-number">02 / 10</div>
+  </section>
+
+  <!-- Slide 3: Solution -->
+  <section class="slide bg-slate-950">
+    <div class="max-w-6xl mx-auto">
+      <p class="text-indigo-400 font-semibold mb-4 tracking-wide">THE SOLUTION</p>
+      <h2 class="text-5xl font-bold mb-4">Your AI-powered <span class="gradient-text">investment co-pilot</span></h2>
+      <p class="text-xl text-slate-400 mb-12 max-w-3xl">SmartFolio combines real-time tracking, AI analysis, and gamified learning in one powerful platform.</p>
+
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="solution-card rounded-xl p-6">
+          <div class="flex items-start gap-4">
+            <div class="feature-icon shrink-0">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold mb-2">AI-Powered Insights</h3>
+              <p class="text-slate-400">Claude AI analyzes your portfolio and provides personalized recommendations. Ask questions, get smart answers.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="solution-card rounded-xl p-6">
+          <div class="flex items-start gap-4">
+            <div class="feature-icon shrink-0">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold mb-2">Real-Time Tracking</h3>
+              <p class="text-slate-400">Live market data, performance analytics, allocation visualization. All your investments in one dashboard.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="solution-card rounded-xl p-6">
+          <div class="flex items-start gap-4">
+            <div class="feature-icon shrink-0">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold mb-2">ML Price Predictions</h3>
+              <p class="text-slate-400">Ensemble machine learning models with confidence bands. Sentiment analysis from news sources.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="solution-card rounded-xl p-6">
+          <div class="flex items-start gap-4">
+            <div class="feature-icon shrink-0">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold mb-2">Trading Arena</h3>
+              <p class="text-slate-400">$100K virtual portfolios. Weekly competitions. Leaderboards and achievements. Learn without risk.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-number">03 / 10</div>
+  </section>
+
+  <!-- Slide 4: Product Demo -->
+  <section class="slide bg-slate-950">
+    <div class="max-w-6xl mx-auto">
+      <p class="text-indigo-400 font-semibold mb-4 tracking-wide">THE PRODUCT</p>
+      <h2 class="text-5xl font-bold mb-12">Everything investors need, <span class="gradient-text">one platform</span></h2>
+
+      <div class="grid grid-cols-3 gap-8">
+        <div class="text-center">
+          <div class="bg-slate-900 rounded-2xl p-8 mb-4 border border-slate-800">
+            <div class="w-20 h-20 mx-auto gradient-bg rounded-2xl flex items-center justify-center mb-4">
+              <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/>
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-2">Dashboard</h3>
+            <p class="text-slate-400 text-sm">Real-time portfolio value, P/L tracking, allocation charts, performance history</p>
+          </div>
+        </div>
+
+        <div class="text-center">
+          <div class="bg-slate-900 rounded-2xl p-8 mb-4 border border-slate-800">
+            <div class="w-20 h-20 mx-auto gradient-bg rounded-2xl flex items-center justify-center mb-4">
+              <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-2">AI Chat</h3>
+            <p class="text-slate-400 text-sm">Ask questions about your portfolio, get personalized advice and analysis</p>
+          </div>
+        </div>
+
+        <div class="text-center">
+          <div class="bg-slate-900 rounded-2xl p-8 mb-4 border border-slate-800">
+            <div class="w-20 h-20 mx-auto gradient-bg rounded-2xl flex items-center justify-center mb-4">
+              <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-2">Trading Arena</h3>
+            <p class="text-slate-400 text-sm">Virtual competitions, leaderboards, badges, learn trading risk-free</p>
+          </div>
+        </div>
+
+        <div class="text-center">
+          <div class="bg-slate-900 rounded-2xl p-8 mb-4 border border-slate-800">
+            <div class="w-20 h-20 mx-auto gradient-bg rounded-2xl flex items-center justify-center mb-4">
+              <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-2">Smart Alerts</h3>
+            <p class="text-slate-400 text-sm">Price alerts via email, never miss a market move again</p>
+          </div>
+        </div>
+
+        <div class="text-center">
+          <div class="bg-slate-900 rounded-2xl p-8 mb-4 border border-slate-800">
+            <div class="w-20 h-20 mx-auto gradient-bg rounded-2xl flex items-center justify-center mb-4">
+              <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-2">Weekly Digest</h3>
+            <p class="text-slate-400 text-sm">AI-generated portfolio health reports with actionable recommendations</p>
+          </div>
+        </div>
+
+        <div class="text-center">
+          <div class="bg-slate-900 rounded-2xl p-8 mb-4 border border-slate-800">
+            <div class="w-20 h-20 mx-auto gradient-bg rounded-2xl flex items-center justify-center mb-4">
+              <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/>
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-2">Sentiment Analysis</h3>
+            <p class="text-slate-400 text-sm">NLP-powered news sentiment for every stock in your portfolio</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-number">04 / 10</div>
+  </section>
+
+  <!-- Slide 5: Market Opportunity -->
+  <section class="slide bg-slate-950">
+    <div class="max-w-6xl mx-auto">
+      <p class="text-indigo-400 font-semibold mb-4 tracking-wide">MARKET OPPORTUNITY</p>
+      <h2 class="text-5xl font-bold mb-12">A massive and <span class="gradient-text">growing market</span></h2>
+
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div>
+          <div class="space-y-6">
+            <div class="stat-card rounded-xl p-6">
+              <div class="text-4xl font-bold gradient-text mb-2">$2.5 Trillion</div>
+              <div class="text-slate-400">Daily retail trading volume in the US</div>
+            </div>
+            <div class="stat-card rounded-xl p-6">
+              <div class="text-4xl font-bold gradient-text mb-2">150 Million+</div>
+              <div class="text-slate-400">Retail investors in the United States alone</div>
+            </div>
+            <div class="stat-card rounded-xl p-6">
+              <div class="text-4xl font-bold gradient-text mb-2">23% CAGR</div>
+              <div class="text-slate-400">AI in fintech market growth through 2030</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <canvas id="marketChart" class="w-full"></canvas>
+        </div>
+      </div>
+
+      <div class="mt-12 grid grid-cols-3 gap-6">
+        <div class="text-center p-6 bg-slate-900/50 rounded-xl border border-slate-800">
+          <div class="text-3xl font-bold text-indigo-400 mb-2">TAM</div>
+          <div class="text-2xl font-semibold">$15B</div>
+          <div class="text-sm text-slate-400">Global portfolio tracking</div>
+        </div>
+        <div class="text-center p-6 bg-slate-900/50 rounded-xl border border-slate-800">
+          <div class="text-3xl font-bold text-purple-400 mb-2">SAM</div>
+          <div class="text-2xl font-semibold">$4B</div>
+          <div class="text-sm text-slate-400">US retail investors</div>
+        </div>
+        <div class="text-center p-6 bg-slate-900/50 rounded-xl border border-slate-800">
+          <div class="text-3xl font-bold text-pink-400 mb-2">SOM</div>
+          <div class="text-2xl font-semibold">$400M</div>
+          <div class="text-sm text-slate-400">AI-forward investors</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-number">05 / 10</div>
+  </section>
+
+  <!-- Slide 6: Business Model -->
+  <section class="slide bg-slate-950">
+    <div class="max-w-6xl mx-auto">
+      <p class="text-indigo-400 font-semibold mb-4 tracking-wide">BUSINESS MODEL</p>
+      <h2 class="text-5xl font-bold mb-12">Freemium SaaS with <span class="gradient-text">strong unit economics</span></h2>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        <!-- Free Tier -->
+        <div class="tier-card bg-slate-900 rounded-2xl p-8 border border-slate-800">
+          <div class="text-slate-400 font-semibold mb-2">FREE</div>
+          <div class="text-4xl font-bold mb-6">$0<span class="text-lg text-slate-500">/mo</span></div>
+          <ul class="space-y-3 text-slate-300 mb-8">
+            <li class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              10 holdings
+            </li>
+            <li class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              1 price alert
+            </li>
+            <li class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              3 AI questions/day
+            </li>
+            <li class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              1 competition
+            </li>
+            <li class="flex items-center gap-2 text-slate-500">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+              No email alerts
+            </li>
+          </ul>
+          <div class="text-center text-slate-500 text-sm">Try before you buy</div>
+        </div>
+
+        <!-- Pro Tier -->
+        <div class="tier-card tier-popular bg-slate-900 rounded-2xl p-8">
+          <div class="text-indigo-400 font-semibold mb-2">PRO</div>
+          <div class="text-4xl font-bold mb-6">$9.99<span class="text-lg text-slate-500">/mo</span></div>
+          <ul class="space-y-3 text-slate-300 mb-8">
+            <li class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              100 holdings
+            </li>
+            <li class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              25 price alerts
+            </li>
+            <li class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              50 AI questions/day
+            </li>
+            <li class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              Unlimited competitions
+            </li>
+            <li class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              Email alerts
+            </li>
+          </ul>
+          <div class="gradient-bg text-center py-3 rounded-lg font-semibold">Best Value</div>
+        </div>
+
+        <!-- Pro+ Tier -->
+        <div class="tier-card bg-slate-900 rounded-2xl p-8 border border-slate-800">
+          <div class="text-purple-400 font-semibold mb-2">PRO+</div>
+          <div class="text-4xl font-bold mb-6">$19.99<span class="text-lg text-slate-500">/mo</span></div>
+          <ul class="space-y-3 text-slate-300 mb-8">
+            <li class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              <strong>Unlimited</strong> holdings
+            </li>
+            <li class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              <strong>Unlimited</strong> alerts
+            </li>
+            <li class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              <strong>Unlimited</strong> AI questions
+            </li>
+            <li class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              Unlimited competitions
+            </li>
+            <li class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              Priority support
+            </li>
+          </ul>
+          <div class="text-center text-slate-400 text-sm">For power users</div>
+        </div>
+      </div>
+
+      <div class="mt-12 grid grid-cols-4 gap-6 text-center">
+        <div class="p-4 bg-slate-900/50 rounded-xl">
+          <div class="text-2xl font-bold text-green-400">85%</div>
+          <div class="text-sm text-slate-400">Gross Margin</div>
+        </div>
+        <div class="p-4 bg-slate-900/50 rounded-xl">
+          <div class="text-2xl font-bold text-green-400">$120</div>
+          <div class="text-sm text-slate-400">Avg LTV</div>
+        </div>
+        <div class="p-4 bg-slate-900/50 rounded-xl">
+          <div class="text-2xl font-bold text-green-400">$15</div>
+          <div class="text-sm text-slate-400">Target CAC</div>
+        </div>
+        <div class="p-4 bg-slate-900/50 rounded-xl">
+          <div class="text-2xl font-bold text-green-400">8:1</div>
+          <div class="text-sm text-slate-400">LTV:CAC Ratio</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-number">06 / 10</div>
+  </section>
+
+  <!-- Slide 7: Competition -->
+  <section class="slide bg-slate-950">
+    <div class="max-w-6xl mx-auto">
+      <p class="text-indigo-400 font-semibold mb-4 tracking-wide">COMPETITIVE LANDSCAPE</p>
+      <h2 class="text-5xl font-bold mb-12">We're not just <span class="gradient-text">another tracker</span></h2>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left">
+          <thead>
+            <tr class="border-b border-slate-800">
+              <th class="py-4 px-6 text-slate-400 font-medium">Feature</th>
+              <th class="py-4 px-6 text-center">
+                <span class="gradient-text font-bold">SmartFolio</span>
+              </th>
+              <th class="py-4 px-6 text-center text-slate-400">Yahoo Finance</th>
+              <th class="py-4 px-6 text-center text-slate-400">Personal Capital</th>
+              <th class="py-4 px-6 text-center text-slate-400">Stock Rover</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-slate-800/50">
+              <td class="py-4 px-6">AI-Powered Insights</td>
+              <td class="py-4 px-6 text-center"><span class="text-green-400 text-xl">✓</span></td>
+              <td class="py-4 px-6 text-center"><span class="text-red-400 text-xl">✗</span></td>
+              <td class="py-4 px-6 text-center"><span class="text-red-400 text-xl">✗</span></td>
+              <td class="py-4 px-6 text-center"><span class="text-yellow-400 text-xl">~</span></td>
+            </tr>
+            <tr class="border-b border-slate-800/50">
+              <td class="py-4 px-6">AI Chat Interface</td>
+              <td class="py-4 px-6 text-center"><span class="text-green-400 text-xl">✓</span></td>
+              <td class="py-4 px-6 text-center"><span class="text-red-400 text-xl">✗</span></td>
+              <td class="py-4 px-6 text-center"><span class="text-red-400 text-xl">✗</span></td>
+              <td class="py-4 px-6 text-center"><span class="text-red-400 text-xl">✗</span></td>
+            </tr>
+            <tr class="border-b border-slate-800/50">
+              <td class="py-4 px-6">ML Price Predictions</td>
+              <td class="py-4 px-6 text-center"><span class="text-green-400 text-xl">✓</span></td>
+              <td class="py-4 px-6 text-center"><span class="text-red-400 text-xl">✗</span></td>
+              <td class="py-4 px-6 text-center"><span class="text-red-400 text-xl">✗</span></td>
+              <td class="py-4 px-6 text-center"><span class="text-yellow-400 text-xl">~</span></td>
+            </tr>
+            <tr class="border-b border-slate-800/50">
+              <td class="py-4 px-6">Sentiment Analysis</td>
+              <td class="py-4 px-6 text-center"><span class="text-green-400 text-xl">✓</span></td>
+              <td class="py-4 px-6 text-center"><span class="text-red-400 text-xl">✗</span></td>
+              <td class="py-4 px-6 text-center"><span class="text-red-400 text-xl">✗</span></td>
+              <td class="py-4 px-6 text-center"><span class="text-red-400 text-xl">✗</span></td>
+            </tr>
+            <tr class="border-b border-slate-800/50">
+              <td class="py-4 px-6">Virtual Trading Competitions</td>
+              <td class="py-4 px-6 text-center"><span class="text-green-400 text-xl">✓</span></td>
+              <td class="py-4 px-6 text-center"><span class="text-red-400 text-xl">✗</span></td>
+              <td class="py-4 px-6 text-center"><span class="text-red-400 text-xl">✗</span></td>
+              <td class="py-4 px-6 text-center"><span class="text-red-400 text-xl">✗</span></td>
+            </tr>
+            <tr class="border-b border-slate-800/50">
+              <td class="py-4 px-6">Gamification & Badges</td>
+              <td class="py-4 px-6 text-center"><span class="text-green-400 text-xl">✓</span></td>
+              <td class="py-4 px-6 text-center"><span class="text-red-400 text-xl">✗</span></td>
+              <td class="py-4 px-6 text-center"><span class="text-red-400 text-xl">✗</span></td>
+              <td class="py-4 px-6 text-center"><span class="text-red-400 text-xl">✗</span></td>
+            </tr>
+            <tr>
+              <td class="py-4 px-6">Starting Price</td>
+              <td class="py-4 px-6 text-center font-bold text-green-400">Free / $9.99</td>
+              <td class="py-4 px-6 text-center text-slate-400">Free / $35</td>
+              <td class="py-4 px-6 text-center text-slate-400">Free / AUM</td>
+              <td class="py-4 px-6 text-center text-slate-400">$7.99</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-12 p-6 bg-gradient-to-r from-indigo-900/30 to-purple-900/30 rounded-xl border border-indigo-500/30">
+        <p class="text-xl text-center">
+          <strong class="gradient-text">Our moat:</strong> AI-native architecture + gamification creates engagement and switching costs competitors can't match
+        </p>
+      </div>
+    </div>
+    <div class="slide-number">07 / 10</div>
+  </section>
+
+  <!-- Slide 8: Traction -->
+  <section class="slide bg-slate-950">
+    <div class="max-w-6xl mx-auto">
+      <p class="text-indigo-400 font-semibold mb-4 tracking-wide">TRACTION</p>
+      <h2 class="text-5xl font-bold mb-12">Built and <span class="gradient-text">ready to scale</span></h2>
+
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div class="space-y-6">
+          <div class="flex items-center gap-4 p-4 bg-slate-900 rounded-xl border border-slate-800">
+            <div class="w-12 h-12 gradient-bg rounded-xl flex items-center justify-center">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+            <div>
+              <div class="text-xl font-semibold">Full-Stack MVP Complete</div>
+              <div class="text-slate-400">60+ API endpoints, 22 frontend components</div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-4 p-4 bg-slate-900 rounded-xl border border-slate-800">
+            <div class="w-12 h-12 gradient-bg rounded-xl flex items-center justify-center">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+            <div>
+              <div class="text-xl font-semibold">Production Architecture</div>
+              <div class="text-slate-400">FastAPI + Angular + PostgreSQL + Stripe</div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-4 p-4 bg-slate-900 rounded-xl border border-slate-800">
+            <div class="w-12 h-12 gradient-bg rounded-xl flex items-center justify-center">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+            <div>
+              <div class="text-xl font-semibold">AI Integration Live</div>
+              <div class="text-slate-400">Claude API + ML predictions + NLP sentiment</div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-4 p-4 bg-slate-900 rounded-xl border border-slate-800">
+            <div class="w-12 h-12 gradient-bg rounded-xl flex items-center justify-center">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+            <div>
+              <div class="text-xl font-semibold">Zero Infrastructure Cost</div>
+              <div class="text-slate-400">Render + Vercel free tiers until scale</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-slate-900 rounded-2xl p-8 border border-slate-800">
+          <h3 class="text-xl font-semibold mb-6 text-center">Platform Features</h3>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="text-center p-4 bg-slate-800/50 rounded-lg">
+              <div class="text-3xl font-bold gradient-text">15+</div>
+              <div class="text-sm text-slate-400">API Routers</div>
+            </div>
+            <div class="text-center p-4 bg-slate-800/50 rounded-lg">
+              <div class="text-3xl font-bold gradient-text">9</div>
+              <div class="text-sm text-slate-400">Data Models</div>
+            </div>
+            <div class="text-center p-4 bg-slate-800/50 rounded-lg">
+              <div class="text-3xl font-bold gradient-text">22</div>
+              <div class="text-sm text-slate-400">UI Components</div>
+            </div>
+            <div class="text-center p-4 bg-slate-800/50 rounded-lg">
+              <div class="text-3xl font-bold gradient-text">12</div>
+              <div class="text-sm text-slate-400">Achievement Badges</div>
+            </div>
+          </div>
+
+          <div class="mt-6 pt-6 border-t border-slate-700">
+            <h4 class="font-semibold mb-3">Tech Stack</h4>
+            <div class="flex flex-wrap gap-2">
+              <span class="px-3 py-1 bg-slate-800 rounded-full text-sm">FastAPI</span>
+              <span class="px-3 py-1 bg-slate-800 rounded-full text-sm">Angular 21</span>
+              <span class="px-3 py-1 bg-slate-800 rounded-full text-sm">PostgreSQL</span>
+              <span class="px-3 py-1 bg-slate-800 rounded-full text-sm">Claude AI</span>
+              <span class="px-3 py-1 bg-slate-800 rounded-full text-sm">Stripe</span>
+              <span class="px-3 py-1 bg-slate-800 rounded-full text-sm">Tailwind</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-number">08 / 10</div>
+  </section>
+
+  <!-- Slide 9: Roadmap -->
+  <section class="slide bg-slate-950">
+    <div class="max-w-6xl mx-auto">
+      <p class="text-indigo-400 font-semibold mb-4 tracking-wide">ROADMAP</p>
+      <h2 class="text-5xl font-bold mb-12">The path to <span class="gradient-text">market leadership</span></h2>
+
+      <div class="relative">
+        <div class="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-indigo-500 via-purple-500 to-slate-800"></div>
+
+        <div class="space-y-8">
+          <div class="relative pl-20">
+            <div class="absolute left-4 w-8 h-8 gradient-bg rounded-full flex items-center justify-center">
+              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+            <div class="bg-slate-900 rounded-xl p-6 border border-green-500/30">
+              <div class="flex items-center gap-3 mb-2">
+                <span class="text-green-400 font-semibold">PHASE 1 - COMPLETE</span>
+                <span class="px-2 py-0.5 bg-green-500/20 text-green-400 text-xs rounded-full">Now</span>
+              </div>
+              <h3 class="text-xl font-semibold mb-2">Core Platform</h3>
+              <p class="text-slate-400">Full-stack MVP with portfolio tracking, AI insights, Trading Arena, and subscription billing</p>
+            </div>
+          </div>
+
+          <div class="relative pl-20">
+            <div class="absolute left-4 w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center">
+              <span class="text-white font-bold text-sm">2</span>
+            </div>
+            <div class="bg-slate-900 rounded-xl p-6 border border-slate-800">
+              <div class="flex items-center gap-3 mb-2">
+                <span class="text-indigo-400 font-semibold">PHASE 2</span>
+                <span class="px-2 py-0.5 bg-indigo-500/20 text-indigo-400 text-xs rounded-full">Q3 2026</span>
+              </div>
+              <h3 class="text-xl font-semibold mb-2">Growth & Engagement</h3>
+              <p class="text-slate-400">Mobile app (iOS/Android), social features, portfolio sharing, advanced ML models, brokerage integrations</p>
+            </div>
+          </div>
+
+          <div class="relative pl-20">
+            <div class="absolute left-4 w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
+              <span class="text-white font-bold text-sm">3</span>
+            </div>
+            <div class="bg-slate-900 rounded-xl p-6 border border-slate-800">
+              <div class="flex items-center gap-3 mb-2">
+                <span class="text-purple-400 font-semibold">PHASE 3</span>
+                <span class="px-2 py-0.5 bg-purple-500/20 text-purple-400 text-xs rounded-full">Q1 2027</span>
+              </div>
+              <h3 class="text-xl font-semibold mb-2">Platform Expansion</h3>
+              <p class="text-slate-400">International markets, crypto support, automated trading signals, premium competitions with prizes</p>
+            </div>
+          </div>
+
+          <div class="relative pl-20">
+            <div class="absolute left-4 w-8 h-8 bg-slate-700 rounded-full flex items-center justify-center">
+              <span class="text-white font-bold text-sm">4</span>
+            </div>
+            <div class="bg-slate-900 rounded-xl p-6 border border-slate-800">
+              <div class="flex items-center gap-3 mb-2">
+                <span class="text-slate-400 font-semibold">PHASE 4</span>
+                <span class="px-2 py-0.5 bg-slate-500/20 text-slate-400 text-xs rounded-full">2027+</span>
+              </div>
+              <h3 class="text-xl font-semibold mb-2">Enterprise & B2B</h3>
+              <p class="text-slate-400">White-label solutions, advisor dashboards, institutional API, wealth management partnerships</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-number">09 / 10</div>
+  </section>
+
+  <!-- Slide 10: The Ask -->
+  <section class="slide relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-indigo-950 via-slate-950 to-purple-950"></div>
+    <div class="absolute top-20 left-20 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-20 right-20 w-72 h-72 bg-purple-500/20 rounded-full blur-3xl"></div>
+
+    <div class="relative z-10 max-w-4xl mx-auto text-center">
+      <p class="text-indigo-400 font-semibold mb-4 tracking-wide">THE ASK</p>
+      <h2 class="text-5xl font-bold mb-8">Join us in building the future of <span class="gradient-text">retail investing</span></h2>
+
+      <div class="bg-slate-900/80 backdrop-blur rounded-2xl p-10 border border-slate-800 mb-12">
+        <div class="text-6xl font-black gradient-text mb-4">$500K</div>
+        <div class="text-xl text-slate-300 mb-8">Pre-seed Round</div>
+
+        <div class="grid grid-cols-3 gap-6 text-left">
+          <div class="p-4 bg-slate-800/50 rounded-xl">
+            <div class="text-2xl font-bold text-indigo-400 mb-1">40%</div>
+            <div class="text-sm text-slate-400">Engineering & AI</div>
+            <div class="text-xs text-slate-500">Mobile app, ML models</div>
+          </div>
+          <div class="p-4 bg-slate-800/50 rounded-xl">
+            <div class="text-2xl font-bold text-purple-400 mb-1">35%</div>
+            <div class="text-sm text-slate-400">Growth & Marketing</div>
+            <div class="text-xs text-slate-500">User acquisition, content</div>
+          </div>
+          <div class="p-4 bg-slate-800/50 rounded-xl">
+            <div class="text-2xl font-bold text-pink-400 mb-1">25%</div>
+            <div class="text-sm text-slate-400">Operations</div>
+            <div class="text-xs text-slate-500">Infrastructure, legal, team</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-center gap-8 mb-12">
+        <div class="text-center">
+          <div class="text-3xl font-bold">10K</div>
+          <div class="text-slate-400">Users in 12 months</div>
+        </div>
+        <div class="w-px bg-slate-700"></div>
+        <div class="text-center">
+          <div class="text-3xl font-bold">$50K</div>
+          <div class="text-slate-400">MRR target</div>
+        </div>
+        <div class="w-px bg-slate-700"></div>
+        <div class="text-center">
+          <div class="text-3xl font-bold">5%</div>
+          <div class="text-slate-400">Conversion rate</div>
+        </div>
+      </div>
+
+      <div class="inline-flex items-center gap-4">
+        <div class="w-16 h-16 gradient-bg rounded-2xl flex items-center justify-center glow float">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+          </svg>
+        </div>
+        <div class="text-left">
+          <div class="text-2xl font-bold">SmartFolio</div>
+          <div class="text-slate-400">Track. Analyze. Compete. Grow.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-number">10 / 10</div>
+  </section>
+
+  <script>
+    // Market Growth Chart
+    const ctx = document.getElementById('marketChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['2023', '2024', '2025', '2026', '2027', '2028'],
+        datasets: [{
+          label: 'AI in Fintech Market ($B)',
+          data: [9.5, 12.2, 15.8, 20.5, 26.6, 34.5],
+          backgroundColor: 'rgba(99, 102, 241, 0.8)',
+          borderColor: 'rgba(99, 102, 241, 1)',
+          borderWidth: 0,
+          borderRadius: 8,
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            display: true,
+            labels: { color: '#94a3b8' }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: { color: 'rgba(148, 163, 184, 0.1)' },
+            ticks: { color: '#94a3b8' }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { color: '#94a3b8' }
+          }
+        }
+      }
+    });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      const slides = document.querySelectorAll('.slide');
+      const currentScroll = window.scrollY;
+      const viewportHeight = window.innerHeight;
+      const currentSlide = Math.round(currentScroll / viewportHeight);
+
+      if (e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        if (currentSlide < slides.length - 1) {
+          slides[currentSlide + 1].scrollIntoView({ behavior: 'smooth' });
+        }
+      } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+        e.preventDefault();
+        if (currentSlide > 0) {
+          slides[currentSlide - 1].scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    });
+  </script>
+</body>
+</html>
