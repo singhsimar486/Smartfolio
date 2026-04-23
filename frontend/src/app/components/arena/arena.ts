@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -54,7 +54,8 @@ export class ArenaComponent implements OnInit, OnDestroy {
   constructor(
     private api: ApiService,
     private toast: ToastService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -120,11 +121,13 @@ export class ArenaComponent implements OnInit, OnDestroy {
 
           this.loading = false;
           console.log('[Arena] loading set to false');
+          this.cdr.detectChanges();
         },
         error: (err) => {
           console.error('[Arena] loadData error:', err);
           this.toast.error('Failed to load arena data');
           this.loading = false;
+          this.cdr.detectChanges();
         }
       });
   }
