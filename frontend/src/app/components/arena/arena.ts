@@ -68,24 +68,25 @@ export class ArenaComponent implements OnInit, OnDestroy {
 
   loadData() {
     this.loading = true;
+    console.log('[Arena] loadData started');
 
     // Use catchError for each observable to prevent forkJoin from failing completely
     forkJoin({
       competitions: this.api.getCompetitions().pipe(
         catchError(err => {
-          console.error('Failed to load competitions:', err);
+          console.error('[Arena] Failed to load competitions:', err);
           return of([] as Competition[]);
         })
       ),
       achievements: this.api.getAchievements().pipe(
         catchError(err => {
-          console.error('Failed to load achievements:', err);
+          console.error('[Arena] Failed to load achievements:', err);
           return of([] as Achievement[]);
         })
       ),
       stats: this.api.getCompetitionStats().pipe(
         catchError(err => {
-          console.error('Failed to load stats:', err);
+          console.error('[Arena] Failed to load stats:', err);
           return of({
             total_competitions: 0,
             active_competitions: 0,
@@ -102,9 +103,14 @@ export class ArenaComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
+          console.log('[Arena] forkJoin completed with data:', data);
           this.competitions = data.competitions;
           this.achievements = data.achievements;
           this.stats = data.stats;
+
+          console.log('[Arena] competitions:', this.competitions.length);
+          console.log('[Arena] achievements:', this.achievements.length);
+          console.log('[Arena] stats:', this.stats);
 
           // Auto-select first active competition the user has joined
           const joinedActive = this.competitions.find(c => c.status === 'active' && c.user_joined);
@@ -113,9 +119,10 @@ export class ArenaComponent implements OnInit, OnDestroy {
           }
 
           this.loading = false;
+          console.log('[Arena] loading set to false');
         },
         error: (err) => {
-          console.error('Arena loadData error:', err);
+          console.error('[Arena] loadData error:', err);
           this.toast.error('Failed to load arena data');
           this.loading = false;
         }
