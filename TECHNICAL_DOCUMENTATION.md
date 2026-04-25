@@ -1,9 +1,9 @@
-# SmartFolio Technical Documentation
+# Foliowise Technical Documentation
 
 **Version:** 1.0.0
 **Date:** April 2026
 **Classification:** Internal Engineering Documentation
-**Author:** SmartFolio Engineering Team
+**Author:** Foliowise Engineering Team
 
 ---
 
@@ -29,7 +29,7 @@
 
 ### 1.1 Product Overview
 
-SmartFolio is an intelligent portfolio tracking platform that combines real-time market data, AI-powered insights, and gamified virtual trading competitions. The platform enables investors to track their holdings, analyze market sentiment, receive price alerts, and compete in paper trading competitions.
+Foliowise is an intelligent portfolio tracking platform that combines real-time market data, AI-powered insights, and gamified virtual trading competitions. The platform enables investors to track their holdings, analyze market sentiment, receive price alerts, and compete in paper trading competitions.
 
 ### 1.2 Key Capabilities
 
@@ -134,7 +134,7 @@ SmartFolio is an intelligent portfolio tracking platform that combines real-time
 ### 2.3 Directory Structure
 
 ```
-smartfolio/
+foliowise/
 ├── backend/
 │   ├── app/
 │   │   ├── __init__.py
@@ -311,7 +311,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     lifespan=lifespan,
-    title="SmartFolio API",
+    title="Foliowise API",
     description="An intelligent portfolio tracker with AI-powered insights",
     version="0.1.0"
 )
@@ -345,7 +345,7 @@ class Settings(BaseSettings):
 
     # Email (Optional)
     resend_api_key: str | None = None
-    email_from: str = "SmartFolio <alerts@smartfolio.app>"
+    email_from: str = "Foliowise <alerts@foliowise.app>"
 
     # Stripe (Optional)
     stripe_secret_key: str | None = None
@@ -1113,7 +1113,7 @@ export const authGuard: CanActivateFn = (route, state) => {
 })
 export class AuthService {
   private apiUrl = environment.apiUrl;
-  private tokenKey = 'smartfolio_token';
+  private tokenKey = 'foliowise_token';
 
   currentUser$ = new BehaviorSubject<User | null>(null);
 
@@ -2171,7 +2171,7 @@ CREATE INDEX idx_vp_competition_rank ON virtual_portfolios(competition_id, curre
 
 ```bash
 # Required
-DATABASE_URL=postgresql://user:pass@host:5432/smartfolio
+DATABASE_URL=postgresql://user:pass@host:5432/foliowise
 SECRET_KEY=your-256-bit-secret-key
 
 # Optional - Stripe
@@ -2184,7 +2184,7 @@ STRIPE_PRO_PLUS_PRICE_ID=price_...
 RESEND_API_KEY=re_...
 
 # Frontend
-FRONTEND_URL=https://smartfolio.app
+FRONTEND_URL=https://foliowise.app
 ```
 
 ### 12.2 Render Deployment
@@ -2194,20 +2194,20 @@ FRONTEND_URL=https://smartfolio.app
 ```yaml
 services:
   - type: web
-    name: smartfolio-api
+    name: foliowise-api
     env: python
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: DATABASE_URL
         fromDatabase:
-          name: smartfolio-db
+          name: foliowise-db
           property: connectionString
       - key: SECRET_KEY
         generateValue: true
 
   - type: web
-    name: smartfolio-frontend
+    name: foliowise-frontend
     env: static
     buildCommand: npm ci && npm run build
     staticPublishPath: dist/frontend/browser
@@ -2278,7 +2278,7 @@ services:
 |-------|-------|
 | Version | 1.0.0 |
 | Last Updated | April 9, 2026 |
-| Author | SmartFolio Engineering |
+| Author | Foliowise Engineering |
 | Classification | Internal Documentation |
 | Pages | ~100 (when rendered to PDF) |
 

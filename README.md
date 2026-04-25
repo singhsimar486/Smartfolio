@@ -1,6 +1,6 @@
 <div align="center">
 
-# SmartFolio
+# Foliowise
 
 ### Intelligent Portfolio Tracking with AI-Powered Insights
 
@@ -17,7 +17,7 @@
 
 ## Overview
 
-SmartFolio is a comprehensive investment portfolio tracker that combines real-time market data, AI-powered insights, sentiment analysis, and gamified virtual trading competitions. Built for modern investors who want more than just tracking—they want intelligence.
+Foliowise is a comprehensive investment portfolio tracker that combines real-time market data, AI-powered insights, sentiment analysis, and gamified virtual trading competitions. Built for modern investors who want more than just tracking—they want intelligence.
 
 <div align="center">
 
@@ -126,8 +126,8 @@ Get intelligent recommendations and chat with AI about your portfolio.
 
 ```bash
 # Clone repository
-git clone https://github.com/singhsimar486/Smartfolio.git
-cd Smartfolio/backend
+git clone https://github.com/singhsimar486/Foliowise.git
+cd Foliowise/backend
 
 # Create virtual environment
 python3 -m venv venv
@@ -138,7 +138,7 @@ pip install -r requirements.txt
 
 # Configure environment
 cat > .env << EOF
-DATABASE_URL=postgresql://username@localhost:5432/smartfolio
+DATABASE_URL=postgresql://username@localhost:5432/foliowise
 SECRET_KEY=$(openssl rand -hex 32)
 DEBUG=True
 
@@ -155,7 +155,7 @@ FRONTEND_URL=http://localhost:4200
 EOF
 
 # Create database
-createdb smartfolio
+createdb foliowise
 
 # Run server
 uvicorn app.main:app --reload
@@ -258,7 +258,7 @@ chmod +x convert_to_pdf.sh
 ## Project Structure
 
 ```
-smartfolio/
+foliowise/
 ├── backend/
 │   ├── app/
 │   │   ├── main.py              # FastAPI application
@@ -345,6 +345,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Built with passion for investors who want more.**
 
-[Report Bug](https://github.com/singhsimar486/Smartfolio/issues) • [Request Feature](https://github.com/singhsimar486/Smartfolio/issues)
+[Report Bug](https://github.com/singhsimar486/Foliowise/issues) • [Request Feature](https://github.com/singhsimar486/Foliowise/issues)
 
 </div>

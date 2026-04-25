@@ -288,7 +288,7 @@ async def generate_insights(portfolio_summary: dict, holdings: list) -> list:
     portfolio_context = get_portfolio_context(portfolio_summary, holdings)
     sector_analysis = get_sector_analysis(holdings)
 
-    system_prompt = """You are an expert financial advisor AI assistant for SmartFolio, a portfolio tracking app.
+    system_prompt = """You are an expert financial advisor AI assistant for Foliowise, a portfolio tracking app.
 Your job is to analyze the user's portfolio and provide actionable, personalized insights.
 
 Guidelines:
@@ -354,7 +354,7 @@ async def ask_ai_question(question: str, portfolio_summary: dict, holdings: list
     portfolio_context = get_portfolio_context(portfolio_summary, holdings)
     sector_analysis = get_sector_analysis(holdings)
 
-    system_prompt = """You are an expert financial advisor AI assistant for SmartFolio.
+    system_prompt = """You are an expert financial advisor AI assistant for Foliowise.
 The user will ask questions about their investment portfolio.
 
 Guidelines:
@@ -410,7 +410,7 @@ async def generate_weekly_digest(portfolio_summary: dict, holdings: list, week_s
         weekly_change = current_value - week_start_value
         weekly_change_pct = (weekly_change / week_start_value) * 100
 
-    system_prompt = """You are an expert financial advisor creating a weekly portfolio digest for SmartFolio users.
+    system_prompt = """You are an expert financial advisor creating a weekly portfolio digest for Foliowise users.
 
 Create a comprehensive but readable weekly summary that includes:
 1. Overall portfolio health assessment

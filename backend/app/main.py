@@ -56,7 +56,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     lifespan=lifespan,
-    title="SmartFolio API",
+    title="Foliowise API",
     description="An intelligent portfolio tracker with AI-powered insights",
     version="0.1.0"
 )
@@ -106,7 +106,7 @@ app.include_router(allocation.router)
 
 @app.get("/")
 def root():
-    return {"message": "Welcome to SmartFolio API"}
+    return {"message": "Welcome to Foliowise API"}
 
 
 @app.get("/health")

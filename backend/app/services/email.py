@@ -83,14 +83,14 @@ def send_alert_email(
                     <div style="border-top: 1px solid #333; margin-top: 30px; padding-top: 20px;">
                         <p style="color: #666; font-size: 12px; margin: 0;">
                             This alert has been automatically deactivated.
-                            Log in to SmartFolio to reset it or create new alerts.
+                            Log in to Foliowise to reset it or create new alerts.
                         </p>
                     </div>
                 </div>
             </div>
 
             <p style="color: #666; font-size: 11px; text-align: center; margin-top: 20px;">
-                Sent by SmartFolio - Your Intelligent Portfolio Tracker
+                Sent by Foliowise - Your Intelligent Portfolio Tracker
             </p>
         </div>
         """

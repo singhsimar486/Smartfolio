@@ -1,4 +1,4 @@
-# SmartFolio Documentation Index
+# Foliowise Documentation Index
 
 ## Quick Links
 
@@ -112,7 +112,7 @@ Frontend:
 
 ## Contact
 
-**Engineering Team:** engineering@smartfolio.app
+**Engineering Team:** engineering@foliowise.app
 **Documentation Issues:** Open a GitHub issue
 
 ---

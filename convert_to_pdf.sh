@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# SmartFolio Documentation PDF Converter
+# Foliowise Documentation PDF Converter
 # This script combines all documentation and converts to PDF
 #
 # Prerequisites:
@@ -9,7 +9,7 @@
 #   OR
 #   - Use online converter like markdown-to-pdf.com
 
-echo "SmartFolio Documentation PDF Generator"
+echo "Foliowise Documentation PDF Generator"
 echo "======================================="
 
 # Check for pandoc
@@ -23,7 +23,7 @@ if command -v pandoc &> /dev/null; then
 
     # Convert to PDF with styling
     pandoc FULL_DOCUMENTATION.md \
-        -o SmartFolio_Technical_Documentation.pdf \
+        -o Foliowise_Technical_Documentation.pdf \
         --pdf-engine=wkhtmltopdf \
         --toc \
         --toc-depth=3 \
@@ -31,16 +31,16 @@ if command -v pandoc &> /dev/null; then
         -V fontsize=11pt \
         -V documentclass=report \
         --highlight-style=tango \
-        --metadata title="SmartFolio Technical Documentation" \
-        --metadata author="SmartFolio Engineering Team" \
+        --metadata title="Foliowise Technical Documentation" \
+        --metadata author="Foliowise Engineering Team" \
         --metadata date="April 2026"
 
-    echo "PDF generated: SmartFolio_Technical_Documentation.pdf"
+    echo "PDF generated: Foliowise_Technical_Documentation.pdf"
 
 elif command -v grip &> /dev/null; then
     echo "Using grip for HTML preview..."
-    grip FULL_DOCUMENTATION.md --export SmartFolio_Documentation.html
-    echo "HTML generated: SmartFolio_Documentation.html"
+    grip FULL_DOCUMENTATION.md --export Foliowise_Documentation.html
+    echo "HTML generated: Foliowise_Documentation.html"
     echo "Open in browser and print to PDF"
 
 else

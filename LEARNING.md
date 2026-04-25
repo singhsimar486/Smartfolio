@@ -1,6 +1,6 @@
-# SmartFolio Learning Journal
+# Foliowise Learning Journal
 
-This document tracks what I learned while building SmartFolio from scratch.
+This document tracks what I learned while building Foliowise from scratch.
 
 ---
 
@@ -55,7 +55,7 @@ This document tracks what I learned while building SmartFolio from scratch.
 
 ### What We Did
 1. Installed PostgreSQL using Homebrew
-2. Created the smartfolio database
+2. Created the foliowise database
 3. Created database models (User, Holding, Transaction)
 4. Generated real tables from Python models
 5. Started building authentication system

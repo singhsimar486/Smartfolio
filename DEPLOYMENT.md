@@ -1,4 +1,4 @@
-# Smartfolio Deployment Guide
+# Foliowise Deployment Guide
 
 ## Stack (All Free)
 - **Backend:** Render (Free tier)
@@ -12,15 +12,15 @@
 
 1. Go to [render.com](https://render.com) and sign up (use GitHub)
 2. Click **New → Blueprint**
-3. Connect your `smartfolio` repository
+3. Connect your `foliowise` repository
 4. Render will detect `render.yaml` and create:
-   - Web service (smartfolio-api)
-   - PostgreSQL database (smartfolio-db)
+   - Web service (foliowise-api)
+   - PostgreSQL database (foliowise-db)
 5. Click **Apply** and wait for deployment (~5 min)
-6. Copy your backend URL: `https://smartfolio-api.onrender.com`
+6. Copy your backend URL: `https://foliowise-api.onrender.com`
 
 ### Set Environment Variables
-In Render dashboard → smartfolio-api → Environment:
+In Render dashboard → foliowise-api → Environment:
 - `FRONTEND_URL` → (set after Vercel deploy)
 - `ALPHA_VANTAGE_API_KEY` → Get free at [alphavantage.co](https://www.alphavantage.co/support/#api-key)
 
@@ -30,7 +30,7 @@ In Render dashboard → smartfolio-api → Environment:
 
 1. Go to [vercel.com](https://vercel.com) and sign up (use GitHub)
 2. Click **Add New → Project**
-3. Import your `smartfolio` repository
+3. Import your `foliowise` repository
 4. Configure:
    - **Framework Preset:** Angular
    - **Root Directory:** `frontend`
@@ -52,7 +52,7 @@ In Render dashboard → smartfolio-api → Environment:
 
 1. Visit your Vercel URL
 2. Try registering a new account
-3. Check Render logs if issues: Dashboard → smartfolio-api → Logs
+3. Check Render logs if issues: Dashboard → foliowise-api → Logs
 
 ---
 

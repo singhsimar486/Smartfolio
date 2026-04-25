@@ -1,4 +1,4 @@
-# SmartFolio Technical Documentation - Part 2
+# Foliowise Technical Documentation - Part 2
 
 ## 14. Complete API Examples
 
@@ -7,7 +7,7 @@
 #### Register New User
 
 ```bash
-curl -X POST "https://api.smartfolio.app/auth/register" \
+curl -X POST "https://api.foliowise.app/auth/register" \
   -H "Content-Type: application/json" \
   -d '{
     "email": "investor@example.com",
@@ -26,7 +26,7 @@ curl -X POST "https://api.smartfolio.app/auth/register" \
 #### Login Existing User
 
 ```bash
-curl -X POST "https://api.smartfolio.app/auth/login" \
+curl -X POST "https://api.foliowise.app/auth/login" \
   -H "Content-Type: application/x-www-form-urlencoded" \
   -d "username=investor@example.com&password=SecurePass123!"
 ```
@@ -34,7 +34,7 @@ curl -X POST "https://api.smartfolio.app/auth/login" \
 #### Get Current User
 
 ```bash
-curl -X GET "https://api.smartfolio.app/auth/me" \
+curl -X GET "https://api.foliowise.app/auth/me" \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIs..."
 ```
 
@@ -59,7 +59,7 @@ curl -X GET "https://api.smartfolio.app/auth/me" \
 #### Create Holding
 
 ```bash
-curl -X POST "https://api.smartfolio.app/holdings/" \
+curl -X POST "https://api.foliowise.app/holdings/" \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -86,7 +86,7 @@ curl -X POST "https://api.smartfolio.app/holdings/" \
 #### List All Holdings
 
 ```bash
-curl -X GET "https://api.smartfolio.app/holdings/" \
+curl -X GET "https://api.foliowise.app/holdings/" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
@@ -115,7 +115,7 @@ curl -X GET "https://api.smartfolio.app/holdings/" \
 #### Update Holding
 
 ```bash
-curl -X PUT "https://api.smartfolio.app/holdings/a1b2c3d4-e5f6-7890-abcd-ef1234567890" \
+curl -X PUT "https://api.foliowise.app/holdings/a1b2c3d4-e5f6-7890-abcd-ef1234567890" \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -127,7 +127,7 @@ curl -X PUT "https://api.smartfolio.app/holdings/a1b2c3d4-e5f6-7890-abcd-ef12345
 #### Import Holdings from CSV
 
 ```bash
-curl -X POST "https://api.smartfolio.app/holdings/import" \
+curl -X POST "https://api.foliowise.app/holdings/import" \
   -H "Authorization: Bearer $TOKEN" \
   -F "file=@holdings.csv"
 ```
@@ -158,7 +158,7 @@ AMZN,15,178.75
 #### Get Portfolio Summary
 
 ```bash
-curl -X GET "https://api.smartfolio.app/portfolio/summary" \
+curl -X GET "https://api.foliowise.app/portfolio/summary" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
@@ -208,7 +208,7 @@ curl -X GET "https://api.smartfolio.app/portfolio/summary" \
 #### Get Portfolio Performance
 
 ```bash
-curl -X GET "https://api.smartfolio.app/portfolio/performance?period=3mo" \
+curl -X GET "https://api.foliowise.app/portfolio/performance?period=3mo" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
@@ -236,7 +236,7 @@ curl -X GET "https://api.smartfolio.app/portfolio/performance?period=3mo" \
 #### Get Gains Summary
 
 ```bash
-curl -X GET "https://api.smartfolio.app/portfolio/gains" \
+curl -X GET "https://api.foliowise.app/portfolio/gains" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
@@ -275,7 +275,7 @@ curl -X GET "https://api.smartfolio.app/portfolio/gains" \
 #### Get Stock Quote
 
 ```bash
-curl -X GET "https://api.smartfolio.app/market/quote/TSLA"
+curl -X GET "https://api.foliowise.app/market/quote/TSLA"
 ```
 
 **Response:**
@@ -299,7 +299,7 @@ curl -X GET "https://api.smartfolio.app/market/quote/TSLA"
 #### Get Historical Data
 
 ```bash
-curl -X GET "https://api.smartfolio.app/market/history/TSLA?period=1mo"
+curl -X GET "https://api.foliowise.app/market/history/TSLA?period=1mo"
 ```
 
 **Response:**
@@ -320,7 +320,7 @@ curl -X GET "https://api.smartfolio.app/market/history/TSLA?period=1mo"
 #### Search Stocks
 
 ```bash
-curl -X GET "https://api.smartfolio.app/market/search?q=tesla&limit=5"
+curl -X GET "https://api.foliowise.app/market/search?q=tesla&limit=5"
 ```
 
 **Response:**
@@ -337,7 +337,7 @@ curl -X GET "https://api.smartfolio.app/market/search?q=tesla&limit=5"
 #### Get Price Prediction
 
 ```bash
-curl -X GET "https://api.smartfolio.app/market/predict/AAPL?days=14"
+curl -X GET "https://api.foliowise.app/market/predict/AAPL?days=14"
 ```
 
 **Response:**
@@ -373,7 +373,7 @@ curl -X GET "https://api.smartfolio.app/market/predict/AAPL?days=14"
 #### List Competitions
 
 ```bash
-curl -X GET "https://api.smartfolio.app/competitions/?status=active" \
+curl -X GET "https://api.foliowise.app/competitions/?status=active" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
@@ -402,7 +402,7 @@ curl -X GET "https://api.smartfolio.app/competitions/?status=active" \
 #### Join Competition
 
 ```bash
-curl -X POST "https://api.smartfolio.app/competitions/comp-uuid-001/join" \
+curl -X POST "https://api.foliowise.app/competitions/comp-uuid-001/join" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
@@ -426,7 +426,7 @@ curl -X POST "https://api.smartfolio.app/competitions/comp-uuid-001/join" \
 #### Execute Virtual Trade
 
 ```bash
-curl -X POST "https://api.smartfolio.app/competitions/comp-uuid-001/trade" \
+curl -X POST "https://api.foliowise.app/competitions/comp-uuid-001/trade" \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -479,7 +479,7 @@ curl -X POST "https://api.smartfolio.app/competitions/comp-uuid-001/trade" \
 #### Sell Position
 
 ```bash
-curl -X POST "https://api.smartfolio.app/competitions/comp-uuid-001/trade" \
+curl -X POST "https://api.foliowise.app/competitions/comp-uuid-001/trade" \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -530,7 +530,7 @@ curl -X POST "https://api.smartfolio.app/competitions/comp-uuid-001/trade" \
 #### Get Leaderboard
 
 ```bash
-curl -X GET "https://api.smartfolio.app/competitions/comp-uuid-001/leaderboard?limit=10" \
+curl -X GET "https://api.foliowise.app/competitions/comp-uuid-001/leaderboard?limit=10" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
@@ -564,7 +564,7 @@ curl -X GET "https://api.smartfolio.app/competitions/comp-uuid-001/leaderboard?l
 #### Get Achievements
 
 ```bash
-curl -X GET "https://api.smartfolio.app/competitions/achievements/me" \
+curl -X GET "https://api.foliowise.app/competitions/achievements/me" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
@@ -615,7 +615,7 @@ curl -X GET "https://api.smartfolio.app/competitions/achievements/me" \
 #### Create Alert
 
 ```bash
-curl -X POST "https://api.smartfolio.app/alerts/" \
+curl -X POST "https://api.foliowise.app/alerts/" \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -645,7 +645,7 @@ curl -X POST "https://api.smartfolio.app/alerts/" \
 #### Check Alerts
 
 ```bash
-curl -X GET "https://api.smartfolio.app/alerts/check" \
+curl -X GET "https://api.foliowise.app/alerts/check" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
@@ -676,7 +676,7 @@ curl -X GET "https://api.smartfolio.app/alerts/check" \
 #### Get Subscription Status
 
 ```bash
-curl -X GET "https://api.smartfolio.app/subscriptions/status" \
+curl -X GET "https://api.foliowise.app/subscriptions/status" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
@@ -695,7 +695,7 @@ curl -X GET "https://api.smartfolio.app/subscriptions/status" \
 #### Create Checkout Session
 
 ```bash
-curl -X POST "https://api.smartfolio.app/subscriptions/checkout?plan=pro" \
+curl -X POST "https://api.foliowise.app/subscriptions/checkout?plan=pro" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
@@ -710,7 +710,7 @@ curl -X POST "https://api.smartfolio.app/subscriptions/checkout?plan=pro" \
 #### Get Usage
 
 ```bash
-curl -X GET "https://api.smartfolio.app/subscriptions/usage" \
+curl -X GET "https://api.foliowise.app/subscriptions/usage" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
@@ -746,7 +746,7 @@ curl -X GET "https://api.smartfolio.app/subscriptions/usage" \
 # Decode JWT at jwt.io and check "exp" claim
 
 # Re-authenticate
-curl -X POST "https://api.smartfolio.app/auth/login" \
+curl -X POST "https://api.foliowise.app/auth/login" \
   -d "username=email&password=pass"
 ```
 
@@ -781,7 +781,7 @@ curl -X POST "https://api.smartfolio.app/auth/login" \
 **Debug Steps:**
 ```bash
 # Check backend logs
-tail -f /var/log/smartfolio/app.log
+tail -f /var/log/foliowise/app.log
 
 # Verify database connection
 psql $DATABASE_URL -c "SELECT 1"

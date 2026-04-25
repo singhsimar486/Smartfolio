@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartFolio - Fintech Logos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #000;
+      color: white;
+      min-height: 100vh;
+      padding: 40px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 16px;
+      font-weight: 800;
+      font-size: 36px;
+      color: #00ff88;
+      text-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+    }
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 60px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 24px;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+    .logo-card {
+      background: linear-gradient(180deg, #0a0a0a 0%, #111 100%);
+      border-radius: 16px;
+      padding: 40px;
+      text-align: center;
+      border: 1px solid #1a1a1a;
+      position: relative;
+      overflow: hidden;
+    }
+    .logo-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #00ff88, transparent);
+      opacity: 0.5;
+    }
+    .logo-card:hover {
+      border-color: #00ff88;
+      box-shadow: 0 0 40px rgba(0, 255, 136, 0.1);
+    }
+    .logo-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    .logo-main {
+      width: 140px;
+      height: 140px;
+    }
+    h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #00ff88;
+      font-family: 'JetBrains Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    .description {
+      color: #555;
+      font-size: 13px;
+      margin-top: 8px;
+      line-height: 1.6;
+    }
+    .tag {
+      display: inline-block;
+      padding: 4px 10px;
+      background: rgba(0, 255, 136, 0.1);
+      border: 1px solid rgba(0, 255, 136, 0.2);
+      border-radius: 4px;
+      font-size: 10px;
+      color: #00ff88;
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 12px;
+    }
+    .sizes {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid #1a1a1a;
+    }
+    .size-variant {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .size-label {
+      font-size: 10px;
+      color: #333;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    @keyframes scan {
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(100%); }
+    }
+  </style>
+</head>
+<body>
+  <h1>FINTECH EDITIONS</h1>
+  <p class="subtitle">// finance × technology × innovation</p>
+
+  <div class="grid">
+
+    <!-- Concept 1: Candlestick Chart SF -->
+    <div class="logo-card">
+      <div class="logo-container">
+        <svg class="logo-main" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="green1" x1="0" y1="0" x2="0" y2="140" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#00ff88"/>
+              <stop offset="1" stop-color="#00aa55"/>
+            </linearGradient>
+          </defs>
+          <!-- S made of candlesticks -->
+          <rect x="20" y="25" width="12" height="8" fill="#00ff88"/>
+          <rect x="24" y="20" width="4" height="25" fill="#00ff88"/>
+
+          <rect x="38" y="40" width="12" height="12" fill="#00ff88"/>
+          <rect x="42" y="35" width="4" height="30" fill="#00ff88"/>
+
+          <rect x="20" y="60" width="12" height="10" fill="#00ff88"/>
+          <rect x="24" y="55" width="4" height="25" fill="#00ff88"/>
+
+          <rect x="38" y="82" width="12" height="15" fill="#00ff88"/>
+          <rect x="42" y="75" width="4" height="35" fill="#00ff88"/>
+
+          <rect x="20" y="100" width="12" height="8" fill="#00ff88"/>
+          <rect x="24" y="95" width="4" height="25" fill="#00ff88"/>
+
+          <!-- F as tech element -->
+          <rect x="70" y="20" width="6" height="100" fill="url(#green1)"/>
+          <rect x="70" y="20" width="50" height="6" fill="url(#green1)"/>
+          <rect x="70" y="55" width="35" height="5" fill="url(#green1)" opacity="0.7"/>
+
+          <!-- Data points -->
+          <circle cx="120" cy="23" r="4" fill="#00ff88"/>
+          <circle cx="105" cy="57" r="3" fill="#00ff88" opacity="0.5"/>
+        </svg>
+        <div>
+          <h3>Candlestick</h3>
+          <p class="description">S formed by trading candlesticks, F as the solid foundation of your portfolio.</p>
+          <span class="tag">TRADING</span>
+        </div>
+      </div>
+      <div class="sizes">
+        <div class="size-variant">
+          <svg width="48" height="48" viewBox="0 0 140 140" fill="none">
+            <rect x="20" y="25" width="12" height="8" fill="#00ff88"/>
+            <rect x="24" y="20" width="4" height="25" fill="#00ff88"/>
+            <rect x="38" y="40" width="12" height="12" fill="#00ff88"/>
+            <rect x="42" y="35" width="4" height="30" fill="#00ff88"/>
+            <rect x="20" y="60" width="12" height="10" fill="#00ff88"/>
+            <rect x="24" y="55" width="4" height="25" fill="#00ff88"/>
+            <rect x="38" y="82" width="12" height="15" fill="#00ff88"/>
+            <rect x="42" y="75" width="4" height="35" fill="#00ff88"/>
+            <rect x="20" y="100" width="12" height="8" fill="#00ff88"/>
+            <rect x="24" y="95" width="4" height="25" fill="#00ff88"/>
+            <rect x="70" y="20" width="6" height="100" fill="#00ff88"/>
+            <rect x="70" y="20" width="50" height="6" fill="#00ff88"/>
+            <rect x="70" y="55" width="35" height="5" fill="#00ff88" opacity="0.7"/>
+          </svg>
+          <span class="size-label">48px</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Concept 2: Neural Network SF -->
+    <div class="logo-card">
+      <div class="logo-container">
+        <svg class="logo-main" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="neural" x1="0" y1="0" x2="140" y2="140" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#00ff88"/>
+              <stop offset="0.5" stop-color="#00ccff"/>
+              <stop offset="1" stop-color="#8b5cf6"/>
+            </linearGradient>
+          </defs>
+          <!-- Neural network nodes forming S -->
+          <circle cx="25" cy="25" r="8" fill="#00ff88"/>
+          <circle cx="50" cy="25" r="6" fill="#00ccff"/>
+          <circle cx="25" cy="55" r="6" fill="#00ccff"/>
+          <circle cx="50" cy="55" r="8" fill="#00ff88"/>
+          <circle cx="25" cy="85" r="6" fill="#00ccff"/>
+          <circle cx="50" cy="85" r="6" fill="#00ccff"/>
+          <circle cx="25" cy="115" r="6" fill="#00ccff"/>
+          <circle cx="50" cy="115" r="8" fill="#00ff88"/>
+
+          <!-- Connections for S -->
+          <path d="M25 25 L50 25 M25 25 L25 55 M50 25 L50 55 M25 55 L50 55 M50 55 L50 85 M25 85 L50 85 M25 85 L25 115 M25 115 L50 115"
+                stroke="url(#neural)" stroke-width="2" opacity="0.5"/>
+
+          <!-- F structure -->
+          <circle cx="85" cy="25" r="8" fill="#00ff88"/>
+          <circle cx="115" cy="25" r="6" fill="#00ccff"/>
+          <circle cx="85" cy="55" r="6" fill="#00ccff"/>
+          <circle cx="105" cy="55" r="6" fill="#8b5cf6"/>
+          <circle cx="85" cy="85" r="5" fill="#00ccff"/>
+          <circle cx="85" cy="115" r="8" fill="#00ff88"/>
+
+          <!-- Connections for F -->
+          <path d="M85 25 L115 25 M85 25 L85 55 M85 55 L105 55 M85 55 L85 85 M85 85 L85 115"
+                stroke="url(#neural)" stroke-width="2" opacity="0.5"/>
+
+          <!-- Cross connections (AI feel) -->
+          <path d="M50 55 L85 55" stroke="#00ccff" stroke-width="1" opacity="0.3" stroke-dasharray="4 4"/>
+        </svg>
+        <div>
+          <h3>Neural Net</h3>
+          <p class="description">AI-powered intelligence visualized as interconnected nodes processing your portfolio.</p>
+          <span class="tag">AI POWERED</span>
+        </div>
+      </div>
+      <div class="sizes">
+        <div class="size-variant">
+          <svg width="48" height="48" viewBox="0 0 140 140" fill="none">
+            <circle cx="25" cy="25" r="10" fill="#00ff88"/>
+            <circle cx="50" cy="55" r="10" fill="#00ccff"/>
+            <circle cx="25" cy="85" r="8" fill="#00ccff"/>
+            <circle cx="50" cy="115" r="10" fill="#00ff88"/>
+            <circle cx="85" cy="25" r="10" fill="#00ff88"/>
+            <circle cx="85" cy="70" r="8" fill="#00ccff"/>
+            <circle cx="85" cy="115" r="10" fill="#8b5cf6"/>
+            <path d="M25 25 L50 55 L25 85 L50 115 M85 25 L85 115" stroke="#00ff88" stroke-width="3" opacity="0.4"/>
+          </svg>
+          <span class="size-label">48px</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Concept 3: Terminal/Code SF -->
+    <div class="logo-card">
+      <div class="logo-container">
+        <svg class="logo-main" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="10" width="120" height="120" rx="12" fill="#0d1117" stroke="#30363d" stroke-width="2"/>
+          <!-- Terminal header dots -->
+          <circle cx="28" cy="26" r="5" fill="#ff5f56"/>
+          <circle cx="46" cy="26" r="5" fill="#ffbd2e"/>
+          <circle cx="64" cy="26" r="5" fill="#27c93f"/>
+
+          <!-- Code-style SF -->
+          <text x="25" y="70" font-family="JetBrains Mono, monospace" font-size="14" fill="#8b949e">const</text>
+          <text x="25" y="90" font-family="JetBrains Mono, monospace" font-size="32" font-weight="700" fill="#00ff88">SF</text>
+          <text x="75" y="90" font-family="JetBrains Mono, monospace" font-size="14" fill="#8b949e">=</text>
+          <text x="90" y="90" font-family="JetBrains Mono, monospace" font-size="14" fill="#a855f7">∞</text>
+
+          <!-- Cursor blink -->
+          <rect x="25" y="100" width="8" height="16" fill="#00ff88" opacity="0.8"/>
+        </svg>
+        <div>
+          <h3>Terminal</h3>
+          <p class="description">Developer-focused, code-native aesthetic. SF as a constant for infinite growth.</p>
+          <span class="tag">DEV CULTURE</span>
+        </div>
+      </div>
+      <div class="sizes">
+        <div class="size-variant">
+          <svg width="48" height="48" viewBox="0 0 140 140" fill="none">
+            <rect x="10" y="10" width="120" height="120" rx="12" fill="#0d1117" stroke="#30363d" stroke-width="2"/>
+            <circle cx="28" cy="26" r="5" fill="#ff5f56"/>
+            <circle cx="46" cy="26" r="5" fill="#ffbd2e"/>
+            <circle cx="64" cy="26" r="5" fill="#27c93f"/>
+            <text x="35" y="85" font-family="monospace" font-size="40" font-weight="700" fill="#00ff88">SF</text>
+          </svg>
+          <span class="size-label">48px</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Concept 4: Stock Ticker SF -->
+    <div class="logo-card">
+      <div class="logo-container">
+        <svg class="logo-main" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="ticker" x1="0" y1="70" x2="140" y2="70" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#00ff88"/>
+              <stop offset="1" stop-color="#00cc66"/>
+            </linearGradient>
+          </defs>
+          <!-- Ticker tape background -->
+          <rect x="0" y="45" width="140" height="50" fill="#001a0d"/>
+
+          <!-- SF as ticker symbol -->
+          <text x="20" y="82" font-family="JetBrains Mono, monospace" font-size="36" font-weight="700" fill="url(#ticker)">$SF</text>
+
+          <!-- Price and change -->
+          <text x="95" y="68" font-family="JetBrains Mono, monospace" font-size="12" fill="#00ff88">▲</text>
+          <text x="105" y="68" font-family="JetBrains Mono, monospace" font-size="11" fill="#00ff88">24.7%</text>
+
+          <!-- Mini chart line -->
+          <path d="M95 80 L102 85 L108 78 L115 82 L122 72 L130 75" stroke="#00ff88" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+          <!-- Ticker dots -->
+          <circle cx="10" cy="70" r="3" fill="#00ff88" opacity="0.3"/>
+          <circle cx="135" cy="70" r="3" fill="#00ff88" opacity="0.3"/>
+        </svg>
+        <div>
+          <h3>Ticker</h3>
+          <p class="description">Stock ticker aesthetic - $SF as your portfolio's symbol of growth.</p>
+          <span class="tag">MARKETS</span>
+        </div>
+      </div>
+      <div class="sizes">
+        <div class="size-variant">
+          <svg width="48" height="48" viewBox="0 0 140 140" fill="none">
+            <rect x="10" y="35" width="120" height="70" rx="8" fill="#001a0d"/>
+            <text x="25" y="82" font-family="monospace" font-size="38" font-weight="700" fill="#00ff88">$SF</text>
+            <text x="100" y="75" font-family="monospace" font-size="14" fill="#00ff88">▲</text>
+          </svg>
+          <span class="size-label">48px</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Concept 5: Blockchain/Hexagon SF -->
+    <div class="logo-card">
+      <div class="logo-container">
+        <svg class="logo-main" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="hex" x1="0" y1="0" x2="140" y2="140" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#00ff88"/>
+              <stop offset="1" stop-color="#00ccff"/>
+            </linearGradient>
+          </defs>
+          <!-- Hexagonal grid background -->
+          <path d="M70 10 L120 40 L120 100 L70 130 L20 100 L20 40 Z" fill="none" stroke="#00ff88" stroke-width="2" opacity="0.2"/>
+          <path d="M70 25 L105 47 L105 93 L70 115 L35 93 L35 47 Z" fill="none" stroke="#00ff88" stroke-width="2" opacity="0.3"/>
+          <path d="M70 40 L90 54 L90 86 L70 100 L50 86 L50 54 Z" fill="none" stroke="#00ff88" stroke-width="2" opacity="0.5"/>
+
+          <!-- SF in center -->
+          <text x="70" y="82" text-anchor="middle" font-family="Inter, sans-serif" font-size="32" font-weight="800" fill="url(#hex)">SF</text>
+
+          <!-- Connection nodes -->
+          <circle cx="70" cy="10" r="4" fill="#00ff88"/>
+          <circle cx="120" cy="40" r="4" fill="#00ccff"/>
+          <circle cx="120" cy="100" r="4" fill="#00ccff"/>
+          <circle cx="70" cy="130" r="4" fill="#00ff88"/>
+          <circle cx="20" cy="100" r="4" fill="#00ccff"/>
+          <circle cx="20" cy="40" r="4" fill="#00ccff"/>
+        </svg>
+        <div>
+          <h3>Hexchain</h3>
+          <p class="description">Blockchain-inspired hexagonal network. Decentralized, secure, connected.</p>
+          <span class="tag">WEB3</span>
+        </div>
+      </div>
+      <div class="sizes">
+        <div class="size-variant">
+          <svg width="48" height="48" viewBox="0 0 140 140" fill="none">
+            <path d="M70 15 L115 42 L115 98 L70 125 L25 98 L25 42 Z" fill="none" stroke="#00ff88" stroke-width="3"/>
+            <text x="70" y="82" text-anchor="middle" font-family="sans-serif" font-size="36" font-weight="800" fill="#00ff88">SF</text>
+          </svg>
+          <span class="size-label">48px</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Concept 6: Analytics Dashboard SF -->
+    <div class="logo-card">
+      <div class="logo-container">
+        <svg class="logo-main" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="10" width="120" height="120" rx="16" fill="#0a0a0a" stroke="#1a1a1a" stroke-width="2"/>
+
+          <!-- Mini chart grid -->
+          <path d="M25 110 L25 30 M25 110 L115 110" stroke="#1a1a1a" stroke-width="1"/>
+          <path d="M25 90 L115 90 M25 70 L115 70 M25 50 L115 50" stroke="#1a1a1a" stroke-width="1" opacity="0.5"/>
+
+          <!-- S as area chart -->
+          <path d="M25 90 Q35 85, 40 70 Q45 55, 55 65 Q65 75, 70 60" stroke="#00ff88" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M25 90 Q35 85, 40 70 Q45 55, 55 65 Q65 75, 70 60 L70 110 L25 110 Z" fill="url(#areafill)" opacity="0.2"/>
+
+          <!-- F as bar chart -->
+          <rect x="80" y="40" width="10" height="70" rx="2" fill="#00ff88"/>
+          <rect x="95" y="60" width="10" height="50" rx="2" fill="#00ff88" opacity="0.7"/>
+          <rect x="80" y="30" width="30" height="4" rx="2" fill="#00ccff"/>
+
+          <defs>
+            <linearGradient id="areafill" x1="50" y1="60" x2="50" y2="110" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#00ff88"/>
+              <stop offset="1" stop-color="#00ff88" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div>
+          <h3>Dashboard</h3>
+          <p class="description">S as flowing analytics, F as solid metrics. Data visualization meets typography.</p>
+          <span class="tag">ANALYTICS</span>
+        </div>
+      </div>
+      <div class="sizes">
+        <div class="size-variant">
+          <svg width="48" height="48" viewBox="0 0 140 140" fill="none">
+            <rect x="10" y="10" width="120" height="120" rx="16" fill="#0a0a0a" stroke="#1a1a1a" stroke-width="2"/>
+            <path d="M25 90 Q40 70, 55 65 Q70 60, 70 50" stroke="#00ff88" stroke-width="4" fill="none"/>
+            <rect x="80" y="35" width="12" height="75" rx="3" fill="#00ff88"/>
+            <rect x="80" y="25" width="35" height="6" rx="3" fill="#00ccff"/>
+          </svg>
+          <span class="size-label">48px</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Concept 7: Matrix/Binary SF -->
+    <div class="logo-card">
+      <div class="logo-container">
+        <svg class="logo-main" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Binary rain background -->
+          <text x="15" y="20" font-family="JetBrains Mono" font-size="8" fill="#00ff88" opacity="0.15">10110</text>
+          <text x="45" y="30" font-family="JetBrains Mono" font-size="8" fill="#00ff88" opacity="0.1">01001</text>
+          <text x="75" y="25" font-family="JetBrains Mono" font-size="8" fill="#00ff88" opacity="0.2">11010</text>
+          <text x="105" y="35" font-family="JetBrains Mono" font-size="8" fill="#00ff88" opacity="0.1">00101</text>
+          <text x="20" y="120" font-family="JetBrains Mono" font-size="8" fill="#00ff88" opacity="0.1">10101</text>
+          <text x="55" y="130" font-family="JetBrains Mono" font-size="8" fill="#00ff88" opacity="0.15">01110</text>
+          <text x="90" y="125" font-family="JetBrains Mono" font-size="8" fill="#00ff88" opacity="0.1">11001</text>
+
+          <!-- Main SF with glow -->
+          <text x="70" y="90" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="56" font-weight="700" fill="#001a0d">SF</text>
+          <text x="70" y="90" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="56" font-weight="700" fill="#00ff88" filter="url(#glow)">SF</text>
+
+          <defs>
+            <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+              <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+        </svg>
+        <div>
+          <h3>Matrix</h3>
+          <p class="description">Digital rain aesthetic. SF emerges from the data stream - algorithmic intelligence.</p>
+          <span class="tag">ALGORITHM</span>
+        </div>
+      </div>
+      <div class="sizes">
+        <div class="size-variant">
+          <svg width="48" height="48" viewBox="0 0 140 140" fill="none">
+            <rect width="140" height="140" fill="#000"/>
+            <text x="70" y="90" text-anchor="middle" font-family="monospace" font-size="56" font-weight="700" fill="#00ff88">SF</text>
+          </svg>
+          <span class="size-label">48px</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Concept 8: Geometric Precision -->
+    <div class="logo-card">
+      <div class="logo-container">
+        <svg class="logo-main" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="precision" x1="0" y1="0" x2="140" y2="140" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#00ff88"/>
+              <stop offset="0.5" stop-color="#00ccff"/>
+              <stop offset="1" stop-color="#8b5cf6"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Outer ring -->
+          <circle cx="70" cy="70" r="60" fill="none" stroke="url(#precision)" stroke-width="2" opacity="0.3"/>
+          <circle cx="70" cy="70" r="50" fill="none" stroke="url(#precision)" stroke-width="1" opacity="0.2"/>
+
+          <!-- Precision marks -->
+          <path d="M70 15 L70 25 M70 115 L70 125 M15 70 L25 70 M115 70 L125 70" stroke="#00ff88" stroke-width="2"/>
+
+          <!-- Angled precision lines -->
+          <path d="M30 30 L38 38 M102 102 L110 110 M30 110 L38 102 M102 38 L110 30" stroke="#00ff88" stroke-width="1" opacity="0.5"/>
+
+          <!-- SF centered -->
+          <text x="70" y="80" text-anchor="middle" font-family="Inter, sans-serif" font-size="38" font-weight="800" fill="url(#precision)">SF</text>
+
+          <!-- Corner accents -->
+          <path d="M15 15 L35 15 L15 35" fill="none" stroke="#00ff88" stroke-width="2"/>
+          <path d="M125 15 L105 15 L125 35" fill="none" stroke="#00ccff" stroke-width="2"/>
+          <path d="M15 125 L35 125 L15 105" fill="none" stroke="#00ccff" stroke-width="2"/>
+          <path d="M125 125 L105 125 L125 105" fill="none" stroke="#8b5cf6" stroke-width="2"/>
+        </svg>
+        <div>
+          <h3>Precision</h3>
+          <p class="description">Technical precision meets financial accuracy. Every pixel calculated.</p>
+          <span class="tag">PRECISION</span>
+        </div>
+      </div>
+      <div class="sizes">
+        <div class="size-variant">
+          <svg width="48" height="48" viewBox="0 0 140 140" fill="none">
+            <circle cx="70" cy="70" r="55" fill="none" stroke="#00ff88" stroke-width="2"/>
+            <text x="70" y="82" text-anchor="middle" font-family="sans-serif" font-size="42" font-weight="800" fill="#00ff88">SF</text>
+            <path d="M15 15 L30 15 L15 30" fill="none" stroke="#00ff88" stroke-width="2"/>
+            <path d="M125 125 L110 125 L125 110" fill="none" stroke="#00ff88" stroke-width="2"/>
+          </svg>
+          <span class="size-label">48px</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Concept 9: Uptrend Arrow Integration -->
+    <div class="logo-card">
+      <div class="logo-container">
+        <svg class="logo-main" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="uptrend" x1="20" y1="120" x2="120" y2="20" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#00aa55"/>
+              <stop offset="1" stop-color="#00ff88"/>
+            </linearGradient>
+          </defs>
+
+          <!-- S with integrated upward flow -->
+          <path d="M20 95 C20 95, 20 75, 35 75 C50 75, 50 60, 35 60 C20 60, 20 40, 35 40 L55 40"
+                stroke="url(#uptrend)" stroke-width="10" stroke-linecap="round" fill="none"/>
+
+          <!-- F that becomes arrow -->
+          <path d="M65 40 L65 110" stroke="url(#uptrend)" stroke-width="10" stroke-linecap="round"/>
+          <path d="M65 40 L100 40" stroke="url(#uptrend)" stroke-width="10" stroke-linecap="round"/>
+          <path d="M65 65 L90 65" stroke="url(#uptrend)" stroke-width="8" stroke-linecap="round" opacity="0.7"/>
+
+          <!-- Arrow head breaking out -->
+          <path d="M100 40 L120 20 M120 20 L105 20 M120 20 L120 35"
+                stroke="#00ff88" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div>
+          <h3>Breakout</h3>
+          <p class="description">F transforms into upward arrow - your portfolio breaking through resistance.</p>
+          <span class="tag">GROWTH</span>
+        </div>
+      </div>
+      <div class="sizes">
+        <div class="size-variant">
+          <svg width="48" height="48" viewBox="0 0 140 140" fill="none">
+            <path d="M20 95 C20 95, 20 75, 35 75 C50 75, 50 60, 35 60 C20 60, 20 40, 35 40 L55 40" stroke="#00ff88" stroke-width="12" stroke-linecap="round" fill="none"/>
+            <path d="M65 40 L65 110" stroke="#00ff88" stroke-width="12" stroke-linecap="round"/>
+            <path d="M65 40 L100 40" stroke="#00ff88" stroke-width="12" stroke-linecap="round"/>
+            <path d="M100 40 L120 20 M120 20 L105 20 M120 20 L120 35" stroke="#00ff88" stroke-width="8" stroke-linecap="round"/>
+          </svg>
+          <span class="size-label">48px</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Concept 10: Minimal Line Art -->
+    <div class="logo-card">
+      <div class="logo-container">
+        <svg class="logo-main" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Ultra minimal single line SF -->
+          <path d="M25 100
+                   C25 100, 25 80, 40 80
+                   C55 80, 55 60, 40 60
+                   C25 60, 25 40, 40 40
+                   L70 40
+                   L70 100
+                   M70 65 L100 65
+                   M100 40 L100 65"
+                stroke="#00ff88"
+                stroke-width="4"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                fill="none"/>
+
+          <!-- Accent dot -->
+          <circle cx="115" cy="40" r="6" fill="#00ff88"/>
+
+          <!-- Subtle grid -->
+          <path d="M15 120 L125 120" stroke="#00ff88" stroke-width="1" opacity="0.2"/>
+          <path d="M125 20 L125 120" stroke="#00ff88" stroke-width="1" opacity="0.1"/>
+        </svg>
+        <div>
+          <h3>Linework</h3>
+          <p class="description">Single continuous stroke forming SF. Minimal, elegant, memorable.</p>
+          <span class="tag">MINIMAL</span>
+        </div>
+      </div>
+      <div class="sizes">
+        <div class="size-variant">
+          <svg width="48" height="48" viewBox="0 0 140 140" fill="none">
+            <path d="M25 100 C25 100, 25 80, 40 80 C55 80, 55 60, 40 60 C25 60, 25 40, 40 40 L70 40 L70 100 M70 65 L100 65 M100 40 L100 65" stroke="#00ff88" stroke-width="6" stroke-linecap="round" fill="none"/>
+            <circle cx="115" cy="40" r="8" fill="#00ff88"/>
+          </svg>
+          <span class="size-label">48px</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="text-align: center; margin-top: 60px; padding: 40px; background: #0a0a0a; border-radius: 12px; max-width: 700px; margin-left: auto; margin-right: auto; border: 1px solid #1a1a1a;">
+    <p style="color: #00ff88; font-family: 'JetBrains Mono', monospace; margin-bottom: 12px;">// SELECT YOUR VARIANT</p>
+    <p style="color: #444; font-size: 13px;">Tell me which one and I'll export: SVG • PNG (16/32/64/128/256/512px) • Favicon.ico</p>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartFolio - Unique SF Monograms</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #030712;
+      color: white;
+      min-height: 100vh;
+      padding: 40px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 16px;
+      font-weight: 700;
+      font-size: 32px;
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .subtitle {
+      text-align: center;
+      color: #64748b;
+      margin-bottom: 60px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 32px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .logo-card {
+      background: linear-gradient(145deg, #0f172a, #1e293b);
+      border-radius: 24px;
+      padding: 48px;
+      text-align: center;
+      border: 1px solid #1e293b;
+      transition: all 0.3s ease;
+    }
+    .logo-card:hover {
+      border-color: #6366f1;
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(99, 102, 241, 0.15);
+    }
+    .logo-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
+    .logo-main {
+      width: 120px;
+      height: 120px;
+    }
+    h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-top: 8px;
+    }
+    .description {
+      color: #64748b;
+      font-size: 13px;
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+    .sizes {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid #1e293b;
+    }
+    .size-variant {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .size-label {
+      font-size: 10px;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .wordmark {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+    .animate-pulse {
+      animation: pulse 2s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body>
+  <h1>Unique SF Monograms</h1>
+  <p class="subtitle">Innovative, never-seen-before concepts for SmartFolio</p>
+
+  <div class="grid">
+
+    <!-- Concept 1: Interlocked Infinity Growth -->
+    <div class="logo-card">
+      <div class="logo-container">
+        <svg class="logo-main" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="g1a" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#6366f1"/>
+              <stop offset="1" stop-color="#a855f7"/>
+            </linearGradient>
+            <linearGradient id="g1b" x1="120" y1="0" x2="0" y2="120" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#22d3ee"/>
+              <stop offset="1" stop-color="#6366f1"/>
+            </linearGradient>
+          </defs>
+          <!-- S as a continuous flowing ribbon that becomes F -->
+          <path d="M30 85 C30 85, 30 70, 45 70 C60 70, 60 55, 45 55 C30 55, 30 40, 45 40 L75 40"
+                stroke="url(#g1a)" stroke-width="8" stroke-linecap="round" fill="none"/>
+          <path d="M75 40 L75 85" stroke="url(#g1a)" stroke-width="8" stroke-linecap="round"/>
+          <path d="M75 55 L90 55" stroke="url(#g1b)" stroke-width="8" stroke-linecap="round"/>
+          <!-- Accent dot representing growth -->
+          <circle cx="95" cy="35" r="6" fill="url(#g1b)"/>
+        </svg>
+        <div>
+          <h3>Flowing Continuity</h3>
+          <p class="description">S flows seamlessly into F - representing continuous portfolio growth. The accent dot marks the peak.</p>
+        </div>
+      </div>
+      <div class="sizes">
+        <div class="size-variant">
+          <svg width="64" height="64" viewBox="0 0 120 120" fill="none">
+            <path d="M30 85 C30 85, 30 70, 45 70 C60 70, 60 55, 45 55 C30 55, 30 40, 45 40 L75 40" stroke="url(#g1a)" stroke-width="8" stroke-linecap="round" fill="none"/>
+            <path d="M75 40 L75 85" stroke="url(#g1a)" stroke-width="8" stroke-linecap="round"/>
+            <path d="M75 55 L90 55" stroke="#22d3ee" stroke-width="8" stroke-linecap="round"/>
+            <circle cx="95" cy="35" r="6" fill="#22d3ee"/>
+          </svg>
+          <span class="size-label">64px</span>
+        </div>
+        <div class="size-variant">
+          <svg width="32" height="32" viewBox="0 0 120 120" fill="none">
+            <path d="M30 85 C30 85, 30 70, 45 70 C60 70, 60 55, 45 55 C30 55, 30 40, 45 40 L75 40" stroke="#8b5cf6" stroke-width="10" stroke-linecap="round" fill="none"/>
+            <path d="M75 40 L75 85" stroke="#8b5cf6" stroke-width="10" stroke-linecap="round"/>
+            <path d="M75 55 L90 55" stroke="#22d3ee" stroke-width="10" stroke-linecap="round"/>
+            <circle cx="95" cy="35" r="8" fill="#22d3ee"/>
+          </svg>
+          <span class="size-label">32px</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Concept 2: Negative Space Arrow -->
+    <div class="logo-card">
+      <div class="logo-container">
+        <svg class="logo-main" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="g2" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#6366f1"/>
+              <stop offset="0.5" stop-color="#8b5cf6"/>
+              <stop offset="1" stop-color="#a855f7"/>
+            </linearGradient>
+          </defs>
+          <rect x="10" y="10" width="100" height="100" rx="24" fill="url(#g2)"/>
+          <!-- S and F sharing a vertical stroke, negative space creates upward arrow -->
+          <path d="M35 80 C35 80, 35 65, 48 65 C61 65, 61 52, 48 52 C35 52, 35 40, 48 40"
+                stroke="white" stroke-width="7" stroke-linecap="round" fill="none"/>
+          <path d="M60 40 L60 80" stroke="white" stroke-width="7" stroke-linecap="round"/>
+          <path d="M60 52 L78 52" stroke="white" stroke-width="7" stroke-linecap="round"/>
+          <!-- Hidden upward arrow in negative space between letters -->
+          <path d="M60 28 L52 38 M60 28 L68 38" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
+        </svg>
+        <div>
+          <h3>Hidden Ascent</h3>
+          <p class="description">The space between S and F reveals a subtle upward arrow - growth hidden in plain sight.</p>
+        </div>
+      </div>
+      <div class="sizes">
+        <div class="size-variant">
+          <svg width="64" height="64" viewBox="0 0 120 120" fill="none">
+            <rect x="10" y="10" width="100" height="100" rx="24" fill="url(#g2)"/>
+            <path d="M35 80 C35 80, 35 65, 48 65 C61 65, 61 52, 48 52 C35 52, 35 40, 48 40" stroke="white" stroke-width="7" stroke-linecap="round" fill="none"/>
+            <path d="M60 40 L60 80" stroke="white" stroke-width="7" stroke-linecap="round"/>
+            <path d="M60 52 L78 52" stroke="white" stroke-width="7" stroke-linecap="round"/>
+            <path d="M60 28 L52 38 M60 28 L68 38" stroke="white" stroke-width="5" stroke-linecap="round" opacity="0.6"/>
+          </svg>
+          <span class="size-label">64px</span>
+        </div>
+        <div class="size-variant">
+          <svg width="32" height="32" viewBox="0 0 120 120" fill="none">
+            <rect x="10" y="10" width="100" height="100" rx="24" fill="#8b5cf6"/>
+            <path d="M35 80 C35 80, 35 65, 48 65 C61 65, 61 52, 48 52 C35 52, 35 40, 48 40" stroke="white" stroke-width="9" stroke-linecap="round" fill="none"/>
+            <path d="M60 40 L60 80" stroke="white" stroke-width="9" stroke-linecap="round"/>
+            <path d="M60 52 L78 52" stroke="white" stroke-width="9" stroke-linecap="round"/>
+          </svg>
+          <span class="size-label">32px</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Concept 3: Geometric Fragments -->
+    <div class="logo-card">
+      <div class="logo-container">
+        <svg class="logo-main" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="g3a" x1="0" y1="60" x2="60" y2="60" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#6366f1"/>
+              <stop offset="1" stop-color="#8b5cf6"/>
+            </linearGradient>
+            <linearGradient id="g3b" x1="60" y1="60" x2="120" y2="60" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#8b5cf6"/>
+              <stop offset="1" stop-color="#c084fc"/>
+            </linearGradient>
+          </defs>
+          <!-- S made of geometric segments -->
+          <rect x="15" y="20" width="35" height="10" rx="5" fill="url(#g3a)"/>
+          <rect x="15" y="35" width="10" height="20" rx="5" fill="url(#g3a)"/>
+          <rect x="15" y="55" width="35" height="10" rx="5" fill="url(#g3a)"/>
+          <rect x="40" y="65" width="10" height="20" rx="5" fill="url(#g3a)"/>
+          <rect x="15" y="85" width="35" height="10" rx="5" fill="url(#g3a)"/>
+          <!-- F made of geometric segments -->
+          <rect x="65" y="20" width="40" height="10" rx="5" fill="url(#g3b)"/>
+          <rect x="65" y="20" width="10" height="75" rx="5" fill="url(#g3b)"/>
+          <rect x="65" y="52" width="30" height="10" rx="5" fill="url(#g3b)"/>
+        </svg>
+        <div>
+          <h3>Deconstructed</h3>
+          <p class="description">Letters broken into building blocks - like portfolio assets assembling into something greater.</p>
+        </div>
+      </div>
+      <div class="sizes">
+        <div class="size-variant">
+          <svg width="64" height="64" viewBox="0 0 120 120" fill="none">
+            <rect x="15" y="20" width="35" height="10" rx="5" fill="#6366f1"/>
+            <rect x="15" y="35" width="10" height="20" rx="5" fill="#6366f1"/>
+            <rect x="15" y="55" width="35" height="10" rx="5" fill="#7c3aed"/>
+            <rect x="40" y="65" width="10" height="20" rx="5" fill="#7c3aed"/>
+            <rect x="15" y="85" width="35" height="10" rx="5" fill="#8b5cf6"/>
+            <rect x="65" y="20" width="40" height="10" rx="5" fill="#8b5cf6"/>
+            <rect x="65" y="20" width="10" height="75" rx="5" fill="#a855f7"/>
+            <rect x="65" y="52" width="30" height="10" rx="5" fill="#c084fc"/>
+          </svg>
+          <span class="size-label">64px</span>
+        </div>
+        <div class="size-variant">
+          <svg width="32" height="32" viewBox="0 0 120 120" fill="none">
+            <rect x="15" y="20" width="35" height="12" rx="6" fill="#8b5cf6"/>
+            <rect x="15" y="35" width="12" height="20" rx="6" fill="#8b5cf6"/>
+            <rect x="15" y="55" width="35" height="12" rx="6" fill="#8b5cf6"/>
+            <rect x="38" y="65" width="12" height="20" rx="6" fill="#8b5cf6"/>
+            <rect x="15" y="85" width="35" height="12" rx="6" fill="#8b5cf6"/>
+            <rect x="65" y="20" width="40" height="12" rx="6" fill="#a855f7"/>
+            <rect x="65" y="20" width="12" height="77" rx="6" fill="#a855f7"/>
+            <rect x="65" y="52" width="30" height="12" rx="6" fill="#a855f7"/>
+          </svg>
+          <span class="size-label">32px</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Concept 4: Intertwined Möbius -->
+    <div class="logo-card">
+      <div class="logo-container">
+        <svg class="logo-main" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="g4" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#06b6d4"/>
+              <stop offset="0.5" stop-color="#6366f1"/>
+              <stop offset="1" stop-color="#a855f7"/>
+            </linearGradient>
+          </defs>
+          <!-- Intertwined SF like a möbius strip -->
+          <path d="M25 90 C25 90, 25 60, 40 60 C55 60, 55 45, 60 45 L60 25"
+                stroke="url(#g4)" stroke-width="8" stroke-linecap="round" fill="none"/>
+          <path d="M60 25 L95 25" stroke="url(#g4)" stroke-width="8" stroke-linecap="round"/>
+          <path d="M60 25 L60 95" stroke="url(#g4)" stroke-width="8" stroke-linecap="round"/>
+          <path d="M60 55 L85 55" stroke="url(#g4)" stroke-width="8" stroke-linecap="round"/>
+          <!-- The S continues behind -->
+          <path d="M40 60 C25 60, 25 30, 40 30 L60 30"
+                stroke="url(#g4)" stroke-width="8" stroke-linecap="round" fill="none" opacity="0.4"/>
+        </svg>
+        <div>
+          <h3>Infinite Loop</h3>
+          <p class="description">S and F interweave like a möbius strip - infinite, continuous wealth building.</p>
+        </div>
+      </div>
+      <div class="sizes">
+        <div class="size-variant">
+          <svg width="64" height="64" viewBox="0 0 120 120" fill="none">
+            <path d="M25 90 C25 90, 25 60, 40 60 C55 60, 55 45, 60 45 L60 25" stroke="url(#g4)" stroke-width="8" stroke-linecap="round" fill="none"/>
+            <path d="M60 25 L95 25" stroke="url(#g4)" stroke-width="8" stroke-linecap="round"/>
+            <path d="M60 25 L60 95" stroke="url(#g4)" stroke-width="8" stroke-linecap="round"/>
+            <path d="M60 55 L85 55" stroke="url(#g4)" stroke-width="8" stroke-linecap="round"/>
+            <path d="M40 60 C25 60, 25 30, 40 30 L60 30" stroke="#6366f1" stroke-width="8" stroke-linecap="round" fill="none" opacity="0.4"/>
+          </svg>
+          <span class="size-label">64px</span>
+        </div>
+        <div class="size-variant">
+          <svg width="32" height="32" viewBox="0 0 120 120" fill="none">
+            <path d="M25 90 C25 90, 25 60, 40 60 C55 60, 55 45, 60 45 L60 25" stroke="#8b5cf6" stroke-width="10" stroke-linecap="round" fill="none"/>
+            <path d="M60 25 L95 25" stroke="#8b5cf6" stroke-width="10" stroke-linecap="round"/>
+            <path d="M60 25 L60 95" stroke="#8b5cf6" stroke-width="10" stroke-linecap="round"/>
+            <path d="M60 55 L85 55" stroke="#a855f7" stroke-width="10" stroke-linecap="round"/>
+          </svg>
+          <span class="size-label">32px</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Concept 5: Stacked Layers -->
+    <div class="logo-card">
+      <div class="logo-container">
+        <svg class="logo-main" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="g5" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#6366f1"/>
+              <stop offset="1" stop-color="#ec4899"/>
+            </linearGradient>
+          </defs>
+          <!-- Layered/stacked S and F creating depth -->
+          <!-- Back layer -->
+          <text x="38" y="82" font-family="Inter, Arial" font-size="72" font-weight="800" fill="#1e1b4b" opacity="0.3">SF</text>
+          <!-- Middle layer -->
+          <text x="34" y="78" font-family="Inter, Arial" font-size="72" font-weight="800" fill="#4338ca" opacity="0.5">SF</text>
+          <!-- Front layer -->
+          <text x="30" y="74" font-family="Inter, Arial" font-size="72" font-weight="800" fill="url(#g5)">SF</text>
+        </svg>
+        <div>
+          <h3>Depth Stack</h3>
+          <p class="description">Layered typography creating depth - like building wealth layer by layer.</p>
+        </div>
+      </div>
+      <div class="sizes">
+        <div class="size-variant">
+          <svg width="64" height="64" viewBox="0 0 120 120" fill="none">
+            <text x="38" y="82" font-family="Inter, Arial" font-size="72" font-weight="800" fill="#1e1b4b" opacity="0.3">SF</text>
+            <text x="34" y="78" font-family="Inter, Arial" font-size="72" font-weight="800" fill="#4338ca" opacity="0.5">SF</text>
+            <text x="30" y="74" font-family="Inter, Arial" font-size="72" font-weight="800" fill="url(#g5)">SF</text>
+          </svg>
+          <span class="size-label">64px</span>
+        </div>
+        <div class="size-variant">
+          <svg width="32" height="32" viewBox="0 0 120 120" fill="none">
+            <text x="34" y="78" font-family="Inter, Arial" font-size="72" font-weight="800" fill="#4338ca" opacity="0.5">SF</text>
+            <text x="30" y="74" font-family="Inter, Arial" font-size="72" font-weight="800" fill="#8b5cf6">SF</text>
+          </svg>
+          <span class="size-label">32px</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Concept 6: Circuit/Data Flow -->
+    <div class="logo-card">
+      <div class="logo-container">
+        <svg class="logo-main" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="g6" x1="0" y1="60" x2="120" y2="60" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#22d3ee"/>
+              <stop offset="0.5" stop-color="#6366f1"/>
+              <stop offset="1" stop-color="#a855f7"/>
+            </linearGradient>
+          </defs>
+          <!-- S as data flow path -->
+          <path d="M20 85 L35 85 C45 85, 45 75, 35 75 L25 75 C15 75, 15 55, 25 55 L35 55 C45 55, 45 45, 35 45 L20 45"
+                stroke="url(#g6)" stroke-width="6" stroke-linecap="round" fill="none"/>
+          <!-- Connection nodes -->
+          <circle cx="20" cy="85" r="4" fill="#22d3ee"/>
+          <circle cx="20" cy="45" r="4" fill="#6366f1"/>
+          <!-- F as circuit -->
+          <path d="M55 25 L100 25 M55 25 L55 95 M55 55 L90 55"
+                stroke="url(#g6)" stroke-width="6" stroke-linecap="round"/>
+          <!-- Connection nodes on F -->
+          <circle cx="100" cy="25" r="4" fill="#a855f7"/>
+          <circle cx="90" cy="55" r="4" fill="#8b5cf6"/>
+          <circle cx="55" cy="95" r="4" fill="#6366f1"/>
+          <!-- Data pulse animation hint -->
+          <circle cx="55" cy="25" r="6" fill="#22d3ee" class="animate-pulse"/>
+        </svg>
+        <div>
+          <h3>Data Circuit</h3>
+          <p class="description">SF as intelligent data pathways - AI-powered, connected, flowing with insights.</p>
+        </div>
+      </div>
+      <div class="sizes">
+        <div class="size-variant">
+          <svg width="64" height="64" viewBox="0 0 120 120" fill="none">
+            <path d="M20 85 L35 85 C45 85, 45 75, 35 75 L25 75 C15 75, 15 55, 25 55 L35 55 C45 55, 45 45, 35 45 L20 45" stroke="url(#g6)" stroke-width="6" stroke-linecap="round" fill="none"/>
+            <circle cx="20" cy="85" r="4" fill="#22d3ee"/>
+            <circle cx="20" cy="45" r="4" fill="#6366f1"/>
+            <path d="M55 25 L100 25 M55 25 L55 95 M55 55 L90 55" stroke="url(#g6)" stroke-width="6" stroke-linecap="round"/>
+            <circle cx="100" cy="25" r="4" fill="#a855f7"/>
+            <circle cx="90" cy="55" r="4" fill="#8b5cf6"/>
+            <circle cx="55" cy="95" r="4" fill="#6366f1"/>
+            <circle cx="55" cy="25" r="6" fill="#22d3ee"/>
+          </svg>
+          <span class="size-label">64px</span>
+        </div>
+        <div class="size-variant">
+          <svg width="32" height="32" viewBox="0 0 120 120" fill="none">
+            <path d="M20 85 L35 85 C45 85, 45 75, 35 75 L25 75 C15 75, 15 55, 25 55 L35 55 C45 55, 45 45, 35 45 L20 45" stroke="#8b5cf6" stroke-width="8" stroke-linecap="round" fill="none"/>
+            <path d="M55 25 L100 25 M55 25 L55 95 M55 55 L90 55" stroke="#a855f7" stroke-width="8" stroke-linecap="round"/>
+            <circle cx="55" cy="25" r="8" fill="#22d3ee"/>
+          </svg>
+          <span class="size-label">32px</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Concept 7: Glitch/Digital -->
+    <div class="logo-card">
+      <div class="logo-container">
+        <svg class="logo-main" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="10" width="100" height="100" rx="20" fill="#0f0f23"/>
+          <!-- Glitched SF effect -->
+          <text x="24" y="78" font-family="Inter, Arial" font-size="56" font-weight="800" fill="#ff0080" opacity="0.7" transform="translate(-2, 0)">SF</text>
+          <text x="24" y="78" font-family="Inter, Arial" font-size="56" font-weight="800" fill="#00ffff" opacity="0.7" transform="translate(2, 0)">SF</text>
+          <text x="24" y="78" font-family="Inter, Arial" font-size="56" font-weight="800" fill="white">SF</text>
+          <!-- Scan line effect -->
+          <rect x="10" y="50" width="100" height="2" fill="white" opacity="0.1"/>
+          <rect x="10" y="70" width="100" height="1" fill="white" opacity="0.05"/>
+        </svg>
+        <div>
+          <h3>Digital Glitch</h3>
+          <p class="description">Chromatic aberration effect - tech-forward, cutting edge, digital-first.</p>
+        </div>
+      </div>
+      <div class="sizes">
+        <div class="size-variant">
+          <svg width="64" height="64" viewBox="0 0 120 120" fill="none">
+            <rect x="10" y="10" width="100" height="100" rx="20" fill="#0f0f23"/>
+            <text x="24" y="78" font-family="Inter, Arial" font-size="56" font-weight="800" fill="#ff0080" opacity="0.7" transform="translate(-2, 0)">SF</text>
+            <text x="24" y="78" font-family="Inter, Arial" font-size="56" font-weight="800" fill="#00ffff" opacity="0.7" transform="translate(2, 0)">SF</text>
+            <text x="24" y="78" font-family="Inter, Arial" font-size="56" font-weight="800" fill="white">SF</text>
+          </svg>
+          <span class="size-label">64px</span>
+        </div>
+        <div class="size-variant">
+          <svg width="32" height="32" viewBox="0 0 120 120" fill="none">
+            <rect x="10" y="10" width="100" height="100" rx="20" fill="#0f0f23"/>
+            <text x="24" y="78" font-family="Inter, Arial" font-size="56" font-weight="800" fill="white">SF</text>
+          </svg>
+          <span class="size-label">32px</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Concept 8: Isometric 3D -->
+    <div class="logo-card">
+      <div class="logo-container">
+        <svg class="logo-main" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="g8a" x1="0" y1="0" x2="0" y2="120" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#8b5cf6"/>
+              <stop offset="1" stop-color="#6366f1"/>
+            </linearGradient>
+            <linearGradient id="g8b" x1="0" y1="0" x2="120" y2="0" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#a855f7"/>
+              <stop offset="1" stop-color="#8b5cf6"/>
+            </linearGradient>
+          </defs>
+          <!-- 3D Isometric SF -->
+          <!-- S - front face -->
+          <path d="M20 95 L20 75 L35 75 L35 65 L20 65 L20 55 L45 55 L45 65 L30 65 L30 75 L45 75 L45 95 Z" fill="url(#g8a)"/>
+          <!-- S - top face -->
+          <path d="M20 55 L30 45 L55 45 L45 55 Z" fill="url(#g8b)"/>
+          <!-- S - right face -->
+          <path d="M45 55 L55 45 L55 85 L45 95 Z" fill="#4c1d95"/>
+          <!-- F - front face -->
+          <path d="M55 95 L55 25 L95 25 L95 35 L65 35 L65 55 L85 55 L85 65 L65 65 L65 95 Z" fill="url(#g8a)"/>
+          <!-- F - top face -->
+          <path d="M55 25 L65 15 L105 15 L95 25 Z" fill="url(#g8b)"/>
+          <!-- F - right face -->
+          <path d="M95 25 L105 15 L105 85 L95 95 L95 35 L95 25" fill="#4c1d95"/>
+        </svg>
+        <div>
+          <h3>Isometric Block</h3>
+          <p class="description">3D isometric letters - solid, trustworthy, building blocks of wealth.</p>
+        </div>
+      </div>
+      <div class="sizes">
+        <div class="size-variant">
+          <svg width="64" height="64" viewBox="0 0 120 120" fill="none">
+            <path d="M20 95 L20 75 L35 75 L35 65 L20 65 L20 55 L45 55 L45 65 L30 65 L30 75 L45 75 L45 95 Z" fill="#8b5cf6"/>
+            <path d="M20 55 L30 45 L55 45 L45 55 Z" fill="#a855f7"/>
+            <path d="M45 55 L55 45 L55 85 L45 95 Z" fill="#4c1d95"/>
+            <path d="M55 95 L55 25 L95 25 L95 35 L65 35 L65 55 L85 55 L85 65 L65 65 L65 95 Z" fill="#8b5cf6"/>
+            <path d="M55 25 L65 15 L105 15 L95 25 Z" fill="#a855f7"/>
+            <path d="M95 25 L105 15 L105 85 L95 95 L95 35 L95 25" fill="#4c1d95"/>
+          </svg>
+          <span class="size-label">64px</span>
+        </div>
+        <div class="size-variant">
+          <svg width="32" height="32" viewBox="0 0 120 120" fill="none">
+            <path d="M20 95 L20 75 L35 75 L35 65 L20 65 L20 55 L45 55 L45 65 L30 65 L30 75 L45 75 L45 95 Z" fill="#8b5cf6"/>
+            <path d="M55 95 L55 25 L95 25 L95 35 L65 35 L65 55 L85 55 L85 65 L65 65 L65 95 Z" fill="#a855f7"/>
+          </svg>
+          <span class="size-label">32px</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="text-align: center; margin-top: 60px; padding: 40px; background: #0f172a; border-radius: 16px; max-width: 600px; margin-left: auto; margin-right: auto;">
+    <p style="color: #94a3b8; margin-bottom: 16px;">Pick your favorite and I'll export it as:</p>
+    <p style="color: #64748b; font-size: 14px;">SVG (scalable) • PNG (multiple sizes) • Favicon</p>
+  </div>
+
+</body>
+</html>

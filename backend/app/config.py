@@ -8,7 +8,7 @@ class Settings(BaseSettings):
 
     # Email settings (optional - alerts work without email)
     resend_api_key: str | None = None
-    email_from: str = "SmartFolio <alerts@smartfolio.app>"
+    email_from: str = "Foliowise <alerts@foliowise.app>"
 
     # Stripe settings (optional - subscriptions work without Stripe in free mode)
     stripe_secret_key: str | None = None
